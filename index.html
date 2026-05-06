@@ -506,10 +506,15 @@
                             <p class="text-sm text-slate-400 font-medium uppercase tracking-wider">Puntos Nexus</p>
                             <p class="text-4xl font-extrabold mt-2 text-yellow-400 drop-shadow-sm" id="user-nexus-points">0.00</p>
                         </div>
-                        <div class="p-6 bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-red-900/50 relative overflow-hidden group hover:border-red-700/50 transition">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="trending-down" class="w-16 h-16 text-red-400"></i></div>
-                            <p class="text-sm text-slate-400 font-medium uppercase tracking-wider">Deuda Pendiente</p>
-                            <p class="text-4xl font-extrabold mt-2 text-red-400 drop-shadow-sm" id="user-debt-cs">C$ 0.00</p>
+                        <div class="p-6 bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-red-900/50 relative overflow-hidden group hover:border-red-700/50 transition flex flex-col justify-between">
+                            <div>
+                                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="trending-down" class="w-16 h-16 text-red-400"></i></div>
+                                <p class="text-sm text-slate-400 font-medium uppercase tracking-wider">Deuda Pendiente</p>
+                                <p class="text-4xl font-extrabold mt-2 text-red-400 drop-shadow-sm" id="user-debt-cs">C$ 0.00</p>
+                            </div>
+                            <button id="client-pay-debt-btn" onclick="window.showClientPayDebtModal()" class="hidden mt-4 w-full p-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 rounded-xl text-white font-bold shadow-lg shadow-red-900/30 transition transform hover:scale-105 flex items-center justify-center gap-2">
+                                <i data-lucide="credit-card" class="w-4 h-4"></i> Pagar con Saldo
+                            </button>
                         </div>
                     </div>
 
@@ -693,9 +698,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <!-- Columna de Cliente y Productos -->
                             <div class="md:col-span-2 space-y-4">
-                                <div class="flex gap-2 items-center">
-                                    <input type="text" id="pos-user-id" placeholder="Correo del Cliente" class="flex-grow p-2 rounded-lg bg-gray-700">
-                                    <button onclick="window.findPosClient()" class="p-2 bg-blue-600 rounded-lg">Buscar</button>
+                                <div class="relative">
+                                    <div class="flex gap-2 items-center">
+                                        <input type="text" id="pos-user-id" onkeyup="window.findPosClient()" placeholder="Nombre, ID, Correo o Tel" class="flex-grow p-2 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none autocomplete="off">
+                                        <button onclick="window.findPosClient()" class="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition">Buscar</button>
+                                    </div>
+                                    <!-- Caja de resultados de búsqueda -->
+                                    <div id="pos-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
                                 </div>
                                 <p id="pos-client-name" class="text-center font-bold h-6"></p>
                                 <div id="pos-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg">
@@ -751,9 +760,12 @@
                          <div id="past-purchase-form">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="md:col-span-2 space-y-4">
-                                    <div class="flex gap-2 items-center">
-                                        <input type="text" id="past-purchase-user-id" placeholder="Correo del Cliente" class="flex-grow p-2 rounded-lg bg-gray-700">
-                                        <button onclick="window.findPastPurchaseClient()" class="p-2 bg-blue-600 rounded-lg">Buscar</button>
+                                    <div class="relative">
+                                        <div class="flex gap-2 items-center">
+                                            <input type="text" id="past-purchase-user-id" onkeyup="window.findPastPurchaseClient()" placeholder="Nombre, ID, Correo o Tel" class="flex-grow p-2 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none" autocomplete="off">
+                                            <button onclick="window.findPastPurchaseClient()" class="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition">Buscar</button>
+                                        </div>
+                                        <div id="past-purchase-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
                                     </div>
                                     <p id="past-purchase-client-name" class="text-center font-bold h-6"></p>
                                     <div>
@@ -793,9 +805,12 @@
                          <!-- Formulario de Canje Pasado -->
                          <div id="past-redemption-form" class="hidden">
                              <div class="space-y-4 max-w-lg mx-auto">
-                                 <div class="flex gap-2 items-center">
-                                    <input type="text" id="past-redemption-user-id" placeholder="Correo del Cliente" class="flex-grow p-2 rounded-lg bg-gray-700">
-                                    <button onclick="window.findPastRedemptionClient()" class="p-2 bg-blue-600 rounded-lg">Buscar</button>
+                                 <div class="relative">
+                                     <div class="flex gap-2 items-center">
+                                        <input type="text" id="past-redemption-user-id" onkeyup="window.findPastRedemptionClient()" placeholder="Nombre, ID, Correo o Tel" class="flex-grow p-2 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none" autocomplete="off">
+                                        <button onclick="window.findPastRedemptionClient()" class="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition">Buscar</button>
+                                    </div>
+                                    <div id="past-redemption-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
                                 </div>
                                 <p id="past-redemption-client-name" class="text-center font-bold h-6"></p>
                                 <div>
@@ -889,7 +904,7 @@
                             <div class="flex items-center justify-between pt-2">
                                 <label for="nexus-enabled-toggle" class="font-semibold text-slate-300">Activar Puntos Nexus</label>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                  <input type="checkbox" id="nexus-enabled-toggle" class="sr-only peer" onchange="window.updateShopCustomization(false)">
+                                  <input type="checkbox" id="nexus-enabled-toggle" class="sr-only peer" onchange="window.toggleNexusState(this.checked)">
                                   <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                                 </label>
                             </div>
@@ -922,8 +937,9 @@
                             
                             <button onclick="window.updateShopCustomization(true)" class="w-full p-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-lg">💾 Guardar Personalización</button>
                              <hr class="border-slate-700 my-4">
-                             <h4 class="text-lg font-semibold text-red-300">🔑 Cambiar Contraseña de Admin</h4>
-                            <input type="password" id="new-admin-pass" placeholder="Nueva Contraseña de Admin" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                             <h4 class="text-lg font-semibold text-red-300">🔑 Cambiar Mi Contraseña de Acceso</h4>
+                             <p class="text-xs text-slate-400 mb-3">Actualiza la contraseña de tu cuenta actual.</p>
+                            <input type="password" id="new-admin-pass" placeholder="Nueva Contraseña (mínimo 6 caracteres)" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
                             <input type="password" id="confirm-admin-pass" placeholder="Confirmar Nueva Contraseña" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
                             <button onclick="window.updateAdminPassword()" class="w-full p-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition">Cambiar Contraseña</button>
                         </div>
@@ -932,6 +948,18 @@
             </div>
         </div>
     </main>
+
+    <!-- NUEVO: Pie de Página (Footer) -->
+    <footer class="border-t border-slate-800 bg-slate-950/80 backdrop-blur-md py-6 mt-8 z-10 w-full no-print">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">&copy; 2025 Astral Nexus. Todos los derechos reservados.</p>
+            <div class="flex justify-center items-center gap-4 mt-3 text-xs text-slate-400">
+                <button onclick="window.showTerms()" class="hover:text-blue-400 hover:underline transition">Términos de Servicios</button>
+                <span class="text-slate-700">|</span>
+                <button onclick="window.showPrivacy()" class="hover:text-blue-400 hover:underline transition">Política de Privacidad</button>
+            </div>
+        </div>
+    </footer>
 
     <!-- Modals -->
     <!-- Modal Base -->
@@ -943,6 +971,27 @@
         </div>
     </div>
     
+    <!-- Modal Pagar Deuda Cliente -->
+    <div id="client-pay-debt-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[60] p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-sm w-full shadow-2xl border border-red-900/50">
+            <h3 class="text-xl font-bold mb-4 text-red-400 flex items-center gap-2"><i data-lucide="credit-card" class="w-5 h-5"></i> Pagar Deuda</h3>
+            <p class="text-sm text-gray-300 mb-4">Usa tu saldo actual para reducir o cancelar tu deuda pendiente.</p>
+            
+            <div class="bg-gray-800 p-3 rounded-lg mb-4 text-sm">
+                <div class="flex justify-between mb-1"><span>Saldo Disponible:</span> <strong id="pay-debt-modal-funds" class="text-green-400">C$ 0.00</strong></div>
+                <div class="flex justify-between"><span>Deuda Total:</span> <strong id="pay-debt-modal-debt" class="text-red-400">C$ 0.00</strong></div>
+            </div>
+
+            <label class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 block">Monto a pagar (C$)</label>
+            <input type="number" id="client-debt-payment-amount" placeholder="Ej: 100" class="w-full p-3 rounded-xl bg-slate-900 text-white border border-slate-700 focus:border-red-500 focus:outline-none transition mb-6" min="1">
+            
+            <div class="flex justify-end gap-3">
+                <button onclick="window.hideClientPayDebtModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-bold transition">Cancelar</button>
+                <button onclick="window.processClientDebtPayment()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition shadow-lg shadow-red-900/30">Confirmar Pago</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast-notification" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-xl transform translate-y-20 transition-transform duration-300 z-[90] flex items-center gap-2 pointer-events-none">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
@@ -1149,7 +1198,7 @@
 <script type="module">
     // Usamos la versión 10.7.1 que es muy estable para evitar errores de compatibilidad
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, serverTimestamp, writeBatch, runTransaction, updateDoc, getDocs, where, Timestamp, deleteDoc, addDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -1276,6 +1325,23 @@
     };
     const formatNexus = (amount) => `${parseFloat(amount || 0).toFixed(2)} Puntos`;
     
+    // NUEVO: Funciones de Políticas y Términos
+    window.showTerms = () => {
+        window.showModal(
+            "Términos de Servicios", 
+            `Bienvenido a Astral Nexus.<br><br>
+            Al utilizar nuestra plataforma, aceptas que todas las compras de productos digitales y canjes de puntos son definitivos. Nos reservamos el derecho de anular cuentas que intenten vulnerar la seguridad del sistema o realizar fraudes.`
+        );
+    };
+
+    window.showPrivacy = () => {
+        window.showModal(
+            "Política de Privacidad", 
+            `En Astral Nexus nos tomamos muy en serio la seguridad de tu información.<br><br>
+            Solo almacenamos los datos estrictamente necesarios (Nombre, Correo y Contacto) para asegurar la entrega correcta de tus productos y gestionar tus participaciones en los sorteos. Tu información nunca será compartida con terceros.`
+        );
+    };
+
     // NUEVO: Función para abrir WhatsApp
     window.openWhatsApp = () => {
         // Obtener contacto desde config (campo: businessContact)
@@ -2053,7 +2119,8 @@
                     <p class="font-bold p-3 text-center text-purple-300 group-hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.8)] relative z-10">${subCat.title}</p>
                 </button>
             </div>
-        `}).join('');
+            `;
+        }).join('');
     };
 
     window.goBackToSubCategories = (type) => {
@@ -2077,9 +2144,6 @@
         document.getElementById(subView).classList.add('hidden');
         document.getElementById(productView).classList.remove('hidden');
         
-        // ELIMINADO: Scroll automático para mantener la posición del usuario
-        // window.scrollTo({ top: 0, behavior: 'smooth' }); 
-
         const sourceData = isShop ? productsCatalog.catalog : productsCatalog.nexusRedemptions;
         const mainCat = sourceData.find(c => c.key === mainKey);
         const subCat = mainCat ? mainCat.subcategories.find(s => s.key === subKey) : null;
@@ -2141,10 +2205,16 @@
                     </div>`;
             } else { // Nexus
                  const canAfford = currentUserFunds.nexus >= item.nexusCost;
-                const isOutOfStock = !item.unlimited && item.inventory <= 0;
+                const isDigital = item.availableCodes !== undefined;
+                const isOutOfStock = !item.unlimited && item.inventory <= 0 && !isDigital;
+                const isPreorder = !item.unlimited && item.inventory <= 0 && isDigital;
+                
                 const stockDisplay = item.unlimited ? '<span class="text-xs text-green-400">Sin Límite</span>' : 
-                                     (isOutOfStock ? '<span class="text-xs text-red-500 font-bold">AGOTADO</span>' : `<span class="text-xs text-gray-400">Disponibles: ${item.inventory}</span>`);
+                                     (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes canjear ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
+                                     (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-gray-400">Disponibles: ${item.inventory}</span>`));
                 const descText = item.description ? `<p class="text-xs text-gray-400 mt-1 line-clamp-2" title="${item.description.replace(/"/g, '&quot;')}">${item.description}</p>` : '';
+
+                const btnDisabled = !canAfford || isOutOfStock;
 
                 containerEl.innerHTML += `
                     <div class="neon-card-wrapper rounded-lg ${isOutOfStock || !canAfford ? 'opacity-60 grayscale' : ''}">
@@ -2163,7 +2233,7 @@
                                         <p class="text-3xl font-extrabold price-highlight-nexus">${formatNexus(item.nexusCost)}</p>
                                     </div>
                                 </div>
-                                <button onclick="window.processRedemption('${item.id}')" class="w-full mt-3 p-2 rounded-lg font-bold text-sm transition ${canAfford && !isOutOfStock ? 'bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-500 hover:to-orange-400 text-white shadow-[0_0_15px_rgba(250,204,21,0.4)]' : 'bg-gray-600 cursor-not-allowed'}" ${!canAfford || isOutOfStock ? 'disabled' : ''}>Canjear</button>
+                                <button onclick="window.processRedemption('${item.id}')" class="w-full mt-3 p-2 rounded-lg font-bold text-sm transition ${!btnDisabled ? 'bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-500 hover:to-orange-400 text-white shadow-[0_0_15px_rgba(250,204,21,0.4)]' : 'bg-gray-600 cursor-not-allowed'}" ${btnDisabled ? 'disabled' : ''}>Canjear</button>
                             </div>
                         </div>
                     </div>`;
@@ -2230,6 +2300,16 @@
         document.getElementById('user-funds-cs').textContent = formatCS(currentUserFunds.cs);
         document.getElementById('user-nexus-points').textContent = currentUserFunds.nexus.toFixed(2);
         document.getElementById('user-debt-cs').textContent = formatCS(currentUserFunds.debt);
+        
+        const payBtn = document.getElementById('client-pay-debt-btn');
+        if (payBtn) {
+            if (currentUserFunds.debt > 0 && currentUserFunds.cs > 0) {
+                payBtn.classList.remove('hidden');
+            } else {
+                payBtn.classList.add('hidden');
+            }
+        }
+
         window.renderRedemptionList();
     };
     
@@ -2418,13 +2498,25 @@
                 
                 const newCatalogData = catalogDoc.data();
                 let itemFoundAndInStock = false;
+                let assignedCode = "";
+                let pendingCodes = 0;
+                let redemptionUrl = "";
                 
                 for (const mainCat of newCatalogData.nexusRedemptions) {
                     if(mainCat.subcategories) {
                         for(const subCat of mainCat.subcategories) {
                             const item = subCat.items.find(i => i.id === itemId);
                             if (item) {
-                                if (!item.unlimited) {
+                                redemptionUrl = item.redemptionUrl || "";
+                                // NUEVO: Lógica de códigos digitales y Pre-órdenes para Canjes
+                                if (item.availableCodes !== undefined) {
+                                    if (item.availableCodes.length > 0) {
+                                        assignedCode = item.availableCodes.splice(0, 1).join(', ');
+                                    } else {
+                                        pendingCodes = 1;
+                                    }
+                                    item.inventory = item.availableCodes.length;
+                                } else if (!item.unlimited) {
                                     if (item.inventory < 1) throw new Error(`¡El item "${item.name}" está agotado!`);
                                     item.inventory -= 1;
                                 }
@@ -2442,10 +2534,19 @@
                 transaction.set(productCatalogRef, newCatalogData);
                 transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), { 
                     type: 'CANJE', userId: currentUserId, costNexus: nexusCost, costCS: cost || 0,
-                    item: name, timestamp: serverTimestamp() 
+                    item: name, timestamp: serverTimestamp(),
+                    assignedCode, pendingCodes, redemptionUrl,
+                    items: {
+                        [itemId]: { id: itemId, name: name, quantity: 1, pendingCodes, assignedCode, redemptionUrl }
+                    }
                 });
             });
-            window.showModal("¡Canje Exitoso!", `Has canjeado **"${name}"** por ${formatNexus(nexusCost)}.`);
+            
+            const successMsg = pendingCodes > 0 
+                ? `Has canjeado **"${name}"** por ${formatNexus(nexusCost)}.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Este item está en PRE-ORDEN. Recibirás tu código automáticamente en tu historial apenas el administrador agregue más códigos.</span>`
+                : `Has canjeado **"${name}"** por ${formatNexus(nexusCost)}. Revisa tu historial para ver tu código.`;
+            
+            window.showModal("¡Canje Exitoso!", successMsg);
         } catch (error) { window.showModal("Error de Transacción", `Error: ${error.message}.`); }
     };
 
@@ -2573,6 +2674,13 @@
                                                      <textarea id="nexus-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción del canje">${item.description || ''}</textarea>
                                                 </div>
                                                 <textarea id="nexus-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen">${pImage}</textarea>
+                                                
+                                                <!-- NUEVO: Campos para Códigos Digitales en Canjes -->
+                                                <div class="md:col-span-6 mt-2 border-t border-yellow-900 pt-2">
+                                                    <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
+                                                    <input type="text" id="nexus-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)"/>
+                                                    <textarea id="nexus-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente.">${(item.availableCodes || []).join('\n')}</textarea>
+                                                </div>
                                             </div>`;
                                         }
                                     }).join('')}
@@ -2677,9 +2785,10 @@
     window.autoFulfillPendingOrders = async (productId, newCodes) => {
         if (!newCodes || newCodes.length === 0) return newCodes;
         
-        // Buscar compras con códigos pendientes para este producto
+        // Buscar compras o canjes con códigos pendientes para este producto
         const pendingOrders = purchaseHistoryData.filter(t => 
-            t.type === 'COMPRA' && t.status !== 'anulada' && 
+            t.status !== 'anulada' && 
+            (t.type === 'COMPRA' || t.type === 'CANJE') &&
             t.items && t.items[productId] && t.items[productId].pendingCodes > 0
         );
 
@@ -2708,9 +2817,12 @@
                 itemInOrder.assignedCode = codesToGive.join(', ');
             }
             
-            batch.update(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, order.id), {
-                [`items.${productId}`]: itemInOrder
-            });
+            let updates = { [`items.${productId}`]: itemInOrder };
+            if (order.type === 'CANJE') {
+                updates.assignedCode = itemInOrder.assignedCode;
+                updates.pendingCodes = itemInOrder.pendingCodes;
+            }
+            batch.update(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, order.id), updates);
             updatedCount++;
         }
         
@@ -2809,6 +2921,12 @@
         const inv = parseInt(document.getElementById(`nexus-inv-${itemId}`).value);
         const desc = document.getElementById(`nexus-desc-${itemId}`).value; // NUEVO: Descripción Nexus
         const imgs = document.getElementById(`nexus-img-${itemId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
+        const url = document.getElementById(`nexus-url-${itemId}`).value.trim();
+        const codesRaw = document.getElementById(`nexus-codes-${itemId}`).value.trim();
+        let codes = codesRaw ? codesRaw.split('\n').map(c => c.trim()).filter(c => c) : [];
+
+        // AUTO-ENTREGA para canjes
+        codes = await window.autoFulfillPendingOrders(itemId, codes);
 
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
         const subCat = newCatalog.nexusRedemptions.find(c => c.key === mainKey)?.subcategories.find(s => s.key === subKey);
@@ -2818,10 +2936,19 @@
             item.name = name; 
             item.nexusCost = cost; 
             item.cost = moneyCost; // NUEVO: Guardar Costo Real
-            item.inventory = inv; 
             item.description = desc; // NUEVO
             item.unlimited = false; 
             item.imageUrls = imgs;
+            item.redemptionUrl = url;
+            item.availableCodes = codes;
+
+            // Si hay códigos, el inventario se ajusta automáticamente
+            if (codes.length > 0 || codesRaw.length > 0) {
+                item.inventory = codes.length;
+            } else {
+                item.inventory = inv;
+            }
+
             await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
             window.showModal("Éxito", "Item de canje actualizado.");
         }
@@ -2999,22 +3126,49 @@
         });
     };
 
-    // ADMIN FUNCTIONS
-    window.findPosClient = async () => {
-        const email = document.getElementById('pos-user-id').value.trim().toLowerCase();
-        if(!email) return;
-        const q = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("email", "==", email), limit(1));
-        const snaps = await getDocs(q);
-        if(!snaps.empty) {
-            const snap = snaps.docs[0];
-            posClient = { id: snap.id, ...snap.data() };
+    // ADMIN FUNCTIONS - BÚSQUEDA POS (VENTAS)
+    window.findPosClient = () => {
+        const term = document.getElementById('pos-user-id').value.trim().toLowerCase();
+        const resultsBox = document.getElementById('pos-search-results');
+        
+        if(!term) {
+            resultsBox.classList.add('hidden');
+            resultsBox.classList.remove('flex');
+            return;
+        }
+        
+        // Buscar todas las coincidencias y limitar a 10 resultados para no saturar la vista
+        const matches = allUsersData.filter(u => 
+            (u.email && u.email.toLowerCase().includes(term)) ||
+            (u.id && u.id.toLowerCase().includes(term)) ||
+            (u.contact && u.contact.toLowerCase().includes(term)) ||
+            (u.name && u.name.toLowerCase().includes(term))
+        ).slice(0, 10);
+        
+        if(matches.length > 0) {
+            resultsBox.innerHTML = matches.map(u => `
+                <button onclick="window.selectPosClient('${u.id}')" class="p-3 text-left hover:bg-gray-700 transition w-full">
+                    <span class="font-bold text-white block text-sm">${u.name}</span>
+                    <span class="text-xs text-gray-400 block mt-0.5">ID: ${u.id} <br> Contacto/Email: ${u.contact || u.email || 'N/A'}</span>
+                </button>
+            `).join('');
+        } else {
+            resultsBox.innerHTML = '<p class="p-3 text-xs text-red-400 text-center">No se encontraron clientes con esos datos.</p>';
+        }
+        resultsBox.classList.remove('hidden');
+        resultsBox.classList.add('flex');
+    };
+
+    window.selectPosClient = (id) => {
+        const snap = allUsersData.find(u => u.id === id);
+        if(snap) {
+            posClient = { ...snap };
             const nameEl = document.getElementById('pos-client-name');
             nameEl.textContent = posClient.name;
             nameEl.className = "text-center font-bold h-6 text-xl text-cyan-400";
-        } else {
-            window.showModal("Error", "Usuario no encontrado con ese correo");
-            posClient = null;
-            document.getElementById('pos-client-name').textContent = '';
+            document.getElementById('pos-search-results').classList.add('hidden');
+            document.getElementById('pos-user-id').value = posClient.name; // Visual feedback
+            window.updatePosSummary();
         }
     };
 
@@ -3168,17 +3322,48 @@
         }
     };
 
-    window.findPastPurchaseClient = async () => {
-        const email = document.getElementById('past-purchase-user-id').value.trim().toLowerCase();
-        if(!email) return;
-        const q = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("email", "==", email), limit(1));
-        const snaps = await getDocs(q);
-        if(!snaps.empty) {
-            const snap = snaps.docs[0];
-            pastPurchaseClient = { id: snap.id, ...snap.data() };
+    // BÚSQUEDA COMPRAS PASADAS
+    window.findPastPurchaseClient = () => {
+        const term = document.getElementById('past-purchase-user-id').value.trim().toLowerCase();
+        const resultsBox = document.getElementById('past-purchase-search-results');
+        
+        if(!term) {
+            resultsBox.classList.add('hidden');
+            resultsBox.classList.remove('flex');
+            return;
+        }
+        
+        const matches = allUsersData.filter(u => 
+            (u.email && u.email.toLowerCase().includes(term)) ||
+            (u.id && u.id.toLowerCase().includes(term)) ||
+            (u.contact && u.contact.toLowerCase().includes(term)) ||
+            (u.name && u.name.toLowerCase().includes(term))
+        ).slice(0, 10);
+        
+        if(matches.length > 0) {
+            resultsBox.innerHTML = matches.map(u => `
+                <button onclick="window.selectPastPurchaseClient('${u.id}')" class="p-3 text-left hover:bg-gray-700 transition w-full">
+                    <span class="font-bold text-white block text-sm">${u.name}</span>
+                    <span class="text-xs text-gray-400 block mt-0.5">ID: ${u.id} <br> Contacto/Email: ${u.contact || u.email || 'N/A'}</span>
+                </button>
+            `).join('');
+        } else {
+            resultsBox.innerHTML = '<p class="p-3 text-xs text-red-400 text-center">No se encontraron clientes.</p>';
+        }
+        resultsBox.classList.remove('hidden');
+        resultsBox.classList.add('flex');
+    };
+
+    window.selectPastPurchaseClient = (id) => {
+        const snap = allUsersData.find(u => u.id === id);
+        if(snap) {
+            pastPurchaseClient = { ...snap };
             const nameEl = document.getElementById('past-purchase-client-name');
             nameEl.textContent = pastPurchaseClient.name;
             nameEl.className = "text-center font-bold h-6 text-xl text-cyan-400";
+            document.getElementById('past-purchase-search-results').classList.add('hidden');
+            document.getElementById('past-purchase-user-id').value = pastPurchaseClient.name;
+            window.updatePastPurchaseSummary();
         }
     };
 
@@ -3318,17 +3503,47 @@
         } catch(e) { window.showModal("Error", e.message); }
     };
 
-    window.findPastRedemptionClient = async () => {
-        const email = document.getElementById('past-redemption-user-id').value.trim().toLowerCase();
-        if(!email) return;
-        const q = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("email", "==", email), limit(1));
-        const snaps = await getDocs(q);
-        if(!snaps.empty) {
-            const snap = snaps.docs[0];
-            pastRedemptionClient = { id: snap.id, ...snap.data() };
+    // BÚSQUEDA CANJE PASADO
+    window.findPastRedemptionClient = () => {
+        const term = document.getElementById('past-redemption-user-id').value.trim().toLowerCase();
+        const resultsBox = document.getElementById('past-redemption-search-results');
+        
+        if(!term) {
+            resultsBox.classList.add('hidden');
+            resultsBox.classList.remove('flex');
+            return;
+        }
+        
+        const matches = allUsersData.filter(u => 
+            (u.email && u.email.toLowerCase().includes(term)) ||
+            (u.id && u.id.toLowerCase().includes(term)) ||
+            (u.contact && u.contact.toLowerCase().includes(term)) ||
+            (u.name && u.name.toLowerCase().includes(term))
+        ).slice(0, 10);
+        
+        if(matches.length > 0) {
+            resultsBox.innerHTML = matches.map(u => `
+                <button onclick="window.selectPastRedemptionClient('${u.id}')" class="p-3 text-left hover:bg-gray-700 transition w-full">
+                    <span class="font-bold text-white block text-sm">${u.name}</span>
+                    <span class="text-xs text-gray-400 block mt-0.5">ID: ${u.id} <br> Contacto/Email: ${u.contact || u.email || 'N/A'}</span>
+                </button>
+            `).join('');
+        } else {
+            resultsBox.innerHTML = '<p class="p-3 text-xs text-red-400 text-center">No se encontraron clientes.</p>';
+        }
+        resultsBox.classList.remove('hidden');
+        resultsBox.classList.add('flex');
+    };
+
+    window.selectPastRedemptionClient = (id) => {
+        const snap = allUsersData.find(u => u.id === id);
+        if(snap) {
+            pastRedemptionClient = { ...snap };
             const nameEl = document.getElementById('past-redemption-client-name');
             nameEl.textContent = pastRedemptionClient.name;
             nameEl.className = "text-center font-bold h-6 text-xl text-cyan-400";
+            document.getElementById('past-redemption-search-results').classList.add('hidden');
+            document.getElementById('past-redemption-user-id').value = pastRedemptionClient.name;
         }
     };
 
@@ -3576,7 +3791,7 @@
                         <td class="p-2">${u?u.name:t.userId}</td>
                         <td class="p-2 font-bold ${t.type==='COMPRA'?'text-green-400':t.type==='CANJE'?'text-yellow-400':'text-gray-400'}">${t.type}</td>
                         <td class="p-2 text-right">${t.totalCS ? formatCS(t.totalCS) : (t.costNexus ? formatNexus(t.costNexus) : '-')}</td>
-                        <td class="p-2 text-center"><button onclick="window.showTransactionDetails('${t.id}')" class="text-blue-400 hover:text-white transition transform hover:scale-110"><i data-lucide="eye" class="w-5 h-5"></i></button></td>
+                        <td class="p-2 text-center"><button onclick="window.showTransactionDetails('${t.id}', 'admin')" class="text-blue-400 hover:text-white transition transform hover:scale-110"><i data-lucide="eye" class="w-5 h-5"></i></button></td>
                     </tr>`;
                 }).join('')}</tbody>
             </table>
@@ -3588,17 +3803,57 @@
     // ... (Se mantienen igual las funciones de config, etc) ...
 
     window.updateNexusRate = async () => {
-        const val = parseFloat(document.getElementById('new-nexus-rate').value);
-        if(!val) return;
-        await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { nexusValueInCS: val });
-        window.showModal("Éxito", "Tasa actualizada");
+        const valInput = document.getElementById('new-nexus-rate');
+        const val = parseFloat(valInput.value);
+        if(isNaN(val) || val <= 0) {
+            window.showModal("Error", "Ingresa un valor numérico válido mayor a 0.");
+            return;
+        }
+        try {
+            // Actualización Inmediata en la Interfaz
+            document.getElementById('admin-nexus-rate').textContent = formatCS(val);
+            adminConfig.nexusValueInCS = val;
+            
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { nexusValueInCS: val });
+            window.showModal("Éxito", "Tasa Nexus actualizada correctamente");
+            valInput.value = '';
+        } catch(e) {
+            window.showModal("Error", "No se pudo actualizar la tasa.");
+        }
+    };
+
+    window.toggleNexusState = async (isEnabled) => {
+        try {
+            adminConfig.nexusEnabled = isEnabled;
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { nexusEnabled: isEnabled });
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = isEnabled ? "Puntos Nexus Activados" : "Puntos Nexus Desactivados";
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        } catch(e) {
+            console.error(e);
+            window.showModal("Error", "Hubo un problema actualizando el estado de los puntos Nexus.");
+        }
     };
 
     window.updateIvaPercentage = async () => {
-        const val = parseFloat(document.getElementById('new-iva-rate').value);
-        if(isNaN(val)) return;
-        await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { ivaPercentage: val });
-        window.showModal("Éxito", "Porcentaje de IVA actualizado");
+        const valInput = document.getElementById('new-iva-rate');
+        const val = parseFloat(valInput.value);
+        if(isNaN(val) || val < 0) {
+            window.showModal("Error", "Ingresa un porcentaje válido.");
+            return;
+        }
+        try {
+            // Actualización Inmediata en la Interfaz
+            document.getElementById('admin-iva-rate').textContent = `${val}%`;
+            adminConfig.ivaPercentage = val;
+            
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { ivaPercentage: val });
+            window.showModal("Éxito", "Porcentaje de IVA actualizado");
+            valInput.value = '';
+        } catch(e) {
+            window.showModal("Error", "No se pudo actualizar el porcentaje.");
+        }
     };
 
     window.updateShopCustomization = async (manualSave) => {
@@ -3628,9 +3883,38 @@
     window.updateAdminPassword = async () => {
         const p1 = document.getElementById('new-admin-pass').value;
         const p2 = document.getElementById('confirm-admin-pass').value;
-        if(p1 && p1 === p2) {
-            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { adminPass: p1 });
-            window.showModal("Éxito", "Contraseña de Admin actualizada");
+        
+        if (!p1 || p1.length < 6) {
+            window.showModal("Error", "La nueva contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+
+        if(p1 === p2) {
+            const user = auth.currentUser;
+            if (!user || user.isAnonymous) {
+                window.showModal("Error", "No hay una sesión de administrador válida para cambiar la contraseña.");
+                return;
+            }
+
+            try {
+                // Actualiza la contraseña real de la cuenta de Firebase del administrador
+                await updatePassword(user, p1);
+                
+                // Mantenemos la actualización en la BD por compatibilidad con el backdoor de emergencia
+                await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { adminPass: p1 });
+                
+                window.showModal("Éxito", "La contraseña de tu cuenta ha sido actualizada correctamente.");
+                document.getElementById('new-admin-pass').value = '';
+                document.getElementById('confirm-admin-pass').value = '';
+            } catch (error) {
+                console.error("Error al actualizar contraseña:", error);
+                // Firebase exige que el usuario haya iniciado sesión recientemente para cambiar la clave
+                if (error.code === 'auth/requires-recent-login') {
+                    window.showModal("Aviso de Seguridad", "Por tu seguridad, Firebase requiere que cierres sesión y vuelvas a ingresar para poder cambiar tu contraseña.");
+                } else {
+                    window.showModal("Error", "No se pudo cambiar la contraseña: " + error.message);
+                }
+            }
         } else {
             window.showModal("Error", "Las contraseñas no coinciden");
         }
@@ -3994,7 +4278,7 @@
             else if (item.type === 'DEBT_PAYMENT') { detail = `Abono deuda ${formatCS(item.amount)}`; color = 'text-yellow-300'; }
             else if (item.type === 'SORTEO_ENTRADA') { detail = `Rifa: ${item.raffleType}`; color = 'text-gray-400'; }
             else { detail = item.type; }
-            return `<div class="text-xs cursor-pointer hover:bg-gray-700 p-1 rounded" onclick="window.showTransactionDetails('${item.id}')"><span class="font-mono">${date}</span> - <span class="${color}">${detail}</span></div>`;
+            return `<div class="text-xs cursor-pointer hover:bg-gray-700 p-1 rounded" onclick="window.showTransactionDetails('${item.id}', 'admin')"><span class="font-mono">${date}</span> - <span class="${color}">${detail}</span></div>`;
         }).join('');
     };
 
@@ -4013,6 +4297,17 @@
             let contentHTML = '';
             let borderColor = 'border-gray-700';
             let allCodesInTransaction = [];
+            let debtHtml = ''; // NUEVO: Bloque HTML para deuda pendiente
+
+            // Verificar si hay deuda activa en esta transacción
+            if (item.type === 'COMPRA' && item.isDebt && item.remainingDebtCS > 0 && item.status !== 'anulada') {
+                borderColor = 'border-red-900/80'; // Borde rojo llamativo
+                debtHtml = `
+                <div class="mt-2 bg-red-900/20 border border-red-500/30 rounded-lg p-2 flex justify-between items-center shadow-inner">
+                    <span class="text-xs text-red-400 font-bold flex items-center gap-1 uppercase tracking-wider"><i data-lucide="alert-circle" class="w-4 h-4"></i> Deuda Pendiente</span>
+                    <span class="text-sm text-red-400 font-extrabold">${formatCS(item.remainingDebtCS)}</span>
+                </div>`;
+            }
 
             if(item.status === 'anulada') {
                  contentHTML = `<p class="text-gray-500 line-through font-bold">COMPRA ANULADA</p>`;
@@ -4111,33 +4406,45 @@
                         </div>
                     `}).join('');
 
-                    codeHtml = `
-                    <div class="mt-4 p-4 bg-slate-900/60 rounded-xl border border-yellow-500/20 shadow-inner">
-                         <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/5">
-                            <span class="text-xs text-yellow-300 uppercase font-bold tracking-wider flex items-center gap-2">
-                                <i data-lucide="key" class="w-4 h-4"></i> Tu Código de Canje
-                            </span>
-                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-900/10 px-2 py-1 rounded border border-emerald-500/20 tracking-wider">ENTREGADO</span>
-                         </div>
-                         <div class="flex flex-col gap-1">
-                             ${codesRendered}
-                         </div>
-                         ${item.redemptionUrl ? `
-                         <div class="mt-3 pt-3 border-t border-white/5">
-                            <a href="${item.redemptionUrl}" target="_blank" class="block w-full py-2.5 bg-gradient-to-r from-yellow-700 to-orange-600 hover:from-yellow-600 hover:to-orange-500 text-white text-sm font-bold rounded-lg text-center transition shadow-lg shadow-yellow-900/30 flex items-center justify-center gap-2 transform hover:translate-y-[-1px] active:translate-y-[0px] border border-yellow-400/20">
-                                <i data-lucide="external-link" class="w-4 h-4"></i> IR AL SITIO DE CANJE
-                            </a>
-                         </div>` : ''}
-                    </div>`;
-                }
+                 codeHtml = `
+                 <div class="mt-4 p-4 bg-slate-900/60 rounded-xl border border-yellow-500/20 shadow-inner">
+                      <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/5">
+                         <span class="text-xs text-yellow-300 uppercase font-bold tracking-wider flex items-center gap-2">
+                             <i data-lucide="key" class="w-4 h-4"></i> Tu Código de Canje
+                         </span>
+                         <span class="text-[10px] text-emerald-400 font-bold bg-emerald-900/10 px-2 py-1 rounded border border-emerald-500/20 tracking-wider">ENTREGADO</span>
+                      </div>
+                      <div class="flex flex-col gap-1">
+                          ${codesRendered}
+                      </div>
+                      ${item.redemptionUrl ? `
+                      <div class="mt-3 pt-3 border-t border-white/5">
+                         <a href="${item.redemptionUrl}" target="_blank" class="block w-full py-2.5 bg-gradient-to-r from-yellow-700 to-orange-600 hover:from-yellow-600 hover:to-orange-500 text-white text-sm font-bold rounded-lg text-center transition shadow-lg shadow-yellow-900/30 flex items-center justify-center gap-2 transform hover:translate-y-[-1px] active:translate-y-[0px] border border-yellow-400/20">
+                             <i data-lucide="external-link" class="w-4 h-4"></i> IR AL SITIO DE CANJE
+                         </a>
+                      </div>` : ''}
+                 </div>`;
+            }
+            
+            let pendingHtml = '';
+            if (item.pendingCodes > 0) {
+                pendingHtml = `
+                <div class="mt-2 p-3 bg-yellow-900/40 rounded-lg border border-yellow-500/30">
+                    <span class="text-xs text-yellow-300 font-bold flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4"></i> PRE-ORDEN EN ESPERA: ${item.pendingCodes} un.
+                    </span>
+                    <p class="text-[10px] text-gray-400 mt-1">Recibirás tu código automáticamente aquí cuando se renueve el stock.</p>
+                </div>`;
+            }
 
-                contentHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="font-bold text-white text-sm">${item.item}</span>
-                        <span class="text-yellow-400 font-bold text-sm">${formatNexus(item.costNexus)}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 mt-1">Canje de Puntos</div>
-                    ${codeHtml}`;
+            contentHTML = `
+                <div class="flex justify-between items-start">
+                    <span class="font-bold text-white text-sm">${item.item}</span>
+                    <span class="text-yellow-400 font-bold text-sm">${formatNexus(item.costNexus)}</span>
+                </div>
+                <div class="text-xs text-gray-400 mt-1">Canje de Puntos</div>
+                ${codeHtml}
+                ${pendingHtml}`;
             } else if (item.type === 'SORTEO_GANADO') {
                 const prize = item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon);
                 contentHTML = `<p class="text-green-400 font-bold">🏆 Ganaste: ${item.prizeDesc || prize}</p><p class="text-xs text-gray-400">En sorteo: ${item.raffleName}</p>`;
@@ -4149,36 +4456,35 @@
                 contentHTML = `<p class="text-gray-300 text-sm">${desc}</p>`;
             }
 
-            // Botón Copiar Todo si hay varios
-            let copyAllBtn = '';
-            if(allCodesInTransaction.length > 0) {
-                const fullCodesString = allCodesInTransaction.join('\n');
-                // Escapar comillas para el onclick
-                const safeString = fullCodesString.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, "\\n");
-                copyAllBtn = `
-                <div class="mt-4 pt-3 border-t border-gray-700/50">
-                    <button onclick="window.copyText('${safeString}')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2">
-                        <i data-lucide="copy" class="w-3 h-3"></i> Copiar Todos los Códigos
+            // Nueva área inferior combinada (Copiar Códigos + Ver Factura)
+            let viewReceiptBtn = '';
+            if (allCodesInTransaction.length > 0) {
+                viewReceiptBtn = `
+                <div class="mt-4 border-t border-gray-700/50 pt-3 flex flex-wrap gap-2">
+                    <button onclick="window.copyText('${allCodesInTransaction.join('\\n').replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, "\\n")}'); event.stopPropagation();" class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 border border-gray-600 shadow-md active:scale-95">
+                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar Códigos
                     </button>
-                </div>`;
+                </div>
+                `;
             }
 
             return `
-            <div class="bg-[#161b22] p-4 rounded-xl border ${borderColor} shadow-lg mb-4 cursor-pointer relative overflow-hidden transition hover:border-opacity-100" onclick="if(!event.target.closest('button') && !event.target.closest('a')) window.showTransactionDetails('${item.id}')">
+            <div class="bg-[#161b22] p-4 rounded-xl border ${borderColor} shadow-lg mb-4 relative overflow-hidden transition hover:border-opacity-100">
                 <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
-                    <span class="text-xs font-bold text-slate-400 font-mono tracking-wider">PEDIDO #${item.id.slice(0,8).toUpperCase()}</span>
+                    <span class="text-xs font-bold text-slate-400 font-mono tracking-wider">REF #${item.id.slice(0,8).toUpperCase()}</span>
                     <span class="text-[10px] text-slate-500 font-mono bg-slate-800/50 px-2 py-1 rounded">${date} ${time}</span>
                 </div>
                 <div class="mt-1">
                     ${contentHTML}
                 </div>
-                ${copyAllBtn}
+                ${debtHtml}
+                ${viewReceiptBtn}
             </div>`;
         }).join('');
         lucide.createIcons();
     };
 
-    window.showTransactionDetails = (transactionId) => {
+    window.showTransactionDetails = (transactionId, context = 'client') => {
         const item = purchaseHistoryData.find(t => t.id === transactionId);
         if (!item) return;
 
@@ -4202,22 +4508,40 @@
         const isVoid = item.status === 'anulada';
         document.getElementById('receipt-void-status').classList.toggle('hidden', !isVoid);
         
-        const isAdmin = currentUserProfile && currentUserProfile.isAdmin;
+        // Bloqueo explícito de acciones administrativas si se abre desde la tienda (cliente)
+        const isAdmin = currentUserProfile && currentUserProfile.isAdmin && context === 'admin';
 
-        // GESTIÓN DE VISIBILIDAD DE SECCIÓN DE DEUDA
+        // GESTIÓN DE VISIBILIDAD DE SECCIÓN DE DEUDA Y CONTROLES (ESTRICTO)
         const debtSection = document.getElementById('receipt-debt-payment-section');
         const payBtn = document.getElementById('btn-pay-specific-debt');
+        const voidBtn = document.getElementById('btn-void-transaction');
+        const deleteBtn = document.getElementById('transaction-modal-delete-btn');
         
-        // Solo mostrar si es COMPRA, tiene deuda pendiente, no está anulada y ES ADMIN
-        if (item.type === 'COMPRA' && item.isDebt && (item.remainingDebtCS > 0) && !isVoid && isAdmin) {
-            debtSection.classList.remove('hidden');
-            document.getElementById('debt-original-amount').textContent = formatCS(item.totalCS - item.amountPaidCS); // Aproximado si no se guardó originalDebt
-            document.getElementById('debt-remaining-amount').textContent = formatCS(item.remainingDebtCS);
-            document.getElementById('debt-payment-input').value = '';
-            
-            // Asignar función al botón con los datos actuales
-            payBtn.onclick = () => window.paySpecificDebt(item.id, item.userId, item.remainingDebtCS);
+        if (isAdmin) {
+            // Es Administrador y está viéndolo desde el panel
+            deleteBtn.style.display = 'block';
+            deleteBtn.onclick = () => window.deleteTransactionHistory(item.id);
+
+            if (!isVoid && (item.type === 'COMPRA' || item.type === 'CANJE')) {
+                voidBtn.classList.remove('hidden');
+                voidBtn.onclick = () => window.voidTransaction(item.id);
+            } else {
+                voidBtn.classList.add('hidden');
+            }
+
+            if (item.type === 'COMPRA' && item.isDebt && (item.remainingDebtCS > 0) && !isVoid) {
+                debtSection.classList.remove('hidden');
+                document.getElementById('debt-original-amount').textContent = formatCS(item.totalCS - item.amountPaidCS);
+                document.getElementById('debt-remaining-amount').textContent = formatCS(item.remainingDebtCS);
+                document.getElementById('debt-payment-input').value = '';
+                payBtn.onclick = () => window.paySpecificDebt(item.id, item.userId, item.remainingDebtCS);
+            } else {
+                debtSection.classList.add('hidden');
+            }
         } else {
+            // Es un Cliente en la Tienda: MODO SOLO LECTURA
+            deleteBtn.style.display = 'none';
+            voidBtn.classList.add('hidden');
             debtSection.classList.add('hidden');
         }
 
@@ -4307,6 +4631,11 @@
                  </div>`;
             }
             
+            let pendingHtml = '';
+            if (item.pendingCodes > 0) {
+                pendingHtml = `<div class="mt-1 text-[10px] font-bold text-yellow-600 bg-yellow-100 p-1 rounded border border-yellow-300 uppercase">PENDIENTE DE ENTREGA: ${item.pendingCodes} UN.</div>`;
+            }
+
             itemsContainer.innerHTML = `
                 <div class="mb-2">
                     <div class="flex justify-between">
@@ -4314,6 +4643,7 @@
                         <span>${formatNexus(item.costNexus)}</span>
                     </div>
                     ${codeHtml}
+                    ${pendingHtml}
                 </div>`;
             financialHTML = `<div class="border-t border-black pt-2 mt-2 font-bold text-center">TOTAL PUNTOS: ${formatNexus(item.costNexus)}</div>`;
         } else if (item.type === 'SORTEO_GANADO') {
@@ -4348,21 +4678,6 @@
         
         document.getElementById('receipt-financial-details').innerHTML = financialHTML;
         
-        // Botones de acción
-        const voidBtn = document.getElementById('btn-void-transaction');
-        const deleteBtn = document.getElementById('transaction-modal-delete-btn');
-
-        // Solo admin puede borrar historial. Solo admin puede anular? O cualquier usuario su propia compra (no, solo admin debería anular)
-        deleteBtn.style.display = isAdmin ? 'block' : 'none';
-        deleteBtn.onclick = () => window.deleteTransactionHistory(item.id);
-
-        if (isAdmin && !isVoid && (item.type === 'COMPRA' || item.type === 'CANJE')) {
-            voidBtn.classList.remove('hidden');
-            voidBtn.onclick = () => window.voidTransaction(item.id);
-        } else {
-            voidBtn.classList.add('hidden');
-        }
-
         modal.style.display = 'flex';
     };
 
@@ -4422,6 +4737,90 @@
         });
     };
 
+    window.showClientPayDebtModal = () => {
+        document.getElementById('pay-debt-modal-funds').textContent = formatCS(currentUserFunds.cs);
+        document.getElementById('pay-debt-modal-debt').textContent = formatCS(currentUserFunds.debt);
+        document.getElementById('client-debt-payment-amount').value = Math.min(currentUserFunds.cs, currentUserFunds.debt);
+        
+        const modal = document.getElementById('client-pay-debt-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.hideClientPayDebtModal = () => {
+        const modal = document.getElementById('client-pay-debt-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    window.processClientDebtPayment = async () => {
+        const amountInput = document.getElementById('client-debt-payment-amount');
+        const amount = parseFloat(amountInput.value);
+
+        if (isNaN(amount) || amount <= 0) {
+            return window.showModal("Monto Inválido", "Ingresa una cantidad mayor a 0.");
+        }
+        if (amount > currentUserFunds.cs) {
+            return window.showModal("Fondos Insuficientes", "El monto ingresado supera tu saldo actual.");
+        }
+        if (amount > currentUserFunds.debt) {
+            return window.showModal("Monto Excesivo", "No puedes pagar más de tu deuda total.");
+        }
+
+        window.hideClientPayDebtModal();
+        
+        try {
+            const q = query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", currentUserId), where("isDebt", "==", true));
+            const snaps = await getDocs(q);
+            let remainingPayment = amount;
+
+            await runTransaction(db, async (t) => {
+                const userRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                const userDoc = await t.get(userRef);
+                if(!userDoc.exists()) throw "Usuario no encontrado";
+
+                const currentFunds = userDoc.data().fundsCS || 0;
+                const currentDebt = userDoc.data().debtCS || 0;
+                
+                if (amount > currentFunds || amount > currentDebt) throw "Los saldos han cambiado. Actualiza e intenta de nuevo.";
+
+                const debtTx = snaps.docs.map(d => ({id: d.id, ...d.data()}))
+                    .filter(tx => tx.remainingDebtCS > 0 && tx.status !== 'anulada')
+                    .sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+
+                for (const tx of debtTx) {
+                    if (remainingPayment <= 0) break;
+                    const payForThis = Math.min(tx.remainingDebtCS, remainingPayment);
+                    t.update(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, tx.id), {
+                        remainingDebtCS: tx.remainingDebtCS - payForThis
+                    });
+                    remainingPayment -= payForThis;
+                }
+
+                t.update(userRef, {
+                    fundsCS: currentFunds - amount,
+                    debtCS: currentDebt - amount
+                });
+
+                const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+                t.set(historyRef, {
+                    type: 'DEBT_PAYMENT',
+                    userId: currentUserId,
+                    amount: amount,
+                    timestamp: serverTimestamp(),
+                    note: 'Abono automático realizado por el cliente desde su saldo Billetera',
+                    paymentMethod: 'SALDO_BILLETERA'
+                });
+            });
+
+            window.showModal("Pago Exitoso", `Has abonado ${formatCS(amount)} a tu deuda exitosamente.`);
+        } catch (e) {
+            console.error(e);
+            window.showModal("Error de Pago", "Hubo un problema procesando el abono: " + e);
+        }
+    };
+
     window.voidTransaction = (transactionId) => {
         window.showConfirmModal("ANULAR TRANSACCIÓN", "Esto revertirá los fondos/deuda y marcará la venta como anulada. ¿Continuar?", async () => {
              const tRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, transactionId);
@@ -4470,7 +4869,8 @@
                      transaction.update(tRef, { status: 'anulada', voidedAt: serverTimestamp() });
                  });
                  window.showModal("Anulada", "La transacción ha sido anulada y los saldos ajustados.");
-                 document.getElementById('transaction-detail-modal').style.display='none';
+                 document.getElementById('transaction-detail-modal').classList.add('hidden');
+                 document.getElementById('transaction-detail-modal').classList.remove('flex');
              } catch (e) {
                  window.showModal("Error", e.message || e);
              }
@@ -4480,7 +4880,8 @@
     window.deleteTransactionHistory = (id) => {
          window.showConfirmModal("Borrar Registro", "Esto eliminará el registro del historial PERO NO revertirá el dinero ni la deuda. Use 'Anular' para eso. ¿Borrar solo el registro visual?", async () => {
              await deleteDoc(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, id));
-             document.getElementById('transaction-detail-modal').style.display='none';
+             document.getElementById('transaction-detail-modal').classList.add('hidden');
+             document.getElementById('transaction-detail-modal').classList.remove('flex');
          });
     };
 
