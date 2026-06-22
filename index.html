@@ -614,6 +614,7 @@
                 <button onclick="window.changeAdminTab('products')" id="tab-admin-products" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="package" class="w-4 h-4"></i> Productos</button>
                 <button onclick="window.changeAdminTab('raffles')" id="tab-admin-raffles" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="gift" class="w-4 h-4"></i> Sorteos</button>
                 <button onclick="window.changeAdminTab('sales')" id="tab-admin-sales" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Ventas</button>
+                <button onclick="window.changeAdminTab('orders')" id="tab-admin-orders" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="list-todo" class="w-4 h-4"></i> Pedidos</button>
                 <button onclick="window.changeAdminTab('config')" id="tab-admin-config" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Configuración</button>
             </div>
             <div id="admin-content">
@@ -939,10 +940,40 @@
                              <hr class="border-slate-700 my-4">
                              <h4 class="text-lg font-semibold text-red-300">🔑 Cambiar Mi Contraseña de Acceso</h4>
                              <p class="text-xs text-slate-400 mb-3">Actualiza la contraseña de tu cuenta actual.</p>
-                            <input type="password" id="new-admin-pass" placeholder="Nueva Contraseña (mínimo 6 caracteres)" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
-                            <input type="password" id="confirm-admin-pass" placeholder="Confirmar Nueva Contraseña" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            
+                            <div class="relative mb-2">
+                                <input type="password" id="current-admin-pass" placeholder="Contraseña Actual" class="w-full p-2 pr-10 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                                <button onclick="window.togglePasswordVisibility('current-admin-pass')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white transition" type="button" title="Mostrar/Ocultar contraseña">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="relative mb-2">
+                                <input type="password" id="new-admin-pass" placeholder="Nueva Contraseña (mínimo 6 caracteres)" class="w-full p-2 pr-10 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                                <button onclick="window.togglePasswordVisibility('new-admin-pass')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white transition" type="button" title="Mostrar/Ocultar contraseña">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+
+                            <div class="relative mb-4">
+                                <input type="password" id="confirm-admin-pass" placeholder="Confirmar Nueva Contraseña" class="w-full p-2 pr-10 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                                <button onclick="window.togglePasswordVisibility('confirm-admin-pass')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white transition" type="button" title="Mostrar/Ocultar contraseña">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+
                             <button onclick="window.updateAdminPassword()" class="w-full p-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition">Cambiar Contraseña</button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña 6: Pedidos de Recargas -->
+                <div id="content-admin-orders" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold text-yellow-400 flex items-center gap-2"><i data-lucide="gamepad-2" class="w-6 h-6"></i> Pedidos Pendientes (Recargas)</h3>
+                    </div>
+                    <div id="admin-pending-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Las órdenes pendientes se renderizarán aquí -->
                     </div>
                 </div>
             </div>
@@ -1192,15 +1223,41 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Player Info -->
+    <div id="player-info-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[70] p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-sm w-full shadow-2xl border border-yellow-600">
+            <h3 class="text-xl font-bold mb-4 text-yellow-400 flex items-center gap-2"><i data-lucide="gamepad-2"></i> Datos de Recarga</h3>
+            <p class="text-sm text-gray-300 mb-4">Este producto requiere tu información de jugador para procesar la recarga.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">ID del Jugador</label>
+                    <input type="text" id="player-info-id" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500" placeholder="Ej: 123456789">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nombre / Nickname</label>
+                    <input type="text" id="player-info-name" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500" placeholder="Ej: ProGamer99">
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="window.closePlayerInfoModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold">Cancelar</button>
+                <button onclick="window.confirmPlayerInfoAddToCart()" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg font-bold shadow-lg shadow-yellow-900/30">Añadir al Carrito</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Firebase Imports -->
 <script type="module">
     // Usamos la versión 10.7.1 que es muy estable para evitar errores de compatibilidad
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, serverTimestamp, writeBatch, runTransaction, updateDoc, getDocs, where, Timestamp, deleteDoc, addDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    // IMPORTACIÓN PARA FIREBASE FUNCTIONS
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
     setLogLevel('Debug');
 
@@ -1228,12 +1285,11 @@
         RAFFLE_ENTRIES: `artifacts/${appId}/public/data/raffle_entries`,
     };
 
-    let app, db, auth;
+    let app, db, auth, functions; // Declaramos functions aquí
     let currentUserId = null; 
     let currentUserProfile = null;
     let currentUserFunds = { cs: 0, nexus: 0, debt: 0 };
     let productsCatalog = { catalog: [], nexusRedemptions: [] };
-    // ELIMINADO backgroundColor del default config ya que es fijo
     let adminConfig = { nexusValueInCS: 35, adminPass: 'admin123', nexusEnabled: true, ivaPercentage: 15, currencySymbol: 'C$' };
     let shoppingCart = {};
     let posCart = {}; 
@@ -1247,15 +1303,15 @@
     let filteredReportData = [];
     let confirmCallback = null;
     let unsubscribes = [];
-    let heartbeatInterval = null; // NUEVO: Variable para el intervalo de latido
+    let heartbeatInterval = null; 
     let imageViewerState = { images: [], currentIndex: 0, intervalId: null };
     let currentShopPath = { type: 'shop', mainKey: null, subKey: null };
     let currentManagingRaffleId = null;
 
-    // --- NUEVO: Manejador de Errores de Firestore ---
+    // --- Manejador de Errores de Firestore ---
     const handleFirestoreError = (error, context) => {
         console.error(`Firebase Error (${context}):`, error);
-        if (error.code === 'permission-denied') {
+        if (error.code === 'permission-denied' || (error.message && error.message.toLowerCase().includes('permissions'))) {
             window.showModal(
                 "Permisos Insuficientes en Base de Datos", 
                 `<b>Firestore bloqueó la petición (${context}).</b><br><br>
@@ -1267,17 +1323,17 @@
 
     // --- NUEVA ESTRUCTURA DE DATOS (3 NIVELES) - RESTAURADA ---
     const defaultProducts = {
-        catalog: [ // Nivel 1: Categorías Principales
+        catalog: [ 
             { 
                 key: 'ropa', 
                 title: '👕 Ropa', 
                 imageUrls: ['https://placehold.co/400x300/1E90FF/ffffff?text=Ropa'],
-                subcategories: [ // Nivel 2: Subcategorías
+                subcategories: [ 
                     {
                         key: 'camisetas',
                         title: 'Camisetas',
                         imageUrls: ['https://placehold.co/400x300/1E90FF/ffffff?text=Camisetas'],
-                        products: [ // Nivel 3: Productos
+                        products: [ 
                             { name: "Camiseta Básica Negra", price: 350, cost: 200, id: 'TS01', code: 'TS01', description: 'Camiseta de algodón 100%', inventory: 50, unlimited: false, imageUrls: ['https://placehold.co/400x300/000000/ffffff?text=Camiseta'] }
                         ]
                     }
@@ -1325,7 +1381,6 @@
     };
     const formatNexus = (amount) => `${parseFloat(amount || 0).toFixed(2)} Puntos`;
     
-    // NUEVO: Funciones de Políticas y Términos
     window.showTerms = () => {
         window.showModal(
             "Términos de Servicios", 
@@ -1342,30 +1397,21 @@
         );
     };
 
-    // NUEVO: Función para abrir WhatsApp
     window.openWhatsApp = () => {
-        // Obtener contacto desde config (campo: businessContact)
         const contact = adminConfig.businessContact || '';
-        
         if (!contact) {
             window.showModal("Contacto no disponible", "El administrador aún no ha configurado el número de WhatsApp del comercio.");
             return;
         }
-        
-        // Limpieza simple: dejar solo dígitos
         const cleanNumber = contact.replace(/\D/g, '');
-        
         if (!cleanNumber) {
             window.showModal("Error de Formato", "El número de contacto configurado no es válido para WhatsApp.");
             return;
         }
-        
-        // Abrir en nueva pestaña
         const url = `https://wa.me/${cleanNumber}`;
         window.open(url, '_blank');
     };
 
-    // NUEVO: Función específica para solicitar saldo
     window.requestBalanceViaWhatsApp = () => {
         const amount = document.getElementById('request-balance-amount').value;
         if (!amount || amount <= 0) {
@@ -1374,14 +1420,13 @@
         }
 
         const contact = adminConfig.businessContact || '';
-        const cleanNumber = contact.replace(/\D/g, ''); // Extraer solo dígitos
+        const cleanNumber = contact.replace(/\D/g, ''); 
 
         if (!cleanNumber) {
             window.showModal("Error de Contacto", "El número de WhatsApp del negocio no está configurado por el administrador.");
             return;
         }
 
-        // Formato del mensaje: ID - NOMBRE - MONTO
         const symbol = adminConfig.currencySymbol || 'C$';
         const message = `👋 Hola, soy ${currentUserProfile.name}\n🆔 ID: ${currentUserId}\n💰 Solicito una recarga de saldo por: ${symbol} ${amount}`;
         const encodedMessage = encodeURIComponent(message);
@@ -1389,11 +1434,9 @@
         const url = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
         window.open(url, '_blank');
         
-        // Limpiar input y feedback visual
         document.getElementById('request-balance-amount').value = '';
     };
 
-    // NUEVO: Función para copiar texto
     window.copyText = (text) => {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -1401,7 +1444,6 @@
         textarea.select();
         try {
             document.execCommand('copy');
-            // Toast Notification
             const toast = document.getElementById('toast-notification');
             const msg = document.getElementById('toast-message');
             msg.textContent = "¡Copiado al portapapeles!";
@@ -1479,7 +1521,7 @@
             if (images.length > 1) { 
                 prevBtn.classList.remove('hidden'); 
                 nextBtn.classList.remove('hidden');
-                startImageViewerAutoPlay(); // Iniciar Auto-Play
+                startImageViewerAutoPlay(); 
             } else { 
                 prevBtn.classList.add('hidden'); 
                 nextBtn.classList.add('hidden'); 
@@ -1489,14 +1531,13 @@
         } catch (e) { console.error("Error parsing images for viewer:", e); }
     };
     window.hideImageViewer = () => {
-        stopImageViewerAutoPlay(); // Detener Auto-Play al cerrar
+        stopImageViewerAutoPlay();
         const modal = document.getElementById('image-viewer-modal');
         modal.style.opacity = '0';
         setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
     };
     const updateImageViewer = () => {
         const imgEl = document.getElementById('viewer-image');
-        // Pequeño efecto de transición
         imgEl.style.opacity = '0.5';
         setTimeout(() => {
             imgEl.src = imageViewerState.images[imageViewerState.currentIndex];
@@ -1504,10 +1545,8 @@
         }, 150);
     };
 
-    // Funciones de Auto-Play
     const startImageViewerAutoPlay = () => {
         stopImageViewerAutoPlay();
-        // Cambiar imagen cada 3 segundos
         imageViewerState.intervalId = setInterval(() => {
             navigateImageViewer(1, true);
         }, 3000);
@@ -1522,32 +1561,25 @@
 
     const navigateImageViewer = (direction, isAuto = false) => {
         if (!isAuto) {
-            // Si el usuario hace clic manualmente, reiniciamos el temporizador para que no cambie inmediatamente
             stopImageViewerAutoPlay();
             startImageViewerAutoPlay();
         }
-
         let newIndex = imageViewerState.currentIndex + direction;
-        
-        // Lógica de Bucle Infinito
         if (newIndex >= imageViewerState.images.length) {
             newIndex = 0;
         } else if (newIndex < 0) {
             newIndex = imageViewerState.images.length - 1;
         }
-
         imageViewerState.currentIndex = newIndex; 
         updateImageViewer();
     };
 
-    // --- RENDERIZADO Y DISPLAY ---
     window.toggleManagement = (userId) => {
         const details = document.getElementById(`management-details-${userId}`);
         details.classList.toggle('hidden');
         if(!details.classList.contains('hidden')) { window.renderHistoryForUser(userId); }
     }
     
-    // --- Lógica de Pestañas Cliente Modificada (RESET) ---
     window.changeClientTab = (tabName) => {
         ['tienda', 'billetera', 'sorteos', 'historial', 'perfil'].forEach(tab => {
             document.getElementById(`tab-${tab}`).classList.toggle('tab-active', tab === tabName);
@@ -1564,13 +1596,10 @@
              currentShopPath = { type: 'nexus', mainKey: null, subKey: null };
              window.renderMainCategories('nexus');
         }
-        // ELIMINADO: Scroll automático al cambiar de pestaña para evitar saltos bruscos
-        // window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // --- ADMIN TABS ---
     window.changeAdminTab = (tabName) => {
-        ['users', 'products', 'raffles', 'sales', 'config'].forEach(tab => {
+        ['users', 'products', 'raffles', 'sales', 'config', 'orders'].forEach(tab => {
             const btn = document.getElementById(`tab-admin-${tab}`);
             const content = document.getElementById(`content-admin-${tab}`);
             if(tab === tabName) {
@@ -1585,6 +1614,7 @@
         });
         if(tabName === 'products') window.renderAdminProductManagement();
         if(tabName === 'users') window.renderUserList();
+        if(tabName === 'orders') window.renderAdminOrders();
     };
 
     window.renderClientProfile = () => {
@@ -1660,7 +1690,6 @@
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             
-            // Verificar si el perfil existe, si no, lo creamos
             const docRef = doc(db, COLLECTIONS.USER_PROFILE(user.uid));
             const docSnap = await getDoc(docRef);
             
@@ -1677,7 +1706,6 @@
                     createdAt: serverTimestamp()
                 });
             }
-            // onAuthStateChanged se encargará de redirigir al dashboard automáticamente
         } catch (error) {
             console.warn("Aviso Google Auth:", error.code);
             if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
@@ -1730,7 +1758,6 @@
                     prizeText = `<p class="text-sm text-gray-300">Premio: <strong class="text-lg text-${color}-300">${raffle.prizeDescription}</strong></p>`;
                 }
                 
-                // Mostrar resultados de la ronda anterior
                 let winnerHTML = '';
                 if(raffle.lastResult) {
                     const lr = raffle.lastResult;
@@ -1770,61 +1797,6 @@
         }
     };
 
-    window.enterRaffle = async (raffleId) => {
-        if (!currentUserId) return;
-        const raffle = allRafflesData.find(r => r.id === raffleId);
-        if (!raffle) {
-            window.showModal("Error", "Este sorteo ya no existe.");
-            return;
-        }
-        
-        const amount = raffle.entryCost;
-        const isNexus = raffle.costType === 'nexus';
-        const costKey = isNexus ? 'nexusPoints' : 'fundsCS';
-        
-        if (currentUserFunds[isNexus ? 'nexus' : 'cs'] < amount) {
-            window.showModal("Fondos Insuficientes", "No tienes suficientes fondos para esta apuesta.");
-            return;
-        }
-
-        const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
-        const raffleRef = doc(db, COLLECTIONS.RAFFLES_COLLECTION, raffleId);
-        const raffleEntriesCollection = collection(db, COLLECTIONS.RAFFLE_ENTRIES);
-        const historyCollectionRef = collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION);
-
-        try {
-            await runTransaction(db, async (transaction) => {
-                const userDoc = await transaction.get(userProfileRef);
-                const raffleDoc = await transaction.get(raffleRef);
-                if (!userDoc.exists() || !raffleDoc.exists()) throw new Error("DATA_MISSING");
-                
-                const currentFunds = userDoc.data()[costKey] || 0;
-                if (currentFunds < amount) throw new Error("INSUFFICIENT_FUNDS");
-                
-                transaction.update(userProfileRef, { [costKey]: currentFunds - amount });
-                
-                if (raffle.prizeType === 'pot') {
-                    transaction.update(raffleRef, { pot: (raffleDoc.data().pot || 0) + amount });
-                }
-                
-                transaction.set(doc(raffleEntriesCollection), { userId: currentUserId, type: raffleId, amount, timestamp: serverTimestamp() });
-                transaction.set(doc(historyCollectionRef), {
-                    type: 'SORTEO_ENTRADA',
-                    userId: currentUserId,
-                    raffleType: raffle.name, 
-                    raffleId: raffleId,
-                    cost: amount,
-                    isNexus: isNexus,
-                    timestamp: serverTimestamp()
-                });
-            });
-            window.showModal("¡Participación Exitosa!", `¡Mucha suerte! Tu participación en "${raffle.name}" ha sido registrada.`);
-        } catch (error) { 
-            console.error("Error entering raffle:", error);
-            window.showModal("Error", "No se pudo procesar tu participación."); 
-        }
-    };
-
     window.togglePasswordVisibility = (elementId) => {
         const input = document.getElementById(elementId);
         const button = input.nextElementSibling;
@@ -1839,7 +1811,6 @@
         }
         lucide.createIcons();
     };
-
     
     const getRankForUser = (totalSpent) => {
         if (totalSpent >= 5000) return { name: 'Platino', color: 'bg-cyan-500', textColor: 'text-cyan-500' };
@@ -1849,7 +1820,6 @@
         return { name: 'Nuevo', color: 'bg-gray-600', textColor: 'text-gray-600' };
     };
     
-    // NUEVO: Función para iniciar el rastreo de actividad
     const startHeartbeat = (userId) => {
         if (!userId) return;
         
@@ -1862,10 +1832,8 @@
             }
         };
 
-        // Actualizar inmediatamente
         updatePresence();
 
-        // Actualizar cada 2 minutos
         if (heartbeatInterval) clearInterval(heartbeatInterval);
         heartbeatInterval = setInterval(updatePresence, 120000); 
     };
@@ -1879,20 +1847,19 @@
         });
         window.renderUserList();
     };
+    
     window.renderUserList = () => {
         const container = document.getElementById('admin-user-list-container');
         if (!container) return;
         const sortMethod = document.getElementById('user-sort-select').value;
         let sortedUsers = [...allUsersData];
         
-        // Calcular Estado Online/Offline
         const now = new Date();
-        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000); // Umbral de 5 minutos
+        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000); 
         
         let onlineCount = 0;
         let offlineCount = 0;
 
-        // Pre-procesar estado para ordenamiento si fuera necesario
         sortedUsers.forEach(u => {
             const lastSeenDate = u.lastSeen ? new Date(u.lastSeen.seconds * 1000) : null;
             u.isOnline = lastSeenDate && lastSeenDate > fiveMinutesAgo;
@@ -1911,7 +1878,6 @@
         const searchTerm = document.getElementById('user-search-input').value.toLowerCase();
         const filteredUsers = sortedUsers.filter(user => user.name.toLowerCase().includes(searchTerm) || user.id.toLowerCase().includes(searchTerm) || (user.email && user.email.toLowerCase().includes(searchTerm)));
         
-        // --- HEADER DE ESTADÍSTICAS DE CONEXIÓN ---
         let statsHTML = `
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-slate-800/80 p-4 rounded-xl border border-blue-500/30 flex items-center gap-4 shadow-lg shadow-blue-500/10 relative overflow-hidden group">
@@ -1950,7 +1916,6 @@
             const rank = user.rank || getRankForUser(0);
             const adminBadge = user.isAdmin ? '<span class="text-xs px-2 py-0.5 rounded-full bg-red-600 text-white font-bold ml-2">ADMIN</span>' : '';
             
-            // Indicador Visual de Estado
             const statusIndicator = user.isOnline 
                 ? `<div class="flex items-center gap-2 px-2 py-1 bg-green-900/20 border border-green-500/30 rounded-full" title="Usuario en línea">
                      <span class="relative flex h-3 w-3">
@@ -1984,7 +1949,6 @@
                     <button onclick="window.toggleManagement('${user.id}')" class="px-3 py-1 bg-blue-600 rounded-lg text-sm self-center">Gestionar</button>
                 </div>
                 <div id="management-details-${user.id}" class="hidden mt-4 pt-4 border-t border-gray-600 space-y-4">
-                    <!-- ... (contenido de gestión sin cambios) ... -->
                     <h4 class="font-semibold text-red-300">Editar Perfil y Notas</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <input type="text" id="managed-id-${user.id}" value="${user.id}" readonly class="w-full p-2 rounded-lg bg-gray-700 text-sm font-mono opacity-50 cursor-not-allowed" />
@@ -2043,7 +2007,6 @@
         window.renderCartSummary();
     };
     
-    // --- LÓGICA DE NAVEGACIÓN 3 NIVELES (OPTIMIZADA) ---
     window.renderMainCategories = (type) => {
         const isShop = type === 'shop';
         const container = document.getElementById(isShop ? 'shop-main-category-buttons' : 'nexus-main-category-buttons');
@@ -2052,13 +2015,9 @@
         const subView = isShop ? 'sub-category-selection-view' : 'nexus-sub-category-selection-view';
         const productView = isShop ? 'product-list-view' : 'nexus-item-list-view';
 
-        // Ocultar explícitamente otros niveles
         document.getElementById(mainView).classList.remove('hidden');
         document.getElementById(subView).classList.add('hidden');
         document.getElementById(productView).classList.add('hidden');
-        
-        // ELIMINADO: Scroll automático para mantener la posición del usuario
-        // window.scrollTo({ top: 0, behavior: 'smooth' }); 
 
         if (!container || !sourceData) return;
         container.innerHTML = sourceData.map(category => {
@@ -2090,16 +2049,13 @@
 
         const mainView = isShop ? 'main-category-selection-view' : 'nexus-main-category-selection-view';
         const subView = isShop ? 'sub-category-selection-view' : 'nexus-sub-category-selection-view';
-        const productView = isShop ? 'product-list-view' : 'nexus-item-list-view'; // Asegurar que producto esté oculto
+        const productView = isShop ? 'product-list-view' : 'nexus-item-list-view'; 
         const container = document.getElementById(isShop ? 'shop-sub-category-buttons' : 'nexus-sub-category-buttons');
         const titleEl = document.getElementById(isShop ? 'sub-category-title' : 'nexus-sub-category-title');
 
         document.getElementById(mainView).classList.add('hidden');
         document.getElementById(subView).classList.remove('hidden');
-        document.getElementById(productView).classList.add('hidden'); // Ocultar nivel 3
-        
-        // ELIMINADO: Scroll automático para mantener la posición del usuario
-        // window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById(productView).classList.add('hidden'); 
 
         titleEl.textContent = `Subcategorías de ${mainCategory.title}`;
 
@@ -2124,7 +2080,6 @@
     };
 
     window.goBackToSubCategories = (type) => {
-        // Lógica corregida para "Atrás" desde productos
         if(currentShopPath.mainKey) {
             window.renderSubCategories(type, currentShopPath.mainKey);
         } else {
@@ -2166,17 +2121,27 @@
 
             if (isShop) {
                 const product = item;
-                const quantity = shoppingCart[product.id]?.quantity || 0;
+                
+                // Calcula la cantidad total considerando si hay múltiples IDs de recarga para este producto
+                const quantity = Object.values(shoppingCart)
+                    .filter(cartItem => (cartItem.originalProductId || cartItem.id) === product.id)
+                    .reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+                    
                 const isDigital = product.availableCodes !== undefined;
-                const isOutOfStock = !product.unlimited && product.inventory <= 0 && !isDigital;
-                const isPreorder = !product.unlimited && product.inventory <= 0 && isDigital;
+                const isOutOfStock = !product.unlimited && product.inventory <= 0 && !isDigital && !product.requiresPlayerInfo;
+                const isPreorder = !product.unlimited && product.inventory <= 0 && isDigital && !product.requiresPlayerInfo;
                 
                 const stockDisplay = product.unlimited ? '<span class="text-xs text-green-400 bg-green-900/20 px-2 py-0.5 rounded-full">Sin Límite</span>' : 
                                     (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes comprar ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
                                     (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-slate-400">Disponibles: ${product.inventory}</span>`));
                 const descText = product.description ? `<p class="text-xs text-slate-400 mt-1 line-clamp-2" title="${product.description.replace(/"/g, '&quot;')}">${product.description}</p>` : '';
+                const totalSoldDisplay = `<p class="text-[10px] text-blue-400 font-bold mt-2 uppercase flex items-center gap-1 bg-blue-900/20 w-fit px-2 py-0.5 rounded border border-blue-500/20"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Vendidos: ${product.totalSold || 0}</p>`;
                 
-                // NUEVO: Input numérico directo con estilos mejorados y EFECTO NEON
+                // Si requiere info de jugador, deshabilitamos el input manual para evitar ambigüedades en cantidades múltiples
+                const qtyInputHTML = product.requiresPlayerInfo 
+                    ? `<input type="number" value="${quantity}" disabled class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield] opacity-50 cursor-not-allowed" title="Edita cantidades específicas en el panel de Mi Carrito">`
+                    : `<input type="number" min="0" onchange="window.setCartQuantity('${product.id}', this.value)" value="${quantity}" class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield]" ${isOutOfStock ? 'disabled' : ''}>`;
+
                 containerEl.innerHTML += `
                     <div class="neon-card-wrapper rounded-2xl ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
                         <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl flex flex-col justify-between overflow-hidden relative z-10 h-full">
@@ -2190,20 +2155,21 @@
                                         ${stockDisplay}
                                     </div>
                                     ${descText}
+                                    ${totalSoldDisplay}
                                     <div class="mt-4 mb-2 flex items-center">
                                         <p class="text-3xl font-extrabold price-highlight-cs">${formatCS(product.price)}</p>
                                     </div>
                                     <p class="text-[10px] text-slate-500 font-mono">+ IVA</p>
                                 </div>
                                 <div class="flex items-center justify-between mt-4 bg-slate-900/50 p-1 rounded-xl border border-slate-700/50 shadow-inner">
-                                    <button onclick="window.updateCart('${product.id}', -1)" class="w-8 h-8 flex items-center justify-center bg-red-600/80 hover:bg-red-500 text-white rounded-lg transition shadow-lg" ${quantity === 0 || isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>-</button>
-                                    <input type="number" min="0" onchange="window.setCartQuantity('${product.id}', this.value)" value="${quantity}" class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield]" ${isOutOfStock ? 'disabled' : ''}>
-                                    <button onclick="window.updateCart('${product.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg transition shadow-lg hover:shadow-blue-500/50" ${isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>+</button>
+                                    <button onclick="window.preUpdateCart('${product.id}', -1)" class="w-8 h-8 flex items-center justify-center bg-red-600/80 hover:bg-red-500 text-white rounded-lg transition shadow-lg" ${quantity === 0 || isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>-</button>
+                                    ${qtyInputHTML}
+                                    <button onclick="window.preUpdateCart('${product.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg transition shadow-lg hover:shadow-blue-500/50" ${isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>+</button>
                                 </div>
                             </div>
                         </div>
                     </div>`;
-            } else { // Nexus
+            } else { 
                  const canAfford = currentUserFunds.nexus >= item.nexusCost;
                 const isDigital = item.availableCodes !== undefined;
                 const isOutOfStock = !item.unlimited && item.inventory <= 0 && !isDigital;
@@ -2213,6 +2179,7 @@
                                      (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes canjear ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
                                      (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-gray-400">Disponibles: ${item.inventory}</span>`));
                 const descText = item.description ? `<p class="text-xs text-gray-400 mt-1 line-clamp-2" title="${item.description.replace(/"/g, '&quot;')}">${item.description}</p>` : '';
+                const totalRedeemedDisplay = `<p class="text-[10px] text-yellow-400 font-bold mt-2 uppercase flex items-center gap-1 bg-yellow-900/20 w-fit px-2 py-0.5 rounded border border-yellow-500/20"><i data-lucide="award" class="w-3 h-3"></i> Canjeados: ${item.totalRedeemed || 0}</p>`;
 
                 const btnDisabled = !canAfford || isOutOfStock;
 
@@ -2229,6 +2196,7 @@
                                         ${stockDisplay}
                                     </div>
                                     ${descText}
+                                    ${totalRedeemedDisplay}
                                     <div class="mt-4 mb-1 flex items-center">
                                         <p class="text-3xl font-extrabold price-highlight-nexus">${formatNexus(item.nexusCost)}</p>
                                     </div>
@@ -2259,6 +2227,12 @@
         } else {
             container.innerHTML = `<div class="space-y-3 flex-grow max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">${cartItems.map(item => {
                 const mainImageUrl = (Array.isArray(item.imageUrls) && item.imageUrls.length > 0) ? item.imageUrls[0] : (item.imageUrl || `https://placehold.co/100x100/161b22/e6edf3?text=${encodeURIComponent(item.name[0])}`);
+                const playerInfoDisplay = item.requiresPlayerInfo && item.playerInfo 
+                    ? `<div class="mt-2 text-[10px] bg-black/30 p-1.5 rounded border border-yellow-600/30 text-gray-300">
+                          <span class="text-yellow-400 font-bold">ID:</span> <span class="font-mono bg-yellow-900/30 px-1 rounded select-all">${item.playerInfo.id}</span> | <span class="text-blue-400 font-bold">Nick:</span> <span class="font-mono">${item.playerInfo.name}</span>
+                       </div>` 
+                    : '';
+                const cartKey = item.cartKey || item.id;
                 return `
                         <div class="flex flex-col gap-2 p-3 bg-slate-800 rounded-xl border border-slate-700 shadow-sm transition hover:border-blue-500/30">
                             <div class="flex items-center gap-3">
@@ -2271,14 +2245,14 @@
                                     <p class="text-white font-bold text-sm">${formatCS(item.price * item.quantity)}</p>
                                 </div>
                             </div>
-                            
+                            ${playerInfoDisplay}
                             <div class="flex items-center justify-between mt-1 pt-2 border-t border-slate-700/50">
                                 <div class="flex items-center bg-slate-900 rounded-lg p-1 border border-slate-700">
-                                    <button onclick="window.updateCart('${item.id}', -1)" class="w-7 h-7 flex items-center justify-center bg-red-600 hover:bg-red-500 text-white rounded text-xs font-bold transition">-</button>
-                                    <input type="number" min="1" value="${item.quantity}" onchange="window.setCartQuantity('${item.id}', this.value)" class="w-12 bg-transparent text-center font-bold text-white text-xs focus:outline-none [appearance:textfield]">
-                                    <button onclick="window.updateCart('${item.id}', 1)" class="w-7 h-7 flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">+</button>
+                                    <button onclick="window.updateCart('${cartKey}', -1)" class="w-7 h-7 flex items-center justify-center bg-red-600 hover:bg-red-500 text-white rounded text-xs font-bold transition">-</button>
+                                    <input type="number" min="1" value="${item.quantity}" onchange="window.setCartQuantity('${cartKey}', this.value)" class="w-12 bg-transparent text-center font-bold text-white text-xs focus:outline-none [appearance:textfield]">
+                                    <button onclick="window.updateCart('${cartKey}', 1)" class="w-7 h-7 flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">+</button>
                                 </div>
-                                <button onclick="window.removeFromCart('${item.id}')" class="p-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 hover:text-red-300 rounded-lg transition flex items-center gap-1 text-xs font-bold" title="Eliminar del carrito">
+                                <button onclick="window.removeFromCart('${cartKey}')" class="p-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 hover:text-red-300 rounded-lg transition flex items-center gap-1 text-xs font-bold" title="Eliminar del carrito">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -2314,11 +2288,73 @@
     };
     
     // --- LÓGICA DE COMPRA Y CARRITO (Actualizado para 3 Niveles) ---
-    // NUEVO: Función para eliminar completamente del carrito
-    window.removeFromCart = (productId) => {
-        if (shoppingCart[productId]) {
-            delete shoppingCart[productId];
-            // Actualizar vista de productos si está visible para refrescar botones o cantidades
+    window.pendingCartAction = null;
+
+    window.preUpdateCart = (productId, change) => {
+        const product = getProductDetails(productId);
+        if (!product) return;
+
+        if (product.requiresPlayerInfo) {
+            if (change < 0) {
+                window.showModal("Aviso", "Este producto requiere ID de jugador. Por favor, elimina o reduce las cantidades de recargas específicas usando los botones <strong>'-'</strong> y <strong>'basurero'</strong> directamente en tu carrito (lado derecho).");
+                return;
+            }
+            window.pendingCartAction = { productId, change };
+            document.getElementById('player-info-id').value = '';
+            document.getElementById('player-info-name').value = '';
+            document.getElementById('player-info-modal').classList.remove('hidden');
+            document.getElementById('player-info-modal').classList.add('flex');
+            lucide.createIcons();
+        } else {
+            window.updateCart(productId, change);
+        }
+    };
+
+    window.confirmPlayerInfoAddToCart = () => {
+        const pId = document.getElementById('player-info-id').value.trim();
+        const pName = document.getElementById('player-info-name').value.trim();
+        
+        if (!pId || !pName) {
+            window.showModal("Datos Incompletos", "Debes ingresar el ID y el Nombre de usuario para esta recarga.");
+            return;
+        }
+        
+        const { productId, change } = window.pendingCartAction;
+        const product = getProductDetails(productId);
+        if (!product) return;
+
+        // Generamos una clave única combinando producto e ID de jugador 
+        // Reemplazamos caracteres raros por seguridad en la clave del carrito
+        const safePId = pId.replace(/[^a-zA-Z0-9]/g, '_');
+        const cartKey = `${productId}___${safePId}`;
+
+        if (!shoppingCart[cartKey]) {
+            shoppingCart[cartKey] = { 
+                ...product, 
+                quantity: 0, 
+                cartKey: cartKey, 
+                originalProductId: productId, 
+                playerInfo: { id: pId, name: pName } 
+            };
+        } else {
+            // Actualizamos el nombre por si el usuario lo modificó para este mismo ID
+            shoppingCart[cartKey].playerInfo.name = pName;
+        }
+        
+        window.updateCart(cartKey, change, productId);
+        
+        window.closePlayerInfoModal();
+    };
+
+    window.closePlayerInfoModal = () => {
+        document.getElementById('player-info-modal').classList.add('hidden');
+        document.getElementById('player-info-modal').classList.remove('flex');
+        window.pendingCartAction = null;
+    };
+
+    window.removeFromCart = (cartKey) => {
+        if (shoppingCart[cartKey]) {
+            delete shoppingCart[cartKey];
             if (currentShopPath.mainKey && currentShopPath.subKey) {
                 window.showProducts(currentShopPath.type, currentShopPath.mainKey, currentShopPath.subKey);
             }
@@ -2326,29 +2362,42 @@
         }
     };
 
-    // NUEVO: Función para input directo de cantidad
-    window.setCartQuantity = (productId, value) => {
+    window.setCartQuantity = (cartKey, value) => {
         const qty = parseInt(value);
+        const cartItem = shoppingCart[cartKey];
+        
+        // Determinar el producto real subyacente
+        const productId = cartItem ? (cartItem.originalProductId || cartItem.id) : cartKey;
         const product = getProductDetails(productId);
         
         if (!product) return;
         
+        // Prevención: No dejar setear cantidad directo de la tarjeta del catálogo si requiere ID
+        if (product.requiresPlayerInfo && !cartItem) {
+            window.showModal("Aviso", "Usa los botones del carrito lateral para ajustar cantidades de recargas específicas.");
+            return;
+        }
+        
         if (isNaN(qty) || qty <= 0) {
-            // Si es 0 o inválido, eliminamos
-            delete shoppingCart[productId];
+            delete shoppingCart[cartKey];
         } else {
              const isDigital = product.availableCodes !== undefined;
-             if (!product.unlimited && qty > product.inventory && !isDigital) {
+             
+             // Revisar inventario sumando todas las recargas de diferentes IDs para este mismo producto
+             const totalOtherInCart = Object.values(shoppingCart)
+                .filter(item => (item.originalProductId || item.id) === productId && item.cartKey !== cartKey)
+                .reduce((sum, item) => sum + item.quantity, 0);
+
+             if (!product.unlimited && (totalOtherInCart + qty) > product.inventory && !isDigital && !product.requiresPlayerInfo) {
                 window.showModal("Stock Insuficiente", `Solo quedan ${product.inventory} unidades.`);
-                if(!shoppingCart[productId]) {
-                     // Si no estaba, no lo agregamos o lo ponemos en max
-                     shoppingCart[productId] = { ...product, quantity: product.inventory };
-                } else {
-                     shoppingCart[productId].quantity = product.inventory;
+                if(cartItem) {
+                     shoppingCart[cartKey].quantity = product.inventory - totalOtherInCart;
                 }
              } else {
-                 if(!shoppingCart[productId]) shoppingCart[productId] = { ...product, quantity: 0 };
-                 shoppingCart[productId].quantity = qty;
+                 if(!shoppingCart[cartKey]) {
+                     shoppingCart[cartKey] = { ...product, quantity: 0, cartKey: cartKey, originalProductId: productId };
+                 }
+                 shoppingCart[cartKey].quantity = qty;
              }
         }
         
@@ -2358,21 +2407,33 @@
         window.renderCartSummary();
     };
 
-    window.updateCart = (productId, change) => {
+    window.updateCart = (cartKey, change, providedProductId = null) => {
+        const cartItem = shoppingCart[cartKey];
+        const productId = providedProductId || (cartItem ? (cartItem.originalProductId || cartItem.id) : cartKey);
+        
         const product = getProductDetails(productId); 
         if (!product) return;
-        if (!shoppingCart[productId]) shoppingCart[productId] = { ...product, quantity: 0 };
         
-        const currentQuantity = shoppingCart[productId].quantity;
+        if (!shoppingCart[cartKey]) { 
+            shoppingCart[cartKey] = { ...product, quantity: 0, cartKey: cartKey, originalProductId: productId }; 
+        }
+        
+        const currentQuantity = shoppingCart[cartKey].quantity;
         const newQuantity = currentQuantity + change;
         const isDigital = product.availableCodes !== undefined;
 
-        if (!product.unlimited && newQuantity > product.inventory && !isDigital) {
-            window.showModal("Stock Insuficiente", `Solo quedan ${product.inventory} unidades de este producto.`);
+        // Validar inventario considerando todos los cartKeys que pertenecen a este mismo producto base
+        const totalOtherInCart = Object.values(shoppingCart)
+            .filter(item => (item.originalProductId || item.id) === productId && item.cartKey !== cartKey)
+            .reduce((sum, item) => sum + item.quantity, 0);
+
+        if (!product.unlimited && (totalOtherInCart + newQuantity) > product.inventory && !isDigital && !product.requiresPlayerInfo) {
+            window.showModal("Stock Insuficiente", `Solo quedan ${product.inventory} unidades en total de este producto.`);
             return;
         }
-        shoppingCart[productId].quantity = newQuantity;
-        if (shoppingCart[productId].quantity <= 0) { delete shoppingCart[productId]; }
+        
+        shoppingCart[cartKey].quantity = newQuantity;
+        if (shoppingCart[cartKey].quantity <= 0) { delete shoppingCart[cartKey]; }
         
         const productListView = document.getElementById('product-list-view');
         if (!productListView.classList.contains('hidden') && currentShopPath.mainKey && currentShopPath.subKey) {
@@ -2381,177 +2442,420 @@
         window.renderCartSummary();
     };
 
+    // ====== LLAMADAS A CLOUD FUNCTIONS ======
     window.processPurchase = async () => {
         const purchaseButton = document.getElementById('process-purchase-button');
         if (!currentUserId || Object.keys(shoppingCart).length === 0) return;
         purchaseButton.disabled = true; purchaseButton.textContent = 'Procesando...';
         
-        const subtotal = Object.values(shoppingCart).reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const discountAmount = 0; const taxBase = subtotal - discountAmount;
-        const ivaRate = adminConfig.ivaPercentage || 0; const ivaAmount = taxBase * (ivaRate / 100);
-        const totalCostCS = taxBase + ivaAmount;
-
-        if (currentUserFunds.cs < totalCostCS) {
-            window.showModal("Fondos Insuficientes", `El total es ${formatCS(totalCostCS)}. Solo tienes ${formatCS(currentUserFunds.cs)}.`);
-            purchaseButton.disabled = false; purchaseButton.textContent = 'Pagar Ahora'; return;
+        const cleanCart = JSON.parse(JSON.stringify(shoppingCart));
+        for (const k in cleanCart) {
+            if (cleanCart[k].requiresPlayerInfo) cleanCart[k].itemStatus = 'pending';
         }
-        
-        const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
-        const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
-        const historyCollectionRef = collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION);
-        const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
-        const cartSnapshot = JSON.parse(JSON.stringify(shoppingCart));
 
         try {
-            await runTransaction(db, async (transaction) => {
-                const userDoc = await transaction.get(userProfileRef);
-                const catalogDoc = await transaction.get(productCatalogRef);
-                if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
-
-                const newCatalogData = catalogDoc.data();
-                
-                for (const itemId in cartSnapshot) {
-                    const cartItem = cartSnapshot[itemId];
-                    let productFound = false;
-                    for (const mainCat of newCatalogData.catalog) {
-                        if(mainCat.subcategories) {
-                            for(const subCat of mainCat.subcategories) {
-                                const product = subCat.products.find(p => p.id === itemId);
-                                if (product) {
-                                    productFound = true;
-                                    // NUEVO: Lógica de códigos digitales y Pre-órdenes
-                                    if (product.availableCodes !== undefined) {
-                                        let codesToAssign = [];
-                                        let pendingQty = cartItem.quantity;
-                                        
-                                        if (product.availableCodes.length > 0) {
-                                            const availableToTake = Math.min(product.availableCodes.length, cartItem.quantity);
-                                            codesToAssign = product.availableCodes.splice(0, availableToTake);
-                                            pendingQty -= availableToTake;
+            const processSecurePurchase = httpsCallable(functions, 'processSecurePurchase');
+            const result = await processSecurePurchase({ cart: cleanCart });
+            const { totalDeducted, nexusEarned } = result.data;
+            
+            const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+            try {
+                await runTransaction(db, async (t) => {
+                    const catDoc = await t.get(productCatalogRef);
+                    if (catDoc.exists()) {
+                        const catData = catDoc.data();
+                        let updated = false;
+                        for (const itemId in cleanCart) {
+                            for (const mainCat of catData.catalog) {
+                                if (mainCat.subcategories) {
+                                    for (const subCat of mainCat.subcategories) {
+                                        const p = subCat.products.find(x => x.id === itemId);
+                                        if (p) {
+                                            p.totalSold = (p.totalSold || 0) + cleanCart[itemId].quantity;
+                                            updated = true;
                                         }
-                                        
-                                        cartItem.assignedCode = codesToAssign.join(', ');
-                                        cartItem.pendingCodes = pendingQty; // Rastrear cuántos faltan
-                                        cartItem.redemptionUrl = product.redemptionUrl;
-                                        
-                                        product.inventory = product.availableCodes.length;
-                                    } 
-                                    else if (!product.unlimited) {
-                                        if (product.inventory < cartItem.quantity) {
-                                            throw new Error(`¡Stock agotado para ${product.name}! Solo quedan ${product.inventory}.`);
-                                        }
-                                        product.inventory -= cartItem.quantity;
                                     }
-                                    break;
                                 }
                             }
                         }
-                        if(productFound) break;
+                        if (updated) t.set(productCatalogRef, catData);
                     }
-                    if (!productFound) throw new Error(`Producto ${cartItem.name} no encontrado.`);
-                }
-
-                const currentFundsCS = userDoc.data().fundsCS || 0;
-                const currentNexusPoints = userDoc.data().nexusPoints || 0;
-
-                transaction.update(userProfileRef, { fundsCS: currentFundsCS - totalCostCS, nexusPoints: currentNexusPoints + nexusEarned });
-                transaction.set(productCatalogRef, newCatalogData); 
-                transaction.set(doc(historyCollectionRef), { 
-                    type: 'COMPRA', userId: currentUserId, subtotalCS: subtotal, ivaPercentage: ivaRate, ivaAmountCS: ivaAmount, discountCS: 0, taxBaseCS: taxBase, totalCS: totalCostCS, amountPaidCS: totalCostCS, nexusEarned, items: cartSnapshot, timestamp: serverTimestamp(),
-                    paymentMethod: 'FONDOS' // Flag para saber origen
                 });
-            });
+            } catch (e) { console.warn("No se pudo actualizar totalSold localmente tras función en la nube", e); }
+
             shoppingCart = {};
             if(currentShopPath.mainKey && currentShopPath.subKey) {
                 window.showProducts('shop', currentShopPath.mainKey, currentShopPath.subKey);
             }
             window.renderCartSummary();
             
-            const hasPending = Object.values(cartSnapshot).some(item => item.pendingCodes > 0);
-            const successMsg = hasPending 
-                ? `Se descontaron **${formatCS(totalCostCS)}** y ganaste **${formatNexus(nexusEarned)}**.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Algunos productos digitales están en PRE-ORDEN. Los recibirás automáticamente en tu historial apenas el administrador agregue más códigos.</span>`
-                : `Se descontaron **${formatCS(totalCostCS)}** y ganaste **${formatNexus(nexusEarned)}**! Revisa tu historial para ver tus códigos.`;
+            window.showModal("¡Compra Exitosa!", `Se descontaron **${formatCS(totalDeducted)}** y ganaste **${formatNexus(nexusEarned)}**! Revisa tu historial.`);
+        } catch (error) {
+            console.warn("Cloud Function 'processSecurePurchase' falló o no existe. Intentando procesamiento local (Fallback)...", error);
             
-            window.showModal("¡Compra Exitosa!", successMsg);
-        } catch (error) { window.showModal("Error de Transacción", `No se pudo completar la compra. <br><br><strong>Motivo:</strong> ${error.message}.`); } finally { purchaseButton.disabled = false; purchaseButton.textContent = 'Pagar Ahora'; }
+            try {
+                const subtotal = Object.values(cleanCart).reduce((sum, item) => sum + item.price * item.quantity, 0);
+                const discountAmount = 0; const taxBase = subtotal - discountAmount;
+                const ivaRate = adminConfig.ivaPercentage || 0; const ivaAmount = taxBase * (ivaRate / 100);
+                const totalCostCS = taxBase + ivaAmount;
+
+                if (currentUserFunds.cs < totalCostCS) {
+                    window.showModal("Fondos Insuficientes", `El total es ${formatCS(totalCostCS)}. Solo tienes ${formatCS(currentUserFunds.cs)}.`);
+                    purchaseButton.disabled = false; purchaseButton.textContent = 'Pagar Ahora'; return;
+                }
+                
+                const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
+                const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                const historyCollectionRef = collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION);
+                const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+
+                await runTransaction(db, async (transaction) => {
+                    const userDoc = await transaction.get(userProfileRef);
+                    const catalogDoc = await transaction.get(productCatalogRef);
+                    if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
+
+                    const currentFunds = userDoc.data().fundsCS || 0;
+                    if (currentFunds < totalCostCS) throw new Error("insufficient_funds");
+
+                    const newCatalogData = catalogDoc.data();
+                    
+                    for (const cartKey in cleanCart) {
+                        const cartItem = cleanCart[cartKey];
+                        const originalProductId = cartItem.originalProductId || cartItem.id;
+                        let productFound = false;
+                        for (const mainCat of newCatalogData.catalog) {
+                            if(mainCat.subcategories) {
+                                for(const subCat of mainCat.subcategories) {
+                                    const product = subCat.products.find(p => p.id === originalProductId);
+                                    if (product) {
+                                        productFound = true;
+                                        if (product.availableCodes !== undefined && !product.requiresPlayerInfo) {
+                                            let codesToAssign = [];
+                                            let pendingQty = cartItem.quantity;
+                                            
+                                            if (product.availableCodes.length > 0) {
+                                                const availableToTake = Math.min(product.availableCodes.length, cartItem.quantity);
+                                                codesToAssign = product.availableCodes.splice(0, availableToTake);
+                                                pendingQty -= availableToTake;
+                                            }
+                                            
+                                            cartItem.assignedCode = codesToAssign.join(', ');
+                                            cartItem.pendingCodes = pendingQty;
+                                            cartItem.redemptionUrl = product.redemptionUrl;
+                                            product.inventory = product.availableCodes.length;
+                                        } 
+                                        else if (!product.unlimited) {
+                                            if (product.inventory < cartItem.quantity) {
+                                                throw new Error(`item_exhausted`);
+                                            }
+                                            product.inventory -= cartItem.quantity;
+                                        }
+                                        product.totalSold = (product.totalSold || 0) + cartItem.quantity;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(productFound) break;
+                        }
+                        if (!productFound) throw new Error(`Producto no encontrado.`);
+                    }
+
+                    const currentNexusPoints = userDoc.data().nexusPoints || 0;
+
+                    transaction.update(userProfileRef, { fundsCS: currentFunds - totalCostCS, nexusPoints: currentNexusPoints + nexusEarned });
+                    transaction.set(productCatalogRef, newCatalogData); 
+                    transaction.set(doc(historyCollectionRef), { 
+                        type: 'COMPRA', userId: currentUserId, subtotalCS: subtotal, ivaPercentage: ivaRate, ivaAmountCS: ivaAmount, discountCS: 0, taxBaseCS: taxBase, totalCS: totalCostCS, amountPaidCS: totalCostCS, nexusEarned, items: cleanCart, timestamp: serverTimestamp(),
+                        paymentMethod: 'FONDOS' 
+                    });
+                });
+                
+                shoppingCart = {};
+                if(currentShopPath.mainKey && currentShopPath.subKey) {
+                    window.showProducts('shop', currentShopPath.mainKey, currentShopPath.subKey);
+                }
+                window.renderCartSummary();
+                
+                const hasPending = Object.values(cleanCart).some(item => item.pendingCodes > 0);
+                const successMsg = hasPending 
+                    ? `Se descontaron **${formatCS(totalCostCS)}** y ganaste **${formatNexus(nexusEarned)}**.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Algunos productos digitales están en PRE-ORDEN.</span>`
+                    : `Se descontaron **${formatCS(totalCostCS)}** y ganaste **${formatNexus(nexusEarned)}**!`;
+                
+                window.showModal("¡Compra Exitosa!", successMsg);
+            } catch (fallbackError) {
+                if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
+                    window.showModal("Acceso Denegado por Seguridad", "Tus reglas de Firebase bloquean esta compra porque las Cloud Functions no están configuradas en tu servidor. Despliégalas o relaja las reglas de 'fundsCS' temporalmente.");
+                } else if (fallbackError.message === 'insufficient_funds') {
+                    window.showModal("No se pudo procesar la compra", "No tienes suficientes fondos en tu billetera para completar esta compra.");
+                } else if (fallbackError.message === 'item_exhausted') {
+                    window.showModal("No se pudo procesar la compra", "Uno de los productos en tu carrito se ha agotado. Revisa tu carrito.");
+                } else {
+                    window.showModal("Error en transacción local", fallbackError.message);
+                }
+            }
+        } finally {
+            purchaseButton.disabled = false; purchaseButton.textContent = 'Pagar Ahora';
+        }
+    };
+
+    window.processClientDebtPayment = async () => {
+        const amountStr = document.getElementById('client-debt-payment-amount').value;
+        const amount = parseFloat(amountStr);
+        if (isNaN(amount) || amount <= 0) return window.showModal("Error", "Ingresa un monto válido mayor a 0.");
+        if (amount > currentUserFunds.cs) return window.showModal("Fondos Insuficientes", "El monto ingresado supera tu saldo actual.");
+        if (amount > currentUserFunds.debt) return window.showModal("Monto Excesivo", "No puedes pagar más de tu deuda total.");
+        
+        try {
+            const processSecureDebtPayment = httpsCallable(functions, 'processSecureDebtPayment');
+            await processSecureDebtPayment({ amount });
+            
+            window.showModal("Pago Exitoso", `Has abonado ${formatCS(amount)} a tu deuda exitosamente.`);
+            window.hideClientPayDebtModal();
+        } catch (error) {
+            console.warn("Cloud Function 'processSecureDebtPayment' falló. Intentando fallback local...", error);
+            
+            try {
+                const q = query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", currentUserId), where("isDebt", "==", true));
+                const snaps = await getDocs(q);
+                let remainingPayment = amount;
+
+                await runTransaction(db, async (t) => {
+                    const userRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                    const userDoc = await t.get(userRef);
+                    if(!userDoc.exists()) throw new Error("Usuario no encontrado");
+
+                    const currentFunds = userDoc.data().fundsCS || 0;
+                    const currentDebt = userDoc.data().debtCS || 0;
+                    
+                    if (amount > currentFunds || amount > currentDebt) throw new Error("Los saldos han cambiado. Actualiza e intenta de nuevo.");
+
+                    const debtTx = snaps.docs.map(d => ({id: d.id, ...d.data()}))
+                        .filter(tx => tx.remainingDebtCS > 0 && tx.status !== 'anulada')
+                        .sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+
+                    for (const tx of debtTx) {
+                        if (remainingPayment <= 0) break;
+                        const payForThis = Math.min(tx.remainingDebtCS, remainingPayment);
+                        t.update(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, tx.id), {
+                            remainingDebtCS: tx.remainingDebtCS - payForThis
+                        });
+                        remainingPayment -= payForThis;
+                    }
+
+                    t.update(userRef, {
+                        fundsCS: currentFunds - amount,
+                        debtCS: currentDebt - amount
+                    });
+
+                    const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+                    t.set(historyRef, {
+                        type: 'DEBT_PAYMENT',
+                        userId: currentUserId,
+                        amount: amount,
+                        timestamp: serverTimestamp(),
+                        note: 'Abono automático',
+                        paymentMethod: 'SALDO_BILLETERA'
+                    });
+                });
+
+                window.showModal("Pago Exitoso", `Has abonado ${formatCS(amount)} a tu deuda exitosamente.`);
+                window.hideClientPayDebtModal();
+            } catch (fallbackError) {
+                if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
+                    window.showModal("Acceso Denegado por Seguridad", "Las reglas bloquean esto porque tus Cloud Functions no están operando. Despliega las funciones en tu servidor de Firebase.");
+                } else {
+                    window.showModal("Error de Pago", fallbackError.message);
+                }
+            }
+        }
     };
 
     window.processRedemption = async (itemId) => {
-        const itemToRedeem = getNexusItemDetails(itemId); 
-        if (!itemToRedeem || !currentUserId) return;
-        const { name, nexusCost, cost } = itemToRedeem;
+        if (!currentUserId) return;
+        const item = getNexusItemDetails(itemId);
+        if (!item) return;
 
-        if (currentUserFunds.nexus < nexusCost) {
-            window.showModal("Puntos Nexus Insuficientes", `Necesitas ${formatNexus(nexusCost)} para este canje.`); return;
+        if (currentUserFunds.nexus < item.nexusCost) {
+            window.showModal("Puntos Insuficientes", `Necesitas ${formatNexus(item.nexusCost)} para canjear este item.`);
+            return;
         }
 
-        const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
-        const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
-
-        try {
-            await runTransaction(db, async (transaction) => {
-                const userDoc = await transaction.get(userProfileRef);
-                const catalogDoc = await transaction.get(productCatalogRef);
-                if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
+        window.showConfirmModal("Confirmar Canje", `¿Estás seguro de canjear <strong>${item.name}</strong> por <strong>${formatNexus(item.nexusCost)}</strong>?`, async () => {
+            try {
+                const processSecureRedemption = httpsCallable(functions, 'processSecureRedemption');
+                await processSecureRedemption({ itemId });
                 
-                if ((userDoc.data().nexusPoints || 0) < nexusCost) throw new Error("INSUFFICIENT_FUNDS_TRANSACTION");
-                
-                const newCatalogData = catalogDoc.data();
-                let itemFoundAndInStock = false;
-                let assignedCode = "";
-                let pendingCodes = 0;
-                let redemptionUrl = "";
-                
-                for (const mainCat of newCatalogData.nexusRedemptions) {
-                    if(mainCat.subcategories) {
-                        for(const subCat of mainCat.subcategories) {
-                            const item = subCat.items.find(i => i.id === itemId);
-                            if (item) {
-                                redemptionUrl = item.redemptionUrl || "";
-                                // NUEVO: Lógica de códigos digitales y Pre-órdenes para Canjes
-                                if (item.availableCodes !== undefined) {
-                                    if (item.availableCodes.length > 0) {
-                                        assignedCode = item.availableCodes.splice(0, 1).join(', ');
-                                    } else {
-                                        pendingCodes = 1;
+                const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+                try {
+                    await runTransaction(db, async (t) => {
+                        const catDoc = await t.get(productCatalogRef);
+                        if (catDoc.exists()) {
+                            const catData = catDoc.data();
+                            let updated = false;
+                            for (const mainCat of catData.nexusRedemptions) {
+                                if (mainCat.subcategories) {
+                                    for (const subCat of mainCat.subcategories) {
+                                        const i = subCat.items.find(x => x.id === itemId);
+                                        if (i) {
+                                            i.totalRedeemed = (i.totalRedeemed || 0) + 1;
+                                            updated = true;
+                                        }
                                     }
-                                    item.inventory = item.availableCodes.length;
-                                } else if (!item.unlimited) {
-                                    if (item.inventory < 1) throw new Error(`¡El item "${item.name}" está agotado!`);
-                                    item.inventory -= 1;
                                 }
-                                itemFoundAndInStock = true;
-                                break;
                             }
+                            if (updated) t.set(productCatalogRef, catData);
                         }
+                    });
+                } catch(e) { console.warn("No se actualizó totalRedeemed localmente", e); }
+
+                window.showModal("¡Canje Exitoso!", `Has canjeado ${item.name} correctamente. Revisa tu historial.`);
+            } catch (error) {
+                console.warn("Cloud Function 'processSecureRedemption' falló. Intentando fallback local...", error);
+                
+                try {
+                    const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                    const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+
+                    let pendingCodesLocal = 0;
+                    await runTransaction(db, async (transaction) => {
+                        const userDoc = await transaction.get(userProfileRef);
+                        const catalogDoc = await transaction.get(productCatalogRef);
+                        if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
+                        
+                        if ((userDoc.data().nexusPoints || 0) < item.nexusCost) throw new Error("insufficient");
+                        
+                        const newCatalogData = catalogDoc.data();
+                        let itemFoundAndInStock = false;
+                        let assignedCode = "";
+                        let redemptionUrl = "";
+                        
+                        for (const mainCat of newCatalogData.nexusRedemptions) {
+                            if(mainCat.subcategories) {
+                                for(const subCat of mainCat.subcategories) {
+                                    const catItem = subCat.items.find(i => i.id === itemId);
+                                    if (catItem) {
+                                        redemptionUrl = catItem.redemptionUrl || "";
+                                        if (catItem.availableCodes !== undefined) {
+                                            if (catItem.availableCodes.length > 0) {
+                                                assignedCode = catItem.availableCodes.splice(0, 1).join(', ');
+                                            } else {
+                                                pendingCodesLocal = 1;
+                                            }
+                                            catItem.inventory = catItem.availableCodes.length;
+                                        } else if (!catItem.unlimited) {
+                                            if (catItem.inventory < 1) throw new Error(`agotado`);
+                                            catItem.inventory -= 1;
+                                        }
+                                        catItem.totalRedeemed = (catItem.totalRedeemed || 0) + 1;
+                                        itemFoundAndInStock = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(itemFoundAndInStock) break;
+                        }
+
+                        if (!itemFoundAndInStock) throw new Error("no_encontrado");
+
+                        transaction.update(userProfileRef, { nexusPoints: (userDoc.data().nexusPoints || 0) - item.nexusCost });
+                        transaction.set(productCatalogRef, newCatalogData);
+                        transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), { 
+                            type: 'CANJE', userId: currentUserId, costNexus: item.nexusCost, costCS: item.cost || 0,
+                            item: item.name, timestamp: serverTimestamp(),
+                            assignedCode, pendingCodes: pendingCodesLocal, redemptionUrl,
+                            items: {
+                                [itemId]: { id: itemId, name: item.name, quantity: 1, pendingCodes: pendingCodesLocal, assignedCode, redemptionUrl }
+                            }
+                        });
+                    });
+                    
+                    const successMsgLocal = pendingCodesLocal > 0 
+                        ? `Has canjeado **"${item.name}"** por ${formatNexus(item.nexusCost)}.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Este item está en PRE-ORDEN.</span>`
+                        : `Has canjeado **"${item.name}"** por ${formatNexus(item.nexusCost)}. Revisa tu historial.`;
+                    
+                    window.showModal("¡Canje Exitoso!", successMsgLocal);
+                } catch (fallbackError) {
+                    if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
+                        window.showModal("Acceso Denegado por Seguridad", "Tus reglas de Firebase bloquean esta acción porque no has desplegado las funciones en la nube. Configura tu backend.");
+                    } else if (fallbackError.message === 'insufficient') {
+                        window.showModal("Error", "No tienes suficientes puntos Nexus.");
+                    } else if (fallbackError.message === 'agotado') {
+                        window.showModal("Error", "Este ítem se ha agotado.");
+                    } else {
+                        window.showModal("Error", fallbackError.message);
                     }
-                    if(itemFoundAndInStock) break;
                 }
-
-                if (!itemFoundAndInStock) throw new Error("El item de canje no fue encontrado o está agotado.");
-
-                transaction.update(userProfileRef, { nexusPoints: (userDoc.data().nexusPoints || 0) - nexusCost });
-                transaction.set(productCatalogRef, newCatalogData);
-                transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), { 
-                    type: 'CANJE', userId: currentUserId, costNexus: nexusCost, costCS: cost || 0,
-                    item: name, timestamp: serverTimestamp(),
-                    assignedCode, pendingCodes, redemptionUrl,
-                    items: {
-                        [itemId]: { id: itemId, name: name, quantity: 1, pendingCodes, assignedCode, redemptionUrl }
-                    }
-                });
-            });
-            
-            const successMsg = pendingCodes > 0 
-                ? `Has canjeado **"${name}"** por ${formatNexus(nexusCost)}.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Este item está en PRE-ORDEN. Recibirás tu código automáticamente en tu historial apenas el administrador agregue más códigos.</span>`
-                : `Has canjeado **"${name}"** por ${formatNexus(nexusCost)}. Revisa tu historial para ver tu código.`;
-            
-            window.showModal("¡Canje Exitoso!", successMsg);
-        } catch (error) { window.showModal("Error de Transacción", `Error: ${error.message}.`); }
+            }
+        });
     };
 
+    window.enterRaffle = async (raffleId) => {
+        if (!currentUserId) return;
+        
+        try {
+            const processSecureRaffleEntry = httpsCallable(functions, 'processSecureRaffleEntry');
+            const result = await processSecureRaffleEntry({ raffleId });
+            
+            window.showModal("¡Participación Exitosa!", `¡Mucha suerte! Tu participación en "${result.data.raffleName}" ha sido registrada.`);
+        } catch (error) { 
+            console.warn("Cloud Function 'processSecureRaffleEntry' falló. Intentando fallback local...", error);
+            
+            try {
+                const raffle = allRafflesData.find(r => r.id === raffleId);
+                if (!raffle) {
+                    window.showModal("Error", "Este sorteo ya no existe.");
+                    return;
+                }
+                
+                const amount = raffle.entryCost;
+                const isNexus = raffle.costType === 'nexus';
+                const costKey = isNexus ? 'nexusPoints' : 'fundsCS';
+
+                await runTransaction(db, async (transaction) => {
+                    const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                    const raffleRef = doc(db, COLLECTIONS.RAFFLES_COLLECTION, raffleId);
+                    const raffleEntriesCollection = collection(db, COLLECTIONS.RAFFLE_ENTRIES);
+                    const historyCollectionRef = collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION);
+                    
+                    const userDoc = await transaction.get(userProfileRef);
+                    const raffleDoc = await transaction.get(raffleRef);
+                    if (!userDoc.exists() || !raffleDoc.exists()) throw new Error("DATA_MISSING");
+                    
+                    const currentFunds = userDoc.data()[costKey] || 0;
+                    if (currentFunds < amount) throw new Error("INSUFFICIENT_FUNDS");
+                    
+                    transaction.update(userProfileRef, { [costKey]: currentFunds - amount });
+                    
+                    if (raffle.prizeType === 'pot') {
+                        transaction.update(raffleRef, { pot: (raffleDoc.data().pot || 0) + amount });
+                    }
+                    
+                    transaction.set(doc(raffleEntriesCollection), { userId: currentUserId, type: raffleId, amount, timestamp: serverTimestamp() });
+                    transaction.set(doc(historyCollectionRef), {
+                        type: 'SORTEO_ENTRADA',
+                        userId: currentUserId,
+                        raffleType: raffle.name, 
+                        raffleId: raffleId,
+                        cost: amount,
+                        isNexus: isNexus,
+                        timestamp: serverTimestamp()
+                    });
+                });
+                window.showModal("¡Participación Exitosa!", `¡Mucha suerte! Tu participación en "${raffle.name}" ha sido registrada.`);
+            } catch (fallbackError) { 
+                if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
+                    window.showModal("Acceso Denegado por Seguridad", "Las reglas bloquean la compra de boletos porque tu servidor Firebase Functions no está operando.");
+                } else if (fallbackError.message === 'INSUFFICIENT_FUNDS') {
+                    window.showModal("Fondos Insuficientes", "No tienes suficientes fondos para esta apuesta.");
+                } else {
+                    window.showModal("Error", "No se pudo procesar tu participación: " + fallbackError.message); 
+                }
+            }
+        }
+    };
+    // ====== FIN LLAMADAS A CLOUD FUNCTIONS ======
+
     // --- GESTIÓN DE PRODUCTOS ADMIN (3 Niveles) ---
-    // NUEVO: Función para calcular Ganancia en Admin
     window.calculateProfit = (id) => {
         const price = parseFloat(document.getElementById(`prod-price-${id}`).value) || 0;
         const cost = parseFloat(document.getElementById(`prod-cost-${id}`).value) || 0;
@@ -2560,6 +2864,23 @@
         if(span) {
             span.textContent = `Ganancia: ${formatCS(profit)}`;
             span.className = `text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'}`;
+        }
+    };
+
+    window.toggleDigitalConfig = (itemId, isChecked) => {
+        const container = document.getElementById(`digital-config-container-${itemId}`);
+        const urlInput = document.getElementById(`prod-url-${itemId}`);
+        const codesInput = document.getElementById(`prod-codes-${itemId}`);
+        if (container && urlInput && codesInput) {
+            if (isChecked) {
+                container.classList.add('opacity-30', 'pointer-events-none', 'grayscale');
+                urlInput.disabled = true;
+                codesInput.disabled = true;
+            } else {
+                container.classList.remove('opacity-30', 'pointer-events-none', 'grayscale');
+                urlInput.disabled = false;
+                codesInput.disabled = false;
+            }
         }
     };
 
@@ -2635,15 +2956,26 @@
                                                          <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
                                                          <textarea id="prod-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción detallada del producto">${item.description || ''}</textarea>
                                                      </div>
-                                                     <span id="prod-profit-${item.id}" class="text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${formatCS(profit)}</span>
+                                                     <div class="flex flex-col items-end">
+                                                         <span id="prod-profit-${item.id}" class="text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${formatCS(profit)}</span>
+                                                         <div class="flex items-center gap-1 mt-1">
+                                                             <label class="text-[10px] text-gray-400" title="Editar total vendidos manualmente">Vendidos:</label>
+                                                             <input type="number" id="prod-sold-${item.id}" value="${item.totalSold || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-blue-300 font-bold text-right text-[10px] focus:outline-none focus:border-blue-500" min="0">
+                                                         </div>
+                                                     </div>
                                                 </div>
                                                 <textarea id="prod-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen (una por línea)">${pImage}</textarea>
                                                 
-                                                <!-- NUEVO: Campos para Códigos Digitales -->
                                                 <div class="md:col-span-6 mt-2 border-t border-gray-700 pt-2">
-                                                    <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
-                                                    <input type="text" id="prod-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)"/>
-                                                    <textarea id="prod-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente.">${(item.availableCodes || []).join('\n')}</textarea>
+                                                    <label class="flex items-center gap-2 text-xs text-yellow-400 font-bold cursor-pointer mb-2">
+                                                        <input type="checkbox" id="prod-req-info-${item.id}" ${item.requiresPlayerInfo ? 'checked' : ''} onchange="window.toggleDigitalConfig('${item.id}', this.checked)" class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-yellow-500 focus:ring-yellow-500">
+                                                        Requiere ID de Jugador (Recargas Manuales)
+                                                    </label>
+                                                    <div id="digital-config-container-${item.id}" class="transition-all duration-300 ${item.requiresPlayerInfo ? 'opacity-30 pointer-events-none grayscale' : ''}">
+                                                        <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
+                                                        <input type="text" id="prod-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)" ${item.requiresPlayerInfo ? 'disabled' : ''}/>
+                                                        <textarea id="prod-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente." ${item.requiresPlayerInfo ? 'disabled' : ''}>${(item.availableCodes || []).join('\n')}</textarea>
+                                                    </div>
                                                 </div>
                                             </div>`;
                                         } else {
@@ -2669,13 +3001,20 @@
                                                     <button onclick="window.updateDeepNexusItem('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-yellow-700 p-1 rounded text-white flex-grow hover:bg-yellow-600">💾</button>
                                                     <button onclick="window.deleteDeepNexusItem('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-red-700 p-1 rounded text-white hover:bg-red-600">X</button>
                                                 </div>
-                                                <div class="md:col-span-6">
-                                                     <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
-                                                     <textarea id="nexus-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción del canje">${item.description || ''}</textarea>
+                                                <div class="md:col-span-6 flex justify-between items-start">
+                                                     <div class="flex-grow mr-2">
+                                                         <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
+                                                         <textarea id="nexus-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción del canje">${item.description || ''}</textarea>
+                                                     </div>
+                                                     <div class="flex flex-col items-end mt-2">
+                                                         <div class="flex items-center gap-1">
+                                                             <label class="text-[10px] text-gray-400" title="Editar total canjeados manualmente">Canjeados:</label>
+                                                             <input type="number" id="nexus-redeemed-${item.id}" value="${item.totalRedeemed || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-yellow-300 font-bold text-right text-[10px] focus:outline-none focus:border-yellow-500" min="0">
+                                                         </div>
+                                                     </div>
                                                 </div>
                                                 <textarea id="nexus-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen">${pImage}</textarea>
                                                 
-                                                <!-- NUEVO: Campos para Códigos Digitales en Canjes -->
                                                 <div class="md:col-span-6 mt-2 border-t border-yellow-900 pt-2">
                                                     <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
                                                     <input type="text" id="nexus-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)"/>
@@ -2700,7 +3039,6 @@
         lucide.createIcons();
     };
 
-    // --- FUNCIONES CRUD ADMIN (3 Niveles - Sin cambios) ---
     window.addNewMainCategory = async (type) => {
         const inputId = type === 'products' ? 'new-main-category-name' : 'new-nexus-main-category-name';
         const imgId = type === 'products' ? 'new-main-category-image' : 'new-nexus-main-category-image';
@@ -2781,11 +3119,9 @@
         });
     };
 
-    // --- NUEVO: AUTO-ENTREGA DE PRE-ÓRDENES (BACKGROUND) ---
     window.autoFulfillPendingOrders = async (productId, newCodes) => {
         if (!newCodes || newCodes.length === 0) return newCodes;
         
-        // Buscar compras o canjes con códigos pendientes para este producto
         const pendingOrders = purchaseHistoryData.filter(t => 
             t.status !== 'anulada' && 
             (t.type === 'COMPRA' || t.type === 'CANJE') &&
@@ -2794,7 +3130,6 @@
 
         if (pendingOrders.length === 0) return newCodes;
 
-        // Ordenar de más antiguo a más nuevo
         pendingOrders.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
         let remainingCodes = [...newCodes];
@@ -2828,7 +3163,6 @@
         
         if (updatedCount > 0) {
             await batch.commit();
-            // Notificación silenciosa
             setTimeout(() => {
                 const toast = document.getElementById('toast-notification');
                 document.getElementById('toast-message').textContent = `Auto-Entrega: ${updatedCount} pre-orden(es) completada(s).`;
@@ -2850,10 +3184,10 @@
             const newItem = {
                 id: `${type === 'products' ? 'prod' : 'nexus'}_${Date.now()}`,
                 name: "Nuevo Item",
-                inventory: 0, unlimited: false, imageUrls: [], description: '' // NUEVO: Inicializar descripción
+                inventory: 0, unlimited: false, imageUrls: [], description: ''
             };
             if(type === 'products') {
-                newItem.price = 0; newItem.cost = 0; newItem.code = ''; 
+                newItem.price = 0; newItem.cost = 0; newItem.code = ''; newItem.requiresPlayerInfo = false;
                 subCat.products.push(newItem);
             } else {
                 newItem.nexusCost = 1; newItem.cost = 0;
@@ -2866,16 +3200,21 @@
     window.updateDeepProduct = async (mainKey, subKey, prodId) => {
         const name = document.getElementById(`prod-name-${prodId}`).value;
         const price = parseFloat(document.getElementById(`prod-price-${prodId}`).value);
-        const cost = parseFloat(document.getElementById(`prod-cost-${prodId}`).value) || 0; // NUEVO: Capturar Costo
+        const cost = parseFloat(document.getElementById(`prod-cost-${prodId}`).value) || 0; 
         const inv = parseInt(document.getElementById(`prod-inv-${prodId}`).value);
-        const desc = document.getElementById(`prod-desc-${prodId}`).value; // NUEVO: Capturar Descripción
+        const desc = document.getElementById(`prod-desc-${prodId}`).value; 
         const imgs = document.getElementById(`prod-img-${prodId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
         const url = document.getElementById(`prod-url-${prodId}`).value.trim();
         const codesRaw = document.getElementById(`prod-codes-${prodId}`).value.trim();
-        let codes = codesRaw ? codesRaw.split('\n').map(c => c.trim()).filter(c => c) : [];
-
-        // AUTO-ENTREGA: Validar si hay reservas en cola y usar los nuevos códigos
-        codes = await window.autoFulfillPendingOrders(prodId, codes);
+        const sold = parseInt(document.getElementById(`prod-sold-${prodId}`).value) || 0;
+        const reqInfo = document.getElementById(`prod-req-info-${prodId}`).checked;
+        
+        let codes = [];
+        // Solo procesamos los códigos si NO es una recarga directa
+        if (!reqInfo && codesRaw) {
+            codes = codesRaw.split('\n').map(c => c.trim()).filter(c => c);
+            codes = await window.autoFulfillPendingOrders(prodId, codes);
+        }
 
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
         const subCat = newCatalog.catalog.find(c => c.key === mainKey)?.subcategories.find(s => s.key === subKey);
@@ -2888,14 +3227,25 @@
             prod.description = desc; 
             prod.unlimited = false; 
             prod.imageUrls = imgs;
-            prod.redemptionUrl = url;
-            prod.availableCodes = codes;
+            prod.totalSold = Math.max(0, sold); 
+            prod.requiresPlayerInfo = reqInfo;
             
-            // Si hay códigos, el inventario se ajusta automáticamente
-            if (codes.length > 0 || codesRaw.length > 0) {
-                prod.inventory = codes.length;
-            } else {
+            if (reqInfo) {
+                // PRIORIDAD ABSOLUTA A LA RECARGA:
+                // Se borra el sistema digital y se fuerza a usar el inventario manual
+                delete prod.availableCodes;
+                delete prod.redemptionUrl;
                 prod.inventory = inv;
+            } else {
+                // LÓGICA DIGITAL ESTÁNDAR
+                prod.redemptionUrl = url;
+                if (codes.length > 0 || codesRaw.length > 0) {
+                    prod.availableCodes = codes;
+                    prod.inventory = codes.length;
+                } else {
+                    delete prod.availableCodes;
+                    prod.inventory = inv;
+                }
             }
 
             await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
@@ -2916,16 +3266,16 @@
 
     window.updateDeepNexusItem = async (mainKey, subKey, itemId) => {
         const name = document.getElementById(`nexus-name-${itemId}`).value;
-        const cost = parseFloat(document.getElementById(`nexus-cost-${itemId}`).value); // Costo en Puntos
-        const moneyCost = parseFloat(document.getElementById(`nexus-money-cost-${itemId}`).value) || 0; // NUEVO: Costo Real en dinero
+        const cost = parseFloat(document.getElementById(`nexus-cost-${itemId}`).value); 
+        const moneyCost = parseFloat(document.getElementById(`nexus-money-cost-${itemId}`).value) || 0; 
         const inv = parseInt(document.getElementById(`nexus-inv-${itemId}`).value);
-        const desc = document.getElementById(`nexus-desc-${itemId}`).value; // NUEVO: Descripción Nexus
+        const desc = document.getElementById(`nexus-desc-${itemId}`).value; 
         const imgs = document.getElementById(`nexus-img-${itemId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
         const url = document.getElementById(`nexus-url-${itemId}`).value.trim();
         const codesRaw = document.getElementById(`nexus-codes-${itemId}`).value.trim();
+        const redeemed = parseInt(document.getElementById(`nexus-redeemed-${itemId}`).value) || 0;
         let codes = codesRaw ? codesRaw.split('\n').map(c => c.trim()).filter(c => c) : [];
 
-        // AUTO-ENTREGA para canjes
         codes = await window.autoFulfillPendingOrders(itemId, codes);
 
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
@@ -2935,14 +3285,14 @@
         if(item) {
             item.name = name; 
             item.nexusCost = cost; 
-            item.cost = moneyCost; // NUEVO: Guardar Costo Real
-            item.description = desc; // NUEVO
+            item.cost = moneyCost; 
+            item.description = desc; 
             item.unlimited = false; 
             item.imageUrls = imgs;
             item.redemptionUrl = url;
             item.availableCodes = codes;
+            item.totalRedeemed = Math.max(0, redeemed); // Guarda el nuevo valor manual
 
-            // Si hay códigos, el inventario se ajusta automáticamente
             if (codes.length > 0 || codesRaw.length > 0) {
                 item.inventory = codes.length;
             } else {
@@ -2965,7 +3315,139 @@
         });
     };
 
-    // --- POS & PAST ORDERS UPDATES (Deep Search - Sin cambios) ---
+    window.renderAdminOrders = () => {
+        const container = document.getElementById('admin-pending-orders-list');
+        if(!container) return;
+        
+        let pendingItemsHtml = '';
+        
+        purchaseHistoryData.forEach(tx => {
+            if (tx.type !== 'COMPRA' || tx.status === 'anulada' || !tx.items) return;
+            
+            // Usamos Object.entries para obtener la cartKey exacta (ej. prod_123___IDJugador)
+            Object.entries(tx.items).forEach(([cartKey, item]) => {
+                if (item.requiresPlayerInfo && item.itemStatus === 'pending') {
+                    const user = allUsersData.find(u => u.id === tx.userId);
+                    const userName = user ? user.name : tx.userId;
+                    const date = tx.timestamp ? new Date(tx.timestamp.seconds * 1000).toLocaleString('es-NI') : '';
+                    const ivaRate = adminConfig.ivaPercentage || 0;
+                    const itemTotalWithIva = (item.price * item.quantity) * (1 + (ivaRate / 100));
+                    
+                    pendingItemsHtml += `
+                    <div class="bg-gray-800 p-5 rounded-xl border-l-4 border-yellow-500 shadow-xl flex flex-col relative overflow-hidden transition hover:bg-gray-750">
+                        <div class="flex justify-between items-start border-b border-gray-700 pb-3 mb-3">
+                            <div class="pr-2">
+                                <p class="font-bold text-lg text-white leading-tight">${item.name}</p>
+                                <p class="text-[10px] text-gray-400 font-mono mt-1">Ref: ${tx.id.slice(0,8)} | ${date}</p>
+                            </div>
+                            <span class="bg-yellow-900/40 text-yellow-400 px-2 py-1 rounded text-[10px] font-bold border border-yellow-700/50 flex items-center gap-1"><i data-lucide="loader" class="w-3 h-3 animate-spin"></i> ESPERA</span>
+                        </div>
+                        
+                        <div class="mb-5 flex-grow">
+                            <p class="text-xs text-gray-400 mb-2"><strong>Cliente:</strong> ${userName}</p>
+                            <div class="bg-black/40 p-3 rounded-lg border border-gray-700/50 shadow-inner">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] text-gray-500 uppercase font-bold w-12">ID:</span>
+                                    <span class="font-mono text-emerald-400 text-sm font-bold select-all cursor-pointer hover:bg-emerald-900/30 px-1 rounded" title="Doble clic para seleccionar">${item.playerInfo?.id || 'No provisto'}</span>
+                                </div>
+                                <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-700/50">
+                                    <span class="text-[10px] text-gray-500 uppercase font-bold w-12">Nick:</span>
+                                    <span class="font-mono text-blue-400 text-sm font-bold select-all cursor-pointer hover:bg-blue-900/30 px-1 rounded" title="Doble clic para seleccionar">${item.playerInfo?.name || 'No provisto'}</span>
+                                </div>
+                                <p class="text-xs text-white"><strong>Cantidad pagada:</strong> ${item.quantity} recarga(s)</p>
+                                <p class="text-xs text-yellow-400 font-bold mt-1">Monto pagado (con IVA): ${formatCS(itemTotalWithIva)}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 mt-auto">
+                            <button onclick="window.processPendingOrder('${tx.id}', '${cartKey}', 'complete')" class="flex-1 bg-green-600/90 hover:bg-green-500 text-white text-xs font-bold py-2.5 rounded-lg transition shadow flex items-center justify-center gap-1 active:scale-95"><i data-lucide="check" class="w-4 h-4"></i> Listo</button>
+                            <button onclick="window.processPendingOrder('${tx.id}', '${cartKey}', 'reject')" class="flex-1 bg-red-900/80 hover:bg-red-800 text-red-100 text-xs font-bold py-2.5 rounded-lg transition shadow border border-red-700 flex items-center justify-center gap-1 active:scale-95"><i data-lucide="x" class="w-4 h-4"></i> Rechazar</button>
+                        </div>
+                    </div>
+                    `;
+                }
+            });
+        });
+
+        if (!pendingItemsHtml) {
+            container.innerHTML = '<div class="col-span-full py-16 text-center text-gray-500 bg-gray-800/30 rounded-xl border border-dashed border-gray-600"><i data-lucide="check-circle-2" class="w-12 h-12 mx-auto mb-2 opacity-50"></i><p>Todo al día. No hay recargas pendientes.</p></div>';
+        } else {
+            container.innerHTML = pendingItemsHtml;
+        }
+        lucide.createIcons();
+    };
+
+    window.processPendingOrder = (txId, cartKey, action) => {
+        const tx = purchaseHistoryData.find(t => t.id === txId);
+        if (!tx) return;
+        const item = tx.items[cartKey];
+        if (!item) return;
+
+        if (action === 'complete') {
+            window.showConfirmModal("Confirmar Recarga", `¿Confirmas que ya has enviado la recarga a la cuenta <strong>${item.playerInfo?.id}</strong> (${item.playerInfo?.name})?`, async () => {
+                try {
+                    const txRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, txId);
+                    await updateDoc(txRef, {
+                        [`items.${cartKey}.itemStatus`]: 'completed',
+                        [`items.${cartKey}.completedAt`]: serverTimestamp()
+                    });
+                    window.showModal("Éxito", "El pedido ha sido marcado como completado y el cliente será notificado.");
+                } catch(e) { window.showModal("Error", e.message); }
+            });
+        } else if (action === 'reject') {
+            const ivaRate = adminConfig.ivaPercentage || 0;
+            const refundAmount = (item.price * item.quantity) * (1 + (ivaRate / 100));
+
+            const promptHtml = `
+                <p class="mb-4 text-gray-300">¿Rechazar este pedido y devolver automáticamente <strong>${formatCS(refundAmount)}</strong> (incluye IVA) al saldo del cliente?</p>
+                <div class="mt-2 text-left">
+                    <label class="text-xs text-red-400 font-bold uppercase mb-1 block">Motivo del rechazo (Visible para el cliente)</label>
+                    <textarea id="reject-reason-input" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500 focus:outline-none placeholder-gray-500" rows="3" placeholder="Ej: ID incorrecto, región de la cuenta no coincide, etc..."></textarea>
+                </div>
+            `;
+
+            window.showConfirmModal("Rechazar y Reembolsar", promptHtml, async () => {
+                const reasonInput = document.getElementById('reject-reason-input');
+                const reasonText = reasonInput ? reasonInput.value.trim() : '';
+
+                try {
+                    await runTransaction(db, async (t) => {
+                        const txRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, txId);
+                        const userRef = doc(db, COLLECTIONS.USER_PROFILE(tx.userId));
+                        
+                        const userDoc = await t.get(userRef);
+                        if (!userDoc.exists()) throw new Error("Usuario no encontrado");
+
+                        const currentFunds = userDoc.data().fundsCS || 0;
+
+                        // Se devuelven los fondos al cliente
+                        t.update(userRef, { fundsCS: currentFunds + refundAmount });
+
+                        // Marcar item como rechazado y añadir el motivo
+                        t.update(txRef, {
+                            [`items.${cartKey}.itemStatus`]: 'rejected',
+                            [`items.${cartKey}.rejectedAt`]: serverTimestamp(),
+                            [`items.${cartKey}.rejectReason`]: reasonText || 'No especificado por el administrador'
+                        });
+
+                        // Guardar historial del reembolso para los reportes
+                        const refundLogRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+                        t.set(refundLogRef, {
+                            type: 'REEMBOLSO_RECARGA',
+                            userId: tx.userId,
+                            amount: refundAmount,
+                            refTransactionId: txId,
+                            itemName: item.name,
+                            reason: reasonText,
+                            timestamp: serverTimestamp()
+                        });
+                    });
+                    window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado y el dinero se acreditó de vuelta al cliente.");
+                } catch(e) { window.showModal("Error", e.message); }
+            });
+        }
+    };
+
     window.renderPosProductList = () => {
         const container = document.getElementById('pos-product-list');
         if (!container || !productsCatalog.catalog) return;
@@ -3018,7 +3500,6 @@
         });
     };
 
-    // --- USER MANAGEMENT FUNCTIONS (RESTORED) ---
     window.createNewUser = async () => {
         const id = document.getElementById('new-user-id').value.trim();
         const name = document.getElementById('new-user-name').value.trim();
@@ -3126,7 +3607,6 @@
         });
     };
 
-    // ADMIN FUNCTIONS - BÚSQUEDA POS (VENTAS)
     window.findPosClient = () => {
         const term = document.getElementById('pos-user-id').value.trim().toLowerCase();
         const resultsBox = document.getElementById('pos-search-results');
@@ -3137,7 +3617,6 @@
             return;
         }
         
-        // Buscar todas las coincidencias y limitar a 10 resultados para no saturar la vista
         const matches = allUsersData.filter(u => 
             (u.email && u.email.toLowerCase().includes(term)) ||
             (u.id && u.id.toLowerCase().includes(term)) ||
@@ -3167,12 +3646,11 @@
             nameEl.textContent = posClient.name;
             nameEl.className = "text-center font-bold h-6 text-xl text-cyan-400";
             document.getElementById('pos-search-results').classList.add('hidden');
-            document.getElementById('pos-user-id').value = posClient.name; // Visual feedback
+            document.getElementById('pos-user-id').value = posClient.name; 
             window.updatePosSummary();
         }
     };
 
-    // NUEVO: Funciones de manejo de carrito POS mejoradas
     window.removeFromPosCart = (prodId) => {
         if(posCart[prodId]) delete posCart[prodId];
         window.updatePosSummary();
@@ -3187,7 +3665,6 @@
         window.updatePosSummary();
     };
 
-    // NUEVO: Función para input directo en POS
     window.setPosQuantity = (id, val) => {
         const qty = parseInt(val);
         if(isNaN(qty) || qty <= 0) {
@@ -3201,7 +3678,6 @@
     window.updatePosSummary = () => {
         const list = document.getElementById('pos-cart-summary');
         const cartItems = Object.values(posCart);
-        // NUEVO: UI con input directo
         list.innerHTML = cartItems.map(p => `
             <div class="flex justify-between items-center mb-1 bg-gray-700 p-1 rounded">
                 <span class="flex-grow truncate text-xs">${p.name}</span>
@@ -3243,7 +3719,6 @@
     window.finalizePosSale = async () => {
         if(!posClient || Object.keys(posCart).length === 0) return;
         
-        // Recalculate totals
         const cartItems = Object.values(posCart);
         const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
         const discountVal = parseFloat(document.getElementById('pos-discount').value) || 0;
@@ -3260,11 +3735,39 @@
         try {
             await runTransaction(db, async (transaction) => {
                 const userRef = doc(db, COLLECTIONS.USER_PROFILE(posClient.id));
+                const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
                 const userDoc = await transaction.get(userRef);
+                const catalogDoc = await transaction.get(catalogRef);
+                
                 const currentDebt = userDoc.data().debtCS || 0;
                 const currentNexus = userDoc.data().nexusPoints || 0;
-                const currentFunds = userDoc.data().fundsCS || 0;
                 
+                let catalogData = null;
+                if (catalogDoc.exists()) {
+                    catalogData = catalogDoc.data();
+                    let catalogUpdated = false;
+                    for (const itemId in posCart) {
+                        const cartItem = posCart[itemId];
+                        for (const mainCat of catalogData.catalog) {
+                            if(mainCat.subcategories) {
+                                for(const subCat of mainCat.subcategories) {
+                                    const product = subCat.products.find(p => p.id === itemId);
+                                    if (product) {
+                                        product.totalSold = (product.totalSold || 0) + cartItem.quantity;
+                                        if(!product.unlimited && product.availableCodes === undefined) {
+                                            product.inventory = Math.max(0, product.inventory - cartItem.quantity);
+                                        }
+                                        catalogUpdated = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (catalogUpdated) {
+                        transaction.set(catalogRef, catalogData);
+                    }
+                }
+
                 transaction.update(userRef, { 
                     debtCS: currentDebt + debt,
                     nexusPoints: currentNexus + nexusEarned
@@ -3279,7 +3782,6 @@
                 });
             });
 
-            // Invoice Gen
             document.getElementById('invoice-date').textContent = new Date().toLocaleString();
             document.getElementById('invoice-client-name').textContent = posClient.name;
             document.getElementById('invoice-client-id').textContent = posClient.id;
@@ -3307,7 +3809,6 @@
         } catch(e) { window.showModal("Error", e.message); }
     };
 
-    // --- PAST TRANSACTIONS (RESTORED) ---
     window.togglePastRegistrationView = (view) => {
         if(view === 'purchase') {
             document.getElementById('past-purchase-form').classList.remove('hidden');
@@ -3322,7 +3823,6 @@
         }
     };
 
-    // BÚSQUEDA COMPRAS PASADAS
     window.findPastPurchaseClient = () => {
         const term = document.getElementById('past-purchase-user-id').value.trim().toLowerCase();
         const resultsBox = document.getElementById('past-purchase-search-results');
@@ -3367,7 +3867,6 @@
         }
     };
 
-    // NUEVO: Funciones de manejo de carrito Pasado mejoradas
     window.removeFromPastPurchaseCart = (prodId) => {
         if(pastPurchaseCart[prodId]) delete pastPurchaseCart[prodId];
         window.updatePastPurchaseSummary();
@@ -3382,7 +3881,6 @@
         window.updatePastPurchaseSummary();
     };
 
-    // NUEVO: Función para input directo en Past Purchase
     window.setPastPurchaseQuantity = (id, val) => {
         const qty = parseInt(val);
         if(isNaN(qty) || qty <= 0) {
@@ -3396,7 +3894,6 @@
     window.updatePastPurchaseSummary = () => {
          const list = document.getElementById('past-purchase-cart-summary');
         const cartItems = Object.values(pastPurchaseCart);
-        // NUEVO: UI con input directo
         list.innerHTML = cartItems.map(p => `
             <div class="flex justify-between items-center mb-1 bg-gray-700 p-1 rounded">
                 <span class="flex-grow truncate text-xs">${p.name}</span>
@@ -3459,10 +3956,35 @@
         try {
             await runTransaction(db, async (transaction) => {
                  const userRef = doc(db, COLLECTIONS.USER_PROFILE(pastPurchaseClient.id));
+                 const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
                  const userDoc = await transaction.get(userRef);
+                 const catalogDoc = await transaction.get(catalogRef);
                  const currentDebt = userDoc.data().debtCS || 0;
                  const currentNexus = userDoc.data().nexusPoints || 0;
                  
+                 let catalogData = null;
+                 if (catalogDoc.exists()) {
+                     catalogData = catalogDoc.data();
+                     let catalogUpdated = false;
+                     for (const itemId in pastPurchaseCart) {
+                         const cartItem = pastPurchaseCart[itemId];
+                         for (const mainCat of catalogData.catalog) {
+                             if(mainCat.subcategories) {
+                                 for(const subCat of mainCat.subcategories) {
+                                     const product = subCat.products.find(p => p.id === itemId);
+                                     if (product) {
+                                         product.totalSold = (product.totalSold || 0) + cartItem.quantity;
+                                         catalogUpdated = true;
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                     if (catalogUpdated) {
+                         transaction.set(catalogRef, catalogData);
+                     }
+                 }
+
                  transaction.update(userRef, { 
                     debtCS: currentDebt + debt,
                     nexusPoints: currentNexus + nexusEarned
@@ -3477,7 +3999,7 @@
                 });
             });
 
-             // NUEVO: Generar Factura para Pasada
+             // Generar Factura para Pasada
             document.getElementById('invoice-date').textContent = customDate.toLocaleString();
             document.getElementById('invoice-client-name').textContent = pastPurchaseClient.name;
             document.getElementById('invoice-client-id').textContent = pastPurchaseClient.id;
@@ -3558,20 +4080,42 @@
          try {
              await runTransaction(db, async (transaction) => {
                  const userRef = doc(db, COLLECTIONS.USER_PROFILE(pastRedemptionClient.id));
+                 const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
                  const userDoc = await transaction.get(userRef);
+                 const catalogDoc = await transaction.get(catalogRef);
                  const currentNexus = userDoc.data().nexusPoints || 0;
+                 
+                 if (catalogDoc.exists()) {
+                     const catalogData = catalogDoc.data();
+                     let catalogUpdated = false;
+                     for (const mainCat of catalogData.nexusRedemptions) {
+                         if(mainCat.subcategories) {
+                             for(const subCat of mainCat.subcategories) {
+                                 const catItem = subCat.items.find(i => i.id === itemId);
+                                 if (catItem) {
+                                     catItem.totalRedeemed = (catItem.totalRedeemed || 0) + 1;
+                                     catalogUpdated = true;
+                                 }
+                             }
+                         }
+                     }
+                     if (catalogUpdated) {
+                         transaction.set(catalogRef, catalogData);
+                     }
+                 }
+
                  transaction.update(userRef, { nexusPoints: currentNexus - item.nexusCost });
                  transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
                     type: 'CANJE', userId: pastRedemptionClient.id, costNexus: item.nexusCost,
                     item: item.name, timestamp: ts,
-                    costCS: item.cost || 0 // CORRECCIÓN: Guardar el costo monetario real para reportes
+                    costCS: item.cost || 0 // Guardar el costo monetario real para reportes
                 });
              });
              window.showModal("Éxito", "Canje pasado registrado.");
          } catch(e) { window.showModal("Error", e.message); }
     };
 
-    // --- REPORT FUNCTIONS (CSV FIX) ---
+    // --- REPORT FUNCTIONS ---
     window.downloadReportCSV = () => {
         if (!filteredReportData || filteredReportData.length === 0) {
             window.showModal("Error", "No hay datos para exportar. Genera un reporte primero.");
@@ -3583,7 +4127,6 @@
             const date = t.timestamp ? new Date(t.timestamp.seconds * 1000).toLocaleString('es-NI') : 'N/A';
             let profit = 0;
              if(t.items) {
-                 // Try calculate profit if item costs exist, else fallback
                  Object.values(t.items).forEach(i => {
                      const cost = i.cost || 0;
                      profit += (i.price - cost) * i.quantity;
@@ -3591,7 +4134,6 @@
             } else if (t.subtotalCS) {
                 profit = t.subtotalCS * 0.3; // Fallback
             } else if (t.type === 'CANJE') {
-                // CORRECCIÓN: Reflejar el costo del canje como ganancia negativa en el CSV
                 profit = -(t.costCS || 0);
             }
 
@@ -3642,12 +4184,11 @@
             return d >= startDate && d <= endDate;
         });
 
-        // Calculate Stats
         let totalSales = 0, totalProfit = 0, totalRedemptionCost = 0, totalDebt = 0, totalDebtPaid = 0, subtotal = 0, iva = 0;
         let purchasesCount = 0;
         let validTransactionsCount = 0;
         const spenderMap = {}; const debtorMap = {};
-        const productSalesMap = {}; // { prodId: { name: '...', quantity: 0, revenue: 0 } }
+        const productSalesMap = {}; 
 
         filteredReportData.forEach(t => {
             if(t.status === 'anulada') return;
@@ -3659,7 +4200,6 @@
                 subtotal += t.subtotalCS || 0;
                 iva += t.ivaAmountCS || 0;
                 
-                // Profit & Product Stats Logic
                 if(t.items) {
                      Object.values(t.items).forEach(i => {
                          const cost = i.cost || 0;
@@ -3667,7 +4207,6 @@
                          const price = i.price || 0;
                          totalProfit += (price - cost) * quantity;
 
-                         // Track Product Stats
                          if(!productSalesMap[i.id]) {
                              productSalesMap[i.id] = { name: i.name, quantity: 0, revenue: 0 };
                          }
@@ -3675,7 +4214,7 @@
                          productSalesMap[i.id].revenue += (price * quantity);
                      });
                 } else {
-                    totalProfit += (t.subtotalCS || 0) * 0.3; // Fallback estimate
+                    totalProfit += (t.subtotalCS || 0) * 0.3; 
                 }
                 
                 if(t.isDebt) {
@@ -3693,10 +4232,8 @@
             }
         });
 
-        // AJUSTE DE GANANCIA: Restar costo de canjes
         totalProfit = totalProfit - totalRedemptionCost;
         
-        // Render Summary Cards
         document.getElementById('report-title').textContent = `Reporte: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
         document.getElementById('report-total-sales-subtotal').textContent = formatCS(subtotal);
         document.getElementById('report-total-iva').textContent = formatCS(iva);
@@ -3709,14 +4246,12 @@
         
         document.getElementById('report-summary-container').classList.remove('hidden');
 
-        // Top Spenders
         const topSpenders = Object.entries(spenderMap).sort((a,b)=>b[1]-a[1]).slice(0, 5);
         document.getElementById('report-top-spenders').innerHTML = topSpenders.map(([uid, amt]) => {
             const u = allUsersData.find(u=>u.id===uid);
             return `<div class="flex justify-between items-center bg-gray-700/30 p-1 rounded px-2"><span>${u?u.name:uid}</span><span class="font-bold text-green-300">${formatCS(amt)}</span></div>`;
         }).join('');
 
-        // Top Debtors
         const topDebtors = Object.entries(debtorMap).sort((a,b)=>b[1]-a[1]).slice(0, 5);
         document.getElementById('report-top-debtors').innerHTML = topDebtors.length > 0 
             ? topDebtors.map(([uid, amt]) => {
@@ -3725,10 +4260,8 @@
             }).join('')
             : '<p class="text-gray-500 italic text-center">Sin deuda generada.</p>';
 
-        // PRODUCT ANALYTICS
         const sortedProducts = Object.values(productSalesMap).sort((a,b) => b.quantity - a.quantity);
         
-        // Top 5 Sellers
         const topProducts = sortedProducts.slice(0, 5);
         const topProductsHTML = topProducts.length > 0 ? topProducts.map((p, index) => `
             <div class="flex justify-between items-center bg-gray-700/30 p-2 rounded">
@@ -3744,10 +4277,6 @@
         `).join('') : '<p class="text-gray-500 italic text-center">No hubo ventas.</p>';
         document.getElementById('report-top-products').innerHTML = topProductsHTML;
 
-        // Bottom 5 Sellers (tomamos el final de la lista invertido, o los que tienen menos ventas > 0)
-        // Nota: Solo muestra productos que SE VENDIERON al menos una vez en el periodo.
-        // Para mostrar productos con 0 ventas sería necesario cruzar con el catálogo completo, 
-        // pero para reportes de "movimiento" usualmente se analiza lo que se movió.
         const bottomProducts = [...sortedProducts].reverse().slice(0, 5);
         const bottomProductsHTML = bottomProducts.length > 0 ? bottomProducts.map(p => `
             <div class="flex justify-between items-center bg-gray-700/30 p-2 rounded">
@@ -3799,9 +4328,6 @@
         lucide.createIcons();
     };
 
-    // --- CONFIG & RAFFLE ADMIN FUNCTIONS (RESTORED) ---
-    // ... (Se mantienen igual las funciones de config, etc) ...
-
     window.updateNexusRate = async () => {
         const valInput = document.getElementById('new-nexus-rate');
         const val = parseFloat(valInput.value);
@@ -3810,7 +4336,6 @@
             return;
         }
         try {
-            // Actualización Inmediata en la Interfaz
             document.getElementById('admin-nexus-rate').textContent = formatCS(val);
             adminConfig.nexusValueInCS = val;
             
@@ -3844,7 +4369,6 @@
             return;
         }
         try {
-            // Actualización Inmediata en la Interfaz
             document.getElementById('admin-iva-rate').textContent = `${val}%`;
             adminConfig.ivaPercentage = val;
             
@@ -3860,18 +4384,14 @@
         const name = document.getElementById('new-app-name').value;
         const cur = document.getElementById('new-currency-symbol').value;
         const logo = document.getElementById('new-logo-url').value;
-        // ELIMINADO: const bg = document.getElementById('new-background-color').value;
         const enabled = document.getElementById('nexus-enabled-toggle').checked;
         const addr = document.getElementById('new-business-address').value;
         const cont = document.getElementById('new-business-contact').value;
         const ruc = document.getElementById('new-business-ruc').value;
         
-        // Update DOM immediately for preview
         if(name) document.getElementById('app-title-display').textContent = name;
-        // ELIMINADO cambio dinámico de bg ya que ahora es fijo por CSS
 
         if(manualSave) {
-            // Se usa setDoc con merge: true para evitar fallos si el documento no existe o evitar sobreescribir otros campos vitales
             await setDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), {
                 appName: name, currencySymbol: cur, logoUrl: logo, nexusEnabled: enabled,
                 businessAddress: addr, businessContact: cont, businessRuc: ruc
@@ -3881,9 +4401,15 @@
     };
 
     window.updateAdminPassword = async () => {
+        const pCurrent = document.getElementById('current-admin-pass').value;
         const p1 = document.getElementById('new-admin-pass').value;
         const p2 = document.getElementById('confirm-admin-pass').value;
         
+        if (!pCurrent) {
+            window.showModal("Error", "Debes ingresar tu contraseña actual para verificar tu identidad.");
+            return;
+        }
+
         if (!p1 || p1.length < 6) {
             window.showModal("Error", "La nueva contraseña debe tener al menos 6 caracteres.");
             return;
@@ -3897,30 +4423,35 @@
             }
 
             try {
-                // Actualiza la contraseña real de la cuenta de Firebase del administrador
+                // Re-autenticar internamente al usuario usando su contraseña actual para refrescar el token
+                const credential = EmailAuthProvider.credential(user.email, pCurrent);
+                await reauthenticateWithCredential(user, credential);
+
+                // Una vez re-autenticado con éxito, actualizamos la contraseña
                 await updatePassword(user, p1);
                 
-                // Mantenemos la actualización en la BD por compatibilidad con el backdoor de emergencia
                 await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { adminPass: p1 });
                 
                 window.showModal("Éxito", "La contraseña de tu cuenta ha sido actualizada correctamente.");
+                document.getElementById('current-admin-pass').value = '';
                 document.getElementById('new-admin-pass').value = '';
                 document.getElementById('confirm-admin-pass').value = '';
             } catch (error) {
                 console.error("Error al actualizar contraseña:", error);
-                // Firebase exige que el usuario haya iniciado sesión recientemente para cambiar la clave
-                if (error.code === 'auth/requires-recent-login') {
+                
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                    window.showModal("Error", "La contraseña actual ingresada es incorrecta.");
+                } else if (error.code === 'auth/requires-recent-login') {
                     window.showModal("Aviso de Seguridad", "Por tu seguridad, Firebase requiere que cierres sesión y vuelvas a ingresar para poder cambiar tu contraseña.");
                 } else {
                     window.showModal("Error", "No se pudo cambiar la contraseña: " + error.message);
                 }
             }
         } else {
-            window.showModal("Error", "Las contraseñas no coinciden");
+            window.showModal("Error", "Las contraseñas nuevas no coinciden.");
         }
     };
     
-    // --- RAFFLES ADMIN FUNCTIONS (ACTUALIZADO) ---
     window.addNewRaffle = () => {
         document.getElementById('raffle-edit-id').value = '';
         document.getElementById('raffle-name').value = '';
@@ -3933,7 +4464,7 @@
         document.getElementById('raffle-modal-title').textContent = "Crear Nuevo Sorteo";
         const modal = document.getElementById('raffle-edit-modal');
         modal.classList.remove('hidden');
-        modal.classList.add('flex'); // Centrado corregido
+        modal.classList.add('flex'); 
     };
 
     window.editRaffle = (id) => {
@@ -3954,7 +4485,7 @@
         document.getElementById('raffle-modal-title').textContent = "Editar Sorteo";
         const modal = document.getElementById('raffle-edit-modal');
         modal.classList.remove('hidden');
-        modal.classList.add('flex'); // Centrado corregido
+        modal.classList.add('flex'); 
     };
 
     window.toggleRafflePrizeFields = () => {
@@ -3988,7 +4519,7 @@
         }
         const modal = document.getElementById('raffle-edit-modal');
         modal.classList.add('hidden');
-        modal.classList.remove('flex'); // Limpieza de clase
+        modal.classList.remove('flex'); 
     };
 
     window.renderAdminRaffles = (raffles, participants) => {
@@ -4015,7 +4546,6 @@
         lucide.createIcons();
     };
 
-    // --- NUEVO: GESTIÓN DE PARTICIPANTES ---
     window.manageRaffleParticipants = async (raffleId) => {
         currentManagingRaffleId = raffleId;
         const raffle = allRafflesData.find(r => r.id === raffleId);
@@ -4026,7 +4556,6 @@
         document.getElementById('raffle-participants-modal').classList.remove('hidden');
         document.getElementById('raffle-participants-modal').classList.add('flex');
         
-        // Cargar entradas
         window.renderRaffleParticipantsList(raffleId);
     };
 
@@ -4045,7 +4574,6 @@
 
         btnRefundAll.disabled = false;
         btnRefundAll.classList.remove('opacity-50', 'cursor-not-allowed');
-        // Asignar función al botón de borrar todos
         btnRefundAll.onclick = () => window.refundAllParticipants(raffleId);
 
         let html = '';
@@ -4090,20 +4618,16 @@
 
                     if(!userDoc.exists()) throw "Usuario no existe";
                     
-                    // Devolver dinero
                     const field = costType === 'nexus' ? 'nexusPoints' : 'fundsCS';
                     t.update(userRef, { [field]: (userDoc.data()[field] || 0) + amount });
 
-                    // Eliminar entrada
                     t.delete(entryRef);
 
-                    // Si es BOTE (POT), restar del bote
                     if(raffleDoc.exists() && raffleDoc.data().prizeType === 'pot') {
                         const currentPot = raffleDoc.data().pot || 0;
                         t.update(raffleRef, { pot: Math.max(0, currentPot - amount) });
                     }
 
-                    // Historial
                     const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
                     t.set(historyRef, {
                         type: 'SORTEO_REEMBOLSO', userId, amount, raffleId, 
@@ -4111,7 +4635,6 @@
                     });
                 });
                 
-                // Recargar lista si el modal sigue abierto
                 if(currentManagingRaffleId === raffleId) {
                     window.renderRaffleParticipantsList(raffleId);
                 }
@@ -4130,7 +4653,6 @@
              
              if(snaps.empty) return;
 
-             // Procesar uno por uno para asegurar consistencia (en una app real masiva se usarían Cloud Functions)
              let processed = 0;
              const total = snaps.size;
              
@@ -4159,7 +4681,6 @@
                  } catch(e) { console.error("Error refunding user " + entry.userId, e); }
              }
 
-             // Resetear el Bote si aplica
              if(raffle.prizeType === 'pot') {
                  await updateDoc(doc(db, COLLECTIONS.RAFFLES_COLLECTION, raffleId), { pot: 0 });
              }
@@ -4175,7 +4696,6 @@
         });
     };
 
-    // --- LÓGICA DE SORTEO MEJORADA (Pick Winner & Clear) ---
     window.pickWinner = async (raffleId) => {
         const q = query(collection(db, COLLECTIONS.RAFFLE_ENTRIES), where("type", "==", raffleId));
         const snaps = await getDocs(q);
@@ -4186,7 +4706,6 @@
 
         window.showConfirmModal("🎲 Realizar Sorteo Automático", `¿Estás seguro de que quieres realizar el sorteo ahora?\n\nEl sistema elegirá un ganador al azar a ciegas, le entregará el premio automáticamente y limpiará la lista de participantes. ¡Esta acción es irreversible!`, async () => {
              
-             // 1. Elegir ganador SOLO después de confirmar
              const entries = snaps.docs.map(d => ({ id: d.id, ...d.data() })); 
              const winnerEntry = entries[Math.floor(Math.random() * entries.length)];
              const winnerProfile = allUsersData.find(u => u.id === winnerEntry.userId);
@@ -4201,23 +4720,19 @@
                  : raffle.prizeDescription;
 
              try {
-                 // 2. Entregar Premio y Guardar Resultado
                  await runTransaction(db, async (t) => {
                      const uRef = doc(db, COLLECTIONS.USER_PROFILE(winnerProfile.id));
                      const rRef = doc(db, COLLECTIONS.RAFFLES_COLLECTION, raffleId);
                      const uDoc = await t.get(uRef);
                      
-                     // Entregar premio si es Bote (si es item, solo historial)
                      if (raffle.prizeType === 'pot') {
                          const prizeField = raffle.costType === 'nexus' ? 'nexusPoints' : 'fundsCS';
                          const currentVal = uDoc.data()[prizeField] || 0;
                          t.update(uRef, { [prizeField]: currentVal + raffle.pot });
                          
-                         // Resetear Bote
                          t.update(rRef, { pot: 0 });
                      }
 
-                     // Historial Ganador
                      t.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
                          type: 'SORTEO_GANADO', userId: winnerProfile.id, amountWon: raffle.pot || 0, 
                          raffleName: raffle.name, isNexus: raffle.costType === 'nexus', 
@@ -4225,7 +4740,6 @@
                          timestamp: serverTimestamp()
                      });
 
-                     // GUARDAR RESULTADO DE LA RONDA EN EL DOCUMENTO DEL SORTEO
                      t.update(rRef, { 
                          lastResult: {
                              winnerName: winnerProfile.name,
@@ -4236,14 +4750,12 @@
                      });
                  });
 
-                 // 3. Eliminar Participantes (Batch)
                  const batch = writeBatch(db);
                  entries.forEach(entry => {
                      batch.delete(doc(db, COLLECTIONS.RAFFLE_ENTRIES, entry.id));
                  });
                  await batch.commit();
 
-                 // 4. Mostrar al ganador FINAL
                  window.showModal("🎉 ¡Sorteo Completado!", `El sistema ha elegido de forma aleatoria a:\n\n🏆 **${winnerProfile.name}**\n\nEl premio (${prizeDesc}) ha sido entregado automáticamente y la lista de participantes se ha limpiado.`);
              } catch (e) {
                  window.showModal("Error", "Hubo un problema al procesar el sorteo: " + e.message);
@@ -4256,7 +4768,6 @@
         if (!container) return;
         const userHistory = purchaseHistoryData.filter(item => item.userId === userId);
         
-        // Sort by date descending
         userHistory.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
         if (userHistory.length === 0) {
@@ -4270,7 +4781,6 @@
             else if (item.type === 'COMPRA') { detail = `Compra de ${formatCS(item.totalCS)}`; color = 'text-red-300'; }
             else if (item.type === 'CANJE') { detail = `Canjeó "${item.item}"`; color = 'text-yellow-300'; }
             else if (item.type === 'SORTEO_GANADO') { 
-                // FIX: Mostrar detalle exacto del premio
                 const wonWhat = item.amountWon > 0 ? (item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon)) : (item.prizeDesc || 'Premio');
                 detail = `Ganó: ${wonWhat}`; 
                 color = 'text-cyan-300 font-bold'; 
@@ -4297,11 +4807,10 @@
             let contentHTML = '';
             let borderColor = 'border-gray-700';
             let allCodesInTransaction = [];
-            let debtHtml = ''; // NUEVO: Bloque HTML para deuda pendiente
+            let debtHtml = ''; 
 
-            // Verificar si hay deuda activa en esta transacción
             if (item.type === 'COMPRA' && item.isDebt && item.remainingDebtCS > 0 && item.status !== 'anulada') {
-                borderColor = 'border-red-900/80'; // Borde rojo llamativo
+                borderColor = 'border-red-900/80'; 
                 debtHtml = `
                 <div class="mt-2 bg-red-900/20 border border-red-500/30 rounded-lg p-2 flex justify-between items-center shadow-inner">
                     <span class="text-xs text-red-400 font-bold flex items-center gap-1 uppercase tracking-wider"><i data-lucide="alert-circle" class="w-4 h-4"></i> Deuda Pendiente</span>
@@ -4317,9 +4826,8 @@
                     contentHTML = Object.values(item.items).map(p => {
                         let codeHtml = '';
                         if (p.assignedCode) {
-                            // NUEVO: Separar códigos individualmente
                             const codeList = p.assignedCode.split(', ');
-                            allCodesInTransaction.push(p.assignedCode.replace(/, /g, '\n')); // Preparar para copiar todo
+                            allCodesInTransaction.push(p.assignedCode.replace(/, /g, '\n')); 
                             
                             const codesRendered = codeList.map((code, idx) => {
                                 const safeCode = code.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, "\\n");
@@ -4357,15 +4865,46 @@
                             </div>`;
                         }
 
+                        let pendingFulfillmentHtml = '';
+                        if (p.requiresPlayerInfo) {
+                            if (p.itemStatus === 'pending') {
+                                pendingFulfillmentHtml = `
+                                <div class="mt-2 p-3 bg-yellow-900/20 rounded-lg border border-yellow-500/30">
+                                    <span class="text-xs text-yellow-400 font-bold flex items-center gap-2"><i data-lucide="loader" class="w-4 h-4 animate-spin"></i> En Proceso por Administrador</span>
+                                    <p class="text-[10px] text-gray-400 mt-1">Tu recarga está siendo procesada para el ID: ${p.playerInfo?.id} (${p.playerInfo?.name}).</p>
+                                </div>`;
+                            } else if (p.itemStatus === 'completed') {
+                                const compDate = p.completedAt ? new Date(p.completedAt.seconds * 1000).toLocaleString('es-NI') : 'Fecha desconocida';
+                                pendingFulfillmentHtml = `
+                                <div class="mt-2 p-3 bg-green-900/10 rounded-lg border border-green-500/30">
+                                    <span class="text-xs text-green-400 font-bold flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i> Recarga Completada</span>
+                                    <p class="text-[10px] text-gray-400 mt-1">Enviada a ID: <span class="text-gray-300 font-mono">${p.playerInfo?.id}</span></p>
+                                    <p class="text-[10px] text-gray-500 mt-1 border-t border-green-900/30 pt-1">Entregada por el Admin el: ${compDate}</p>
+                                </div>`;
+                            } else if (p.itemStatus === 'rejected') {
+                                const rejDate = p.rejectedAt ? new Date(p.rejectedAt.seconds * 1000).toLocaleString('es-NI') : 'Fecha desconocida';
+                                const rejReason = p.rejectReason || 'No especificado por el administrador';
+                                pendingFulfillmentHtml = `
+                                <div class="mt-2 p-3 bg-red-900/10 rounded-lg border border-red-500/30">
+                                    <span class="text-xs text-red-400 font-bold flex items-center gap-2"><i data-lucide="x-circle" class="w-4 h-4"></i> Rechazado y Reembolsado</span>
+                                    <div class="mt-1 bg-black/40 p-2 rounded-lg border border-red-900/50">
+                                        <p class="text-[10px] text-red-300 font-bold">Motivo del rechazo:</p>
+                                        <p class="text-[10px] text-red-200 mt-0.5">${rejReason}</p>
+                                    </div>
+                                    <p class="text-[10px] text-gray-500 mt-1.5 border-t border-red-900/30 pt-1">Acción realizada por el Admin el: ${rejDate}</p>
+                                </div>`;
+                            }
+                        }
+
                         let pendingHtml = '';
                         if (p.pendingCodes > 0) {
                             pendingHtml = `
-                            <div class="mt-2 p-3 bg-yellow-900/40 rounded-lg border border-yellow-500/30">
-                                <span class="text-xs text-yellow-300 font-bold flex items-center gap-2">
-                                    <i data-lucide="clock" class="w-4 h-4"></i> PRE-ORDEN EN ESPERA: ${p.pendingCodes} un.
-                                </span>
-                                <p class="text-[10px] text-gray-400 mt-1">Recibirás tus códigos automáticamente aquí cuando se renueve el stock.</p>
-                            </div>`;
+                                <div class="mt-2 p-3 bg-yellow-900/40 rounded-lg border border-yellow-500/30">
+                                    <span class="text-xs text-yellow-300 font-bold flex items-center gap-2">
+                                        <i data-lucide="clock" class="w-4 h-4"></i> PRE-ORDEN EN ESPERA: ${p.pendingCodes} un.
+                                    </span>
+                                    <p class="text-[10px] text-gray-400 mt-1">Recibirás tus códigos automáticamente aquí cuando se renueve el stock.</p>
+                                </div>`;
                         }
 
                         return `
@@ -4377,6 +4916,7 @@
                             <div class="text-xs text-gray-500 mb-1">Cantidad: ${p.quantity}</div>
                             ${codeHtml}
                             ${pendingHtml}
+                            ${pendingFulfillmentHtml}
                         </div>`;
                     }).join('');
                 } else {
@@ -4387,24 +4927,24 @@
                 
                 let codeHtml = '';
                 if (item.assignedCode) {
-                    const codeList = item.assignedCode.split(', ');
-                    allCodesInTransaction.push(item.assignedCode.replace(/, /g, '\n'));
-                    
-                    const codesRendered = codeList.map((code, idx) => {
-                        const safeCode = code.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, "\\n");
-                        return `
-                        <div class="flex gap-2 items-center mb-2 last:mb-0 group/code">
-                             <div class="relative font-mono text-yellow-300 text-base md:text-lg font-bold select-all break-all text-center bg-black/40 p-3 rounded-lg border border-yellow-500/20 tracking-widest flex-grow shadow-inner">
-                                ${code}
-                                <div class="absolute top-1 right-1 flex items-center justify-center w-4 h-4 bg-yellow-900/30 rounded-full text-[8px] text-yellow-500/50 font-mono">
-                                    ${idx + 1}
-                                </div>
-                             </div>
-                             <button onclick="window.copyText('${safeCode}')" class="p-3 bg-slate-700 hover:bg-slate-600 hover:text-white text-slate-300 rounded-lg transition shadow-lg border border-slate-600 active:scale-95 flex-shrink-0" title="Copiar solo este código">
-                                <i data-lucide="copy" class="w-5 h-5"></i>
-                             </button>
-                        </div>
-                    `}).join('');
+                     const codeList = item.assignedCode.split(', ');
+                     allCodesInTransaction.push(item.assignedCode.replace(/, /g, '\n'));
+                     
+                     const codesRendered = codeList.map((code, idx) => {
+                         const safeCode = code.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, "\\n");
+                         return `
+                         <div class="flex gap-2 items-center mb-2 last:mb-0 group/code">
+                              <div class="relative font-mono text-yellow-300 text-base md:text-lg font-bold select-all break-all text-center bg-black/40 p-3 rounded-lg border border-yellow-500/20 tracking-widest flex-grow shadow-inner">
+                                 ${code}
+                                 <div class="absolute top-1 right-1 flex items-center justify-center w-4 h-4 bg-yellow-900/30 rounded-full text-[8px] text-yellow-500/50 font-mono">
+                                     ${idx + 1}
+                                 </div>
+                              </div>
+                              <button onclick="window.copyText('${safeCode}')" class="p-3 bg-slate-700 hover:bg-slate-600 hover:text-white text-slate-300 rounded-lg transition shadow-lg border border-slate-600 active:scale-95 flex-shrink-0" title="Copiar solo este código">
+                                 <i data-lucide="copy" class="w-5 h-5"></i>
+                              </button>
+                         </div>
+                     `}).join('');
 
                  codeHtml = `
                  <div class="mt-4 p-4 bg-slate-900/60 rounded-xl border border-yellow-500/20 shadow-inner">
@@ -4449,14 +4989,12 @@
                 const prize = item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon);
                 contentHTML = `<p class="text-green-400 font-bold">🏆 Ganaste: ${item.prizeDesc || prize}</p><p class="text-xs text-gray-400">En sorteo: ${item.raffleName}</p>`;
             } else {
-                // Fallback for other types (Debts, refunds, etc)
                 let desc = item.type;
                 if (item.type === 'SORTEO_ENTRADA') desc = `Participación Sorteo: ${item.raffleType}`;
                 if (item.type === 'DEBT_PAYMENT') desc = `Abono a Deuda: ${formatCS(item.amount)}`;
                 contentHTML = `<p class="text-gray-300 text-sm">${desc}</p>`;
             }
 
-            // Nueva área inferior combinada (Copiar Códigos + Ver Factura)
             let viewReceiptBtn = '';
             if (allCodesInTransaction.length > 0) {
                 viewReceiptBtn = `
@@ -4493,7 +5031,6 @@
         const clientName = client ? client.name : `${item.userId} (Eliminado)`;
         const date = item.timestamp?.seconds ? new Date(item.timestamp.seconds * 1000).toLocaleString('es-NI') : 'N/A';
 
-        // DOM Elements
         document.getElementById('receipt-app-name').textContent = adminConfig.appName || "Astral Nexus";
         document.getElementById('receipt-date').textContent = date;
         document.getElementById('receipt-id').textContent = `Ref: ${item.id.slice(0,8)}`;
@@ -4508,17 +5045,14 @@
         const isVoid = item.status === 'anulada';
         document.getElementById('receipt-void-status').classList.toggle('hidden', !isVoid);
         
-        // Bloqueo explícito de acciones administrativas si se abre desde la tienda (cliente)
         const isAdmin = currentUserProfile && currentUserProfile.isAdmin && context === 'admin';
 
-        // GESTIÓN DE VISIBILIDAD DE SECCIÓN DE DEUDA Y CONTROLES (ESTRICTO)
         const debtSection = document.getElementById('receipt-debt-payment-section');
         const payBtn = document.getElementById('btn-pay-specific-debt');
         const voidBtn = document.getElementById('btn-void-transaction');
         const deleteBtn = document.getElementById('transaction-modal-delete-btn');
         
         if (isAdmin) {
-            // Es Administrador y está viéndolo desde el panel
             deleteBtn.style.display = 'block';
             deleteBtn.onclick = () => window.deleteTransactionHistory(item.id);
 
@@ -4539,7 +5073,6 @@
                 debtSection.classList.add('hidden');
             }
         } else {
-            // Es un Cliente en la Tienda: MODO SOLO LECTURA
             deleteBtn.style.display = 'none';
             voidBtn.classList.add('hidden');
             debtSection.classList.add('hidden');
@@ -4548,10 +5081,8 @@
         if (item.type === 'COMPRA') {
             if(item.items) {
                  Object.values(item.items).forEach(p => {
-                     // Lógica de visualización del código en el recibo
                      let codeHtml = '';
                      if (p.assignedCode) {
-                         // Separa códigos para el recibo
                          const codeList = p.assignedCode.split(', ');
                          
                          const codesListHtml = codeList.map(c => {
@@ -4647,7 +5178,6 @@
                 </div>`;
             financialHTML = `<div class="border-t border-black pt-2 mt-2 font-bold text-center">TOTAL PUNTOS: ${formatNexus(item.costNexus)}</div>`;
         } else if (item.type === 'SORTEO_GANADO') {
-            // MOSTRAR DETALLE DEL PREMIO (DINERO O ITEM)
             let wonText = "";
             if (item.amountWon > 0) {
                wonText = item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon);
@@ -4710,26 +5240,23 @@
 
                     if (txDebt < amount) throw "La deuda de la factura ya cambió. Intenta de nuevo.";
 
-                    // Actualizar Usuario (Deuda Global)
                     t.update(userRef, { debtCS: Math.max(0, userDebt - amount) });
 
-                    // Actualizar Factura (Deuda Específica)
                     t.update(transactionRef, { remainingDebtCS: txDebt - amount });
 
-                    // Registrar el Pago en Historial
                     const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
                     t.set(historyRef, {
                         type: 'DEBT_PAYMENT',
                         userId: userId,
                         amount: amount,
-                        refTransactionId: transactionId, // Vinculamos al ID de la compra original
+                        refTransactionId: transactionId, 
                         timestamp: serverTimestamp(),
                         note: `Abono a factura ${transactionId.slice(0,8)}`
                     });
                 });
 
                 window.showModal("Pago Exitoso", "La deuda ha sido actualizada correctamente.");
-                document.getElementById('transaction-detail-modal').style.display = 'none'; // Cerrar para refrescar datos
+                document.getElementById('transaction-detail-modal').style.display = 'none'; 
             } catch (e) {
                 console.error(e);
                 window.showModal("Error", "No se pudo procesar el pago: " + e);
@@ -4754,73 +5281,6 @@
         modal.classList.remove('flex');
     };
 
-    window.processClientDebtPayment = async () => {
-        const amountInput = document.getElementById('client-debt-payment-amount');
-        const amount = parseFloat(amountInput.value);
-
-        if (isNaN(amount) || amount <= 0) {
-            return window.showModal("Monto Inválido", "Ingresa una cantidad mayor a 0.");
-        }
-        if (amount > currentUserFunds.cs) {
-            return window.showModal("Fondos Insuficientes", "El monto ingresado supera tu saldo actual.");
-        }
-        if (amount > currentUserFunds.debt) {
-            return window.showModal("Monto Excesivo", "No puedes pagar más de tu deuda total.");
-        }
-
-        window.hideClientPayDebtModal();
-        
-        try {
-            const q = query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", currentUserId), where("isDebt", "==", true));
-            const snaps = await getDocs(q);
-            let remainingPayment = amount;
-
-            await runTransaction(db, async (t) => {
-                const userRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
-                const userDoc = await t.get(userRef);
-                if(!userDoc.exists()) throw "Usuario no encontrado";
-
-                const currentFunds = userDoc.data().fundsCS || 0;
-                const currentDebt = userDoc.data().debtCS || 0;
-                
-                if (amount > currentFunds || amount > currentDebt) throw "Los saldos han cambiado. Actualiza e intenta de nuevo.";
-
-                const debtTx = snaps.docs.map(d => ({id: d.id, ...d.data()}))
-                    .filter(tx => tx.remainingDebtCS > 0 && tx.status !== 'anulada')
-                    .sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-
-                for (const tx of debtTx) {
-                    if (remainingPayment <= 0) break;
-                    const payForThis = Math.min(tx.remainingDebtCS, remainingPayment);
-                    t.update(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, tx.id), {
-                        remainingDebtCS: tx.remainingDebtCS - payForThis
-                    });
-                    remainingPayment -= payForThis;
-                }
-
-                t.update(userRef, {
-                    fundsCS: currentFunds - amount,
-                    debtCS: currentDebt - amount
-                });
-
-                const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
-                t.set(historyRef, {
-                    type: 'DEBT_PAYMENT',
-                    userId: currentUserId,
-                    amount: amount,
-                    timestamp: serverTimestamp(),
-                    note: 'Abono automático realizado por el cliente desde su saldo Billetera',
-                    paymentMethod: 'SALDO_BILLETERA'
-                });
-            });
-
-            window.showModal("Pago Exitoso", `Has abonado ${formatCS(amount)} a tu deuda exitosamente.`);
-        } catch (e) {
-            console.error(e);
-            window.showModal("Error de Pago", "Hubo un problema procesando el abono: " + e);
-        }
-    };
-
     window.voidTransaction = (transactionId) => {
         window.showConfirmModal("ANULAR TRANSACCIÓN", "Esto revertirá los fondos/deuda y marcará la venta como anulada. ¿Continuar?", async () => {
              const tRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, transactionId);
@@ -4840,26 +5300,20 @@
                      const currentDebt = userDoc.data().debtCS || 0;
                      const currentNexus = userDoc.data().nexusPoints || 0;
                      
-                     // Lógica de Reversión
                      let newFunds = currentFunds;
                      let newDebt = currentDebt;
                      let newNexus = currentNexus;
                      
                      if (tData.type === 'COMPRA') {
-                         // Restar puntos ganados
                          newNexus -= (tData.nexusEarned || 0);
                          
-                         // Si fue pago con FONDOS (Online), devolver dinero
-                         if (tData.paymentMethod === 'FONDOS') {
+                         if (tData.paymentMethod === 'FONDOS' || tData.paymentMethod === 'FONDOS_SEGURO') {
                              newFunds += tData.totalCS;
                          } 
-                         // Si fue POS (Efectivo/Deuda)
                          else {
-                             // Si hubo deuda, reducirla
                              if (tData.isDebt && tData.remainingDebtCS > 0) {
                                  newDebt = Math.max(0, newDebt - tData.remainingDebtCS);
                              }
-                             // El efectivo NO se devuelve automáticamente al saldo virtual, se asume devolución física
                          }
                      } else if (tData.type === 'CANJE') {
                          newNexus += tData.costNexus;
@@ -4966,7 +5420,6 @@
             const snapshot = await getDocs(q);
             const isFirstUser = snapshot.empty;
             
-            // LÓGICA DE CONTROL MAESTRO: Si es el correo maestro, se asigna como admin directamente.
             const isMasterAdmin = email === 'anthonyfonjim@gmail.com';
             const isAdminUser = isFirstUser || isMasterAdmin;
             
@@ -5040,7 +5493,6 @@
             
             document.getElementById('client-email-input').value = '';
             document.getElementById('client-password-input').value = '';
-            // onAuthStateChanged takes care of routing
             
         } catch (error) {
             console.warn("Aviso de Auth:", error.code);
@@ -5061,7 +5513,6 @@
         }
         
         window.renderShop(); 
-        // La vista de login se manejará en el onAuthStateChanged al re-autenticar anónimamente
     };
 
     window.clientLoginWithId = async () => { 
@@ -5110,7 +5561,7 @@
     window.showRegistration = () => showView('client-register-view');
 
     const bootstrapData = async (user) => {
-        if (!user) return; // Regla de seguridad: Guardar la operación
+        if (!user) return; 
 
         const adminConfigRef = doc(db, COLLECTIONS.SETTINGS, 'adminConfig');
         const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
@@ -5156,7 +5607,6 @@
                      document.getElementById('admin-nexus-rate').textContent = formatCS(adminConfig.nexusValueInCS);
                      document.getElementById('admin-iva-rate').textContent = `${adminConfig.ivaPercentage || 0}%`;
                      document.getElementById('new-app-name').value = adminConfig.appName || '';
-                     // CARGAR LA DATA DE PERSONALIZACIÓN COMPLETA PARA QUE NO SE BORRE AL GUARDAR
                      document.getElementById('new-currency-symbol').value = adminConfig.currencySymbol || '';
                      document.getElementById('new-logo-url').value = adminConfig.logoUrl || '';
                      document.getElementById('new-business-address').value = adminConfig.businessAddress || '';
@@ -5236,8 +5686,13 @@
             purchaseHistoryData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             purchaseHistoryData.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
             window.calculateUserRanksAndRender();
+            
             const activeTab = document.querySelector('.sales-history-tab-active')?.dataset.period || 'day';
             window.changeSalesHistoryView(activeTab);
+            
+            if (!document.getElementById('content-admin-orders').classList.contains('hidden')) {
+                window.renderAdminOrders();
+            }
         }, err => handleFirestoreError(err, "Admin: Historial"));
         
         unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub);
@@ -5249,8 +5704,8 @@
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                functions = getFunctions(app); // Eliminado el 'us-central1' para usar el default dinámicamente y evitar conflictos
                 
-                // REGLA: Autenticar primero antes de cualquier consulta a Firestore
                 const initAuth = async () => {
                     try {
                         await auth.authStateReady();
@@ -5266,26 +5721,22 @@
 
                 onAuthStateChanged(auth, async (user) => {
                     if (!user) {
-                        // Si no hay usuario, forzar inicio anónimo para leer la tienda pública
                         try {
                             await signInAnonymously(auth);
                         } catch(e) {
                             console.warn("Auth Anónimo Falló:", e);
                         }
-                        return; // Detener ejecución hasta que se vuelva a llamar con el usuario anónimo
+                        return; 
                     }
 
                     if (!user.isAnonymous) {
-                        // Regular Email user
                         if (user.emailVerified) {
                             currentUserId = user.uid;
                             
                             try {
-                                // Load profile or wait for listener
                                 const docRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
                                 const docSnap = await getDoc(docRef);
                                 
-                                // If profile doesn't exist but auth does (fallback safety)
                                 if (!docSnap.exists()) {
                                     const isMasterAdmin = user.email === 'anthonyfonjim@gmail.com';
                                     await setDoc(docRef, {
@@ -5297,7 +5748,6 @@
                                         createdAt: serverTimestamp()
                                     });
                                 } else {
-                                    // Asegurar Control Maestro incluso si la cuenta ya existía como usuario normal (para arreglar cuentas viejas)
                                     if (user.email === 'anthonyfonjim@gmail.com' && !docSnap.data().isAdmin) {
                                         await updateDoc(docRef, { isAdmin: true });
                                     }
@@ -5314,12 +5764,9 @@
                             startClientListeners(user);
                             window.changeClientTab('tienda');
                         } else {
-                            // User logged in but not verified
                             await signOut(auth);
-                            // Al cerrar sesión, onAuthStateChanged se disparará con null y tratará de iniciar anónimo
                         }
                     } else {
-                        // No user or anonymous
                         bootstrapData(user);
                         showView('client-login-view');
                     }
