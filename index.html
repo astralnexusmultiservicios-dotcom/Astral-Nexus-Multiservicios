@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Configuración del font Inter y estilos base -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Orbitron:wght@700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Righteous&family=Space+Grotesk:wght@300..700&display=swap');
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #020617;
@@ -197,16 +197,18 @@
         }
         /* --- FIN NUEVOS ESTILOS --- */
 
-        /* NUEVO: Efecto Astral Dinámico para el Título (Elegante y en Mayúsculas) */
+        /* NUEVO: Efecto Astral Dinámico para el Título */
         .astral-text-effect {
-            font-family: 'Orbitron', sans-serif; /* Fuente futurista y espacial */
+            font-family: 'Righteous', cursive; /* Nueva fuente impactante y moderna */
             text-transform: uppercase;
+            font-size: 2.2rem; 
             background: linear-gradient(
-                270deg, 
-                #00f2fe 0%,     /* Cyan */
-                #4facfe 25%, 
-                #f093fb 50%,    /* Magenta/Rosa */
-                #f5576c 75%, 
+                to right, 
+                #ffffff 0%, 
+                #00f2fe 20%, 
+                #4facfe 40%, 
+                #f093fb 60%, 
+                #ffffff 80%,
                 #00f2fe 100%
             );
             background-size: 200% auto;
@@ -214,31 +216,81 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* Animación de colores fluida + Respiración elegante */
-            animation: 
-                astral-flow 4s linear infinite,
-                elegant-breath 5s ease-in-out infinite alternate;
+            animation: flow-gradient 4s linear infinite;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+            cursor: default;
+            position: relative;
         }
 
-        @keyframes astral-flow {
-            to {
-                background-position: 200% center;
-            }
+        .astral-text-effect:hover {
+            transform: translateY(-3px) scale(1.05) perspective(500px) rotateX(15deg);
+            filter: drop-shadow(0 15px 25px rgba(0, 242, 254, 0.5)) drop-shadow(0 -5px 15px rgba(240, 147, 251, 0.5));
+            letter-spacing: 4px;
         }
 
-        @keyframes elegant-breath {
-            0% {
-                opacity: 0.5;
-                filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.4));
-                letter-spacing: 0px;
-                transform: scale(0.98);
-            }
-            100% {
-                opacity: 1;
-                filter: drop-shadow(0 0 25px rgba(240, 147, 251, 0.9));
-                letter-spacing: 3px; /* El texto se expande sutilmente */
-                transform: scale(1.02);
-            }
+        @keyframes flow-gradient {
+            to { background-position: 200% center; }
+        }
+
+        /* --- ESTILOS INTERACTIVOS FOOTER --- */
+        .footer-animated-border {
+            position: relative;
+            background: rgba(2, 6, 23, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            overflow: hidden;
+            font-family: 'Space Grotesk', sans-serif; /* Fuente tecnológica para el footer */
+        }
+        
+        /* Efecto de luz de cristal barriendo el footer en lugar de la línea estática */
+        .footer-animated-border::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 30%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+            transform: skewX(-20deg);
+            animation: glass-sweep 6s infinite ease-in-out;
+            pointer-events: none;
+        }
+        
+        @keyframes glass-sweep {
+            0% { left: -100%; }
+            20%, 100% { left: 200%; }
+        }
+
+        .footer-glow-text {
+            color: #64748b; /* Gris sobrio por defecto */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* Efecto de estrella brillante al pasar el ratón */
+        .footer-glow-text:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px #00f2fe;
+            transform: translateY(-2px);
+            letter-spacing: 1px;
+        }
+        
+        .footer-glow-text::before, .footer-glow-text::after {
+            content: '✦';
+            position: absolute;
+            opacity: 0;
+            color: #f093fb;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0) rotate(-180deg);
+        }
+        
+        .footer-glow-text::before { left: -20px; top: 0; }
+        .footer-glow-text::after { right: -20px; top: 0; }
+        
+        .footer-glow-text:hover::before, .footer-glow-text:hover::after {
+            opacity: 1;
+            transform: scale(1.2) rotate(0deg);
+            text-shadow: 0 0 10px #f093fb;
         }
 
          @media print {
@@ -262,8 +314,8 @@
         <div class="container mx-auto p-4 flex justify-between items-center">
              <div class="flex items-center gap-3">
                 <img id="app-logo-display" src="https://placehold.co/100x100/161b22/60a5fa?text=AN" alt="Logo" class="h-10 w-10 rounded-full object-cover hidden shadow-lg shadow-blue-500/20" onerror="this.onerror=null; this.src='https://placehold.co/100x100/161b22/60a5fa?text=Logo';">
-                <!-- Título actualizado a Mayúsculas por defecto -->
-                <h1 id="app-title-display" class="text-3xl font-extrabold astral-text-effect tracking-tight">🌌 ASTRAL NEXUS</h1>
+                <!-- Título dinámico sin emoji, más limpio y 3D -->
+                <h1 id="app-title-display" class="astral-text-effect">ASTRAL NEXUS</h1>
             </div>
             <div id="user-info" class="text-sm text-slate-400 flex items-center space-x-2">
                 <span id="user-display-id" class="hidden sm:inline font-mono bg-slate-800 border border-slate-700 px-3 py-1 rounded-full text-xs shadow-inner">No Autenticado</span>
@@ -615,6 +667,8 @@
                 <button onclick="window.changeAdminTab('raffles')" id="tab-admin-raffles" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="gift" class="w-4 h-4"></i> Sorteos</button>
                 <button onclick="window.changeAdminTab('sales')" id="tab-admin-sales" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Ventas</button>
                 <button onclick="window.changeAdminTab('orders')" id="tab-admin-orders" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="list-todo" class="w-4 h-4"></i> Pedidos</button>
+                <button onclick="window.changeAdminTab('recharges')" id="tab-admin-recharges" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Recargas</button>
+                <button onclick="window.changeAdminTab('payments')" id="tab-admin-payments" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="landmark" class="w-4 h-4"></i> Métodos Pago</button>
                 <button onclick="window.changeAdminTab('config')" id="tab-admin-config" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Configuración</button>
             </div>
             <div id="admin-content">
@@ -976,18 +1030,61 @@
                         <!-- Las órdenes pendientes se renderizarán aquí -->
                     </div>
                 </div>
+
+                <!-- Pestaña 7: Historial de Recargas (NUEVA) -->
+                <div id="content-admin-recharges" class="hidden">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                        <h3 class="text-2xl font-bold text-blue-400 flex items-center gap-2"><i data-lucide="zap" class="w-6 h-6"></i> Historial de Recargas Manuales</h3>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <input type="text" id="recharge-search-input" onkeyup="window.renderAdminRechargesHistory()" placeholder="🔍 Buscar ID Jugador o Nombre..." class="flex-grow p-2 rounded-lg bg-gray-700 text-white text-sm" />
+                            <select id="recharge-filter-status" onchange="window.renderAdminRechargesHistory()" class="bg-gray-700 rounded-lg p-2 text-sm border-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">Todos los Estados</option>
+                                <option value="completed">Completados</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="rejected">Rechazados</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-recharges-history-list" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- El historial de recargas se renderizará aquí -->
+                    </div>
+                </div>
+
+                <!-- Pestaña 8: Métodos de Pago -->
+                <div id="content-admin-payments" class="hidden">
+                     <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-green-400 flex items-center gap-2"><i data-lucide="landmark" class="w-6 h-6"></i> Cuentas Oficiales para Depósitos</h3>
+                        <button onclick="window.addNewPaymentMethod()" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-bold text-sm shadow-lg flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Método
+                        </button>
+                     </div>
+                     <p class="text-gray-400 text-sm mb-6">Configura aquí las cuentas bancarias, billeteras o datos de remesas que verán los clientes en su sección "Billetera" para poder recargar saldo.</p>
+                     
+                     <div id="admin-payment-methods-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                         <!-- Los métodos de pago se renderizarán aquí -->
+                     </div>
+                </div>
             </div>
         </div>
     </main>
 
     <!-- NUEVO: Pie de Página (Footer) -->
-    <footer class="border-t border-slate-800 bg-slate-950/80 backdrop-blur-md py-6 mt-8 z-10 w-full no-print">
+    <footer class="footer-animated-border backdrop-blur-xl py-8 mt-8 z-10 w-full no-print">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-slate-500 text-sm">&copy; 2025 Astral Nexus. Todos los derechos reservados.</p>
-            <div class="flex justify-center items-center gap-4 mt-3 text-xs text-slate-400">
-                <button onclick="window.showTerms()" class="hover:text-blue-400 hover:underline transition">Términos de Servicios</button>
-                <span class="text-slate-700">|</span>
-                <button onclick="window.showPrivacy()" class="hover:text-blue-400 hover:underline transition">Política de Privacidad</button>
+            <p class="text-sm">
+                <span class="footer-glow-text">&copy; 2026 Astral Nexus. Todos los derechos reservados.</span>
+            </p>
+            <div class="flex justify-center items-center gap-6 mt-5 text-xs text-slate-400 font-medium">
+                <button onclick="window.showTerms()" class="hover:text-white hover:drop-shadow-[0_0_8px_rgba(0,242,254,0.8)] transform hover:-translate-y-1 transition-all duration-300 relative group">
+                    Términos de Servicios
+                    <span class="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-[#00f2fe] group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                </button>
+                <span class="text-slate-700/80">|</span>
+                <button onclick="window.showPrivacy()" class="hover:text-white hover:drop-shadow-[0_0_8px_rgba(240,147,251,0.8)] transform hover:-translate-y-1 transition-all duration-300 relative group">
+                    Política de Privacidad
+                    <span class="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-[#f093fb] group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                </button>
             </div>
         </div>
     </footer>
@@ -1041,185 +1138,55 @@
         </div>
     </div>
     
-    <!-- Modal Factura -->
-    <div id="invoice-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div id="invoice-modal-content" class="bg-white p-8 rounded-lg max-w-2xl w-full text-black shadow-2xl mx-auto my-8">
-            <div class="flex items-start justify-between mb-4">
-                <div>
-                     <h2 id="invoice-app-name" class="text-2xl font-bold">Astral Nexus</h2>
-                     <p id="invoice-business-contact" class="text-xs"></p>
-                     <p id="invoice-business-address" class="text-xs"></p>
-                     <p id="invoice-business-ruc" class="text-xs"></p>
-                </div>
-                <img id="invoice-logo" src="" alt="Logo" class="h-16 w-16 object-contain" style="display: none;" onerror="this.onerror=null; this.style.display='none';">
-            </div>
-            <p class="text-center text-sm mb-6"><strong id="invoice-type-title">Recibo de Compra</strong></p>
-            <div class="text-sm mb-4">
-                <p><strong>Fecha:</strong> <span id="invoice-date"></span></p>
-                <p><strong>Cliente:</strong> <span id="invoice-client-name"></span></p>
-                <p><strong>ID Cliente:</strong> <span id="invoice-client-id"></span></p>
-            </div>
-            <table class="w-full text-xs md:text-sm mb-4 border-collapse">
-                <thead>
-                    <tr class="border-b-2 border-black">
-                        <th class="text-left py-1 w-12">Cant.</th>
-                        <th class="text-left py-1 w-20">Código</th>
-                        <th class="text-left py-1">Producto</th>
-                        <th class="text-right py-1">P. Unit</th>
-                        <th class="text-right py-1">P. Unit (+IVA)</th>
-                        <th class="text-right py-1">Total (Neto)</th>
-                    </tr>
-                </thead>
-                <tbody id="invoice-items"></tbody>
-            </table>
-            <div id="invoice-summary-details" class="border-t border-black pt-4 text-right text-sm">
-                <p><strong>Subtotal (Neto):</strong> <span id="invoice-subtotal"></span></p>
-                <p id="invoice-discount-row" class="text-red-600"><strong>Descuento Aplicado:</strong> <span id="invoice-discount"></span></p>
-                <p><strong>Base Imponible:</strong> <span id="invoice-tax-base" class="font-semibold"></span></p>
-                <p><strong>IVA (<span id="invoice-iva-rate"></span>%):</strong> <span id="invoice-iva-amount"></span></p>
-                <p class="font-bold text-lg mt-2 border-t border-gray-300 pt-2"><strong>Total a Pagar:</strong> <span id="invoice-total"></span></p>
-                <p class="mt-2"><strong>Monto Pagado:</strong> <span id="invoice-received"></span></p>
-                <p><strong>Deuda Pendiente:</strong> <span id="invoice-debt" class="text-red-600"></span></p>
-                <p><strong>Cambio Entregado:</strong> <span id="invoice-change"></span></p>
-            </div>
-             <div id="invoice-redemption-details" class="border-t pt-4 text-right hidden">
-                <p><strong>Costo Total:</strong> <span id="invoice-total-nexus" class="font-bold"></span></p>
-            </div>
-            <div id="invoice-print-controls" class="mt-8 flex justify-between">
-                <button onclick="document.getElementById('invoice-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-500 text-white rounded">Cerrar</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Imprimir / Guardar PDF</button>
-            </div>
-        </div>
-    </div>
-    <!-- Modal Detalles Transacción -->
-    <div id="transaction-detail-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div id="transaction-receipt-content" class="bg-white p-6 rounded-lg max-w-sm w-full text-black shadow-2xl mx-auto font-mono text-sm relative">
-             <div class="text-center mb-4 border-b border-black pb-4">
-                 <h2 id="receipt-app-name" class="text-xl font-bold">Astral Nexus</h2>
-                 <p class="text-xs font-bold">FACTURA / RECIBO</p>
-                 <p id="receipt-date" class="text-xs mt-1"></p>
-                 <p id="receipt-id" class="text-xs mt-1"></p>
-             </div>
-             <div class="mb-4 text-xs">
-                 <p><strong>Cliente:</strong> <span id="receipt-client-name"></span></p>
-                 <p><strong>ID:</strong> <span id="receipt-client-id"></span></p>
-                 <p><strong>Tipo:</strong> <span id="receipt-type" class="font-bold"></span></p>
-             </div>
-             <div class="border-b border-black pb-2 mb-2">
-                 <div class="flex justify-between text-xs font-bold mb-1">
-                     <span>Cant/Item</span>
-                     <span>Total</span>
-                 </div>
-                 <div id="receipt-items" class="space-y-1 text-xs"></div>
-             </div>
-             <div class="text-right text-xs space-y-1">
-                 <div id="receipt-financial-details"></div>
-             </div>
-             <div id="receipt-void-status" class="mt-4 text-center border-t border-b border-black py-2 hidden">
-                 <p class="font-bold text-lg">*** ANULADA ***</p>
-             </div>
-
-             <!-- NUEVO: Sección de Pago de Deuda Específica -->
-             <div id="receipt-debt-payment-section" class="mt-4 pt-4 border-t border-dashed border-gray-400 no-print hidden">
-                 <h4 class="font-bold text-xs text-red-600 mb-2 uppercase">📉 Abonar a esta Factura</h4>
-                 <div class="bg-gray-100 p-2 rounded mb-2">
-                     <p class="text-xs flex justify-between"><span>Deuda Original:</span> <span id="debt-original-amount"></span></p>
-                     <p class="text-xs flex justify-between font-bold"><span>Pendiente Actual:</span> <span id="debt-remaining-amount" class="text-red-600"></span></p>
-                 </div>
-                 <div class="flex gap-2 items-center">
-                     <input type="number" id="debt-payment-input" placeholder="Monto a pagar" class="flex-grow p-2 border border-gray-400 rounded text-sm w-full">
-                     <button id="btn-pay-specific-debt" class="bg-green-600 text-white px-3 py-2 rounded font-bold text-xs hover:bg-green-700 shadow whitespace-nowrap">
-                         Pagar
-                     </button>
-                 </div>
-             </div>
-
-             <div id="transaction-modal-controls" class="mt-6 flex flex-col gap-2 no-print">
-                 <button onclick="window.print()" class="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded font-bold text-xs flex justify-center items-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i> Imprimir</button>
-                 <button id="btn-void-transaction" class="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs hidden">ANULAR TRANSACCIÓN</button>
-                 <button onclick="document.getElementById('transaction-detail-modal').style.display='none'" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded font-bold text-xs">Cerrar</button>
-                 <button id="transaction-modal-delete-btn" class="w-full py-2 bg-red-900 hover:bg-red-800 text-white rounded font-bold text-xs mt-2">Borrar del Historial (Solo Admin)</button>
-             </div>
-        </div>
-    </div>
-    <!-- Modal Visor Imágenes -->
-    <div id="image-viewer-modal" class="fixed inset-0 bg-black bg-opacity-80 hidden items-center justify-center z-[80] p-4 transition-opacity duration-300">
-        <div class="relative max-w-4xl max-h-[90vh] w-full h-full">
-            <button onclick="window.hideImageViewer()" class="absolute -top-2 -right-2 md:top-2 md:right-2 z-10 p-2 bg-red-600 text-white rounded-full hover:bg-red-700"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <div class="w-full h-full flex items-center justify-center">
-                <img id="viewer-image" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
-            </div>
-            <button id="viewer-prev-btn" class="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 hidden"><i data-lucide="chevron-left" class="w-8 h-8"></i></button>
-            <button id="viewer-next-btn" class="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-gray-800 bg-opacity-50 text-white rounded-full hover:bg-opacity-75 hidden"><i data-lucide="chevron-right" class="w-8 h-8"></i></button>
-        </div>
-    </div>
-    <!-- Modal Crear/Editar Sorteo -->
-    <div id="raffle-edit-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#161b22] p-6 rounded-xl max-w-lg w-full shadow-2xl border border-gray-700 space-y-4 max-h-[90vh] overflow-y-auto">
-            <h3 id="raffle-modal-title" class="text-xl font-bold mb-4 text-yellow-400">Crear Nuevo Sorteo</h3>
-            <input type="hidden" id="raffle-edit-id">
-            <div>
-                <label class="text-sm">Nombre del Sorteo</label>
-                <input type="text" id="raffle-name" class="w-full p-2 rounded-lg bg-gray-700">
-            </div>
-            <div>
-                <label class="text-sm">URL de la Imagen</label>
-                <input type="text" id="raffle-image-url" class="w-full p-2 rounded-lg bg-gray-700" placeholder="https://...">
-            </div>
-            <div>
-                <label class="text-sm">Categoría</label>
-                <input type="text" id="raffle-category" class="w-full p-2 rounded-lg bg-gray-700" placeholder="Ej: Sorteos de Puntos">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-sm">Costo de Entrada</label>
-                    <input type="number" id="raffle-entry-cost" class="w-full p-2 rounded-lg bg-gray-700" value="1">
-                </div>
-                <div>
-                    <label class="text-sm">Tipo de Costo</label>
-                    <select id="raffle-cost-type" class="w-full p-2 rounded-lg bg-gray-700">
-                        <option value="nexus">Puntos Nexus</option>
-                        <option value="cs">Fondos Monetarios</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="text-sm">Tipo de Premio</label>
-                <select id="raffle-prize-type" class="w-full p-2 rounded-lg bg-gray-700" onchange="window.toggleRafflePrizeFields()">
-                    <option value="pot">Bote Acumulado</option>
-                    <option value="item">Item/Producto Fijo</option>
-                </select>
-            </div>
-            <div id="raffle-prize-pot-fields">
-                <label class="text-sm">Bote Inicial / Actual</label>
-                <input type="number" id="raffle-initial-pot" class="w-full p-2 rounded-lg bg-gray-700" value="0">
-                <p class="text-xs text-gray-400 mt-1">Edita este valor para añadir más fondos manualmente.</p>
-            </div>
-            <div id="raffle-prize-item-fields" class="hidden">
-                <label class="text-sm">Descripción del Premio</label>
-                <input type="text" id="raffle-prize-description" class="w-full p-2 rounded-lg bg-gray-700" placeholder="Ej: Camiseta Exclusiva">
-            </div>
-            <div class="flex justify-end space-x-4 mt-6">
-                <button onclick="document.getElementById('raffle-edit-modal').classList.add('hidden'); document.getElementById('raffle-edit-modal').classList.remove('flex')" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold">Cancelar</button>
-                <button onclick="window.saveRaffle()" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-bold">Guardar Sorteo</button>
-            </div>
-        </div>
-    </div>
-    <!-- NUEVO: Modal de Gestión de Participantes -->
-    <div id="raffle-participants-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#161b22] p-6 rounded-xl max-w-lg w-full shadow-2xl border border-gray-700 max-h-[90vh] flex flex-col">
-            <h3 class="text-xl font-bold mb-4 text-purple-400">👥 Gestión de Participantes</h3>
-            <p id="raffle-participants-subtitle" class="text-sm text-gray-400 mb-4"></p>
+    <!-- Modal Crear/Editar Método de Pago -->
+    <div id="payment-method-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-lg w-full shadow-2xl border border-green-700/50 space-y-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="window.closePaymentMethodModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 id="payment-modal-title" class="text-xl font-bold mb-4 text-green-400 flex items-center gap-2"><i data-lucide="landmark" class="w-5 h-5"></i> Configurar Método de Pago</h3>
             
-            <div id="raffle-participants-list" class="flex-grow overflow-y-auto space-y-2 mb-4 bg-gray-900 p-2 rounded-lg min-h-[200px]">
-                <p class="text-center text-gray-500 py-4">Cargando participantes...</p>
+            <input type="hidden" id="payment-edit-id">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Tipo de Plataforma / Banco</label>
+                    <input type="text" id="payment-bank" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500" placeholder="Ej: LAFISE, BAC, PayPal, Binance, Remitly...">
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">URL del Logo (Opcional pero recomendado)</label>
+                    <input type="url" id="payment-logo" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500" placeholder="https://ejemplo.com/logo-banco.png">
+                    <p class="text-[10px] text-gray-500 mt-1">Sugerencia: Usa logos con fondo transparente o iconos cuadrados.</p>
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Tipo de Moneda / Cuenta</label>
+                    <input type="text" id="payment-type" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500" placeholder="Ej: Córdobas, Dólares, USDT...">
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Número de Cuenta / Tag</label>
+                    <input type="text" id="payment-account" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500 font-mono" placeholder="Ej: 123456789">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Nombre del Titular de la Cuenta</label>
+                    <input type="text" id="payment-owner" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500" placeholder="Nombre completo de quien recibe">
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Número de Cédula / ID (Remesas)</label>
+                    <input type="text" id="payment-id" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500 font-mono" placeholder="Para retiros de remesas">
+                </div>
+                
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Contacto Extra</label>
+                    <input type="text" id="payment-contact" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-green-500" placeholder="Ej: +505 8888 8888">
+                </div>
             </div>
             
-            <div class="flex flex-col gap-2 border-t border-gray-700 pt-4">
-                <button onclick="window.closeRaffleParticipantsModal()" class="w-full p-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold">Cerrar</button>
-                <button id="btn-refund-all" class="w-full p-2 bg-red-900 hover:bg-red-800 text-red-100 rounded-lg font-bold text-xs flex items-center justify-center gap-2">
-                    <i data-lucide="alert-triangle" class="w-4 h-4"></i> CANCELAR SORTEO Y REEMBOLSAR A TODOS
-                </button>
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
+                <button onclick="window.closePaymentMethodModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold transition">Cancelar</button>
+                <button onclick="window.savePaymentMethod()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold transition shadow-lg">Guardar Método</button>
             </div>
         </div>
     </div>
@@ -1230,6 +1197,13 @@
             <h3 class="text-xl font-bold mb-4 text-yellow-400 flex items-center gap-2"><i data-lucide="gamepad-2"></i> Datos de Recarga</h3>
             <p class="text-sm text-gray-300 mb-4">Este producto requiere tu información de jugador para procesar la recarga.</p>
             
+            <div id="saved-players-selector-container" class="mb-4 hidden">
+                <label class="text-xs text-yellow-400 font-bold uppercase mb-1 block">Seleccionar cuenta guardada</label>
+                <select id="saved-players-select" onchange="window.onSavedPlayerSelect()" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500">
+                    <option value="">-- Nueva Cuenta (Escribir abajo) --</option>
+                </select>
+            </div>
+
             <div class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">ID del Jugador</label>
@@ -1239,6 +1213,10 @@
                     <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nombre / Nickname</label>
                     <input type="text" id="player-info-name" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-yellow-500" placeholder="Ej: ProGamer99">
                 </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <input type="checkbox" id="save-player-info-cb" class="w-4 h-4 rounded bg-gray-900 border-gray-700 text-yellow-500 focus:ring-yellow-500">
+                    <label for="save-player-info-cb" class="text-xs text-gray-400 cursor-pointer select-none">Guardar estos datos para futuras recargas</label>
+                </div>
             </div>
             
             <div class="flex justify-end gap-3 mt-6">
@@ -1247,6 +1225,230 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Crear/Editar Sorteo -->
+    <div id="raffle-edit-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[70] p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-lg w-full shadow-2xl border border-blue-700/50 space-y-4 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="document.getElementById('raffle-edit-modal').classList.add('hidden'); document.getElementById('raffle-edit-modal').classList.remove('flex');" class="absolute top-4 right-4 text-gray-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 id="raffle-modal-title" class="text-xl font-bold mb-4 text-blue-400 flex items-center gap-2"><i data-lucide="gift" class="w-5 h-5"></i> Sorteo</h3>
+            
+            <input type="hidden" id="raffle-edit-id">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Nombre del Sorteo</label>
+                    <input type="text" id="raffle-name" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="Ej: Rifa de 500 Puntos Nexus">
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">URL de la Imagen (Opcional)</label>
+                    <input type="url" id="raffle-image-url" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="https://...">
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Categoría</label>
+                    <input type="text" id="raffle-category" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="Ej: General">
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Costo de Entrada</label>
+                    <input type="number" id="raffle-entry-cost" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="Ej: 50">
+                </div>
+                
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Moneda de Entrada</label>
+                    <select id="raffle-cost-type" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none">
+                        <option value="cs">Saldo C$</option>
+                        <option value="nexus">Puntos Nexus</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Tipo de Premio</label>
+                    <select id="raffle-prize-type" onchange="window.toggleRafflePrizeFields()" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none">
+                        <option value="pot">Bote Acumulable (Dinero/Puntos)</option>
+                        <option value="item">Premio Físico/Digital (Item)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="raffle-prize-pot-fields" class="mt-4">
+                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Bote Inicial (Opcional)</label>
+                <input type="number" id="raffle-initial-pot" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="Ej: 0">
+                <p class="text-[10px] text-gray-500 mt-1">El bote crecerá automáticamente con cada participación.</p>
+            </div>
+
+            <div id="raffle-prize-item-fields" class="mt-4 hidden">
+                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Descripción del Premio</label>
+                <input type="text" id="raffle-prize-description" class="w-full p-2.5 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-blue-500 outline-none" placeholder="Ej: Tarjeta Google Play $10">
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
+                <button onclick="document.getElementById('raffle-edit-modal').classList.add('hidden'); document.getElementById('raffle-edit-modal').classList.remove('flex');" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold transition">Cancelar</button>
+                <button onclick="window.saveRaffle()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition shadow-lg">Guardar Sorteo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Participantes Sorteo -->
+    <div id="raffle-participants-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[75] p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-lg w-full shadow-2xl border border-purple-700/50 space-y-4 max-h-[90vh] flex flex-col relative">
+            <button onclick="window.closeRaffleParticipantsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-xl font-bold mb-2 text-purple-400 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5"></i> Participantes</h3>
+            <p id="raffle-participants-subtitle" class="text-sm text-gray-400 mb-4"></p>
+            
+            <div id="raffle-participants-list" class="flex-grow overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                <!-- Lista se carga por JS -->
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                 <button id="btn-refund-all" class="w-full sm:w-auto px-4 py-2 bg-red-900 hover:bg-red-800 text-red-100 rounded-lg font-bold text-xs transition border border-red-700 flex items-center justify-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i> Cancelar y Reembolsar a Todos
+                 </button>
+                 <button onclick="window.closeRaffleParticipantsModal()" class="w-full sm:w-auto px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalles de Transacción -->
+    <div id="transaction-detail-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[80] p-4">
+        <div class="bg-[#161b22] rounded-xl max-w-md w-full shadow-2xl border border-gray-700 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5"></i> Recibo de Transacción</h3>
+                <button onclick="document.getElementById('transaction-detail-modal').style.display = 'none'" class="text-gray-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div id="transaction-receipt-content" class="p-6 overflow-y-auto flex-grow bg-white text-black print:bg-white print:text-black relative">
+                <!-- CABECERA RECIBO -->
+                <div class="text-center mb-6 border-b-2 border-black pb-4">
+                    <h2 id="receipt-app-name" class="text-2xl font-black uppercase tracking-widest mb-1">ASTRAL NEXUS</h2>
+                    <p class="text-xs text-gray-600 font-mono" id="receipt-date"></p>
+                    <p class="text-xs text-gray-600 font-mono" id="receipt-id"></p>
+                    <div id="receipt-void-status" class="hidden absolute top-10 left-0 right-0 text-center pointer-events-none opacity-80">
+                        <span class="inline-block border-4 border-red-600 text-red-600 font-black text-3xl uppercase tracking-widest p-2 transform -rotate-12 bg-white">ANULADA</span>
+                    </div>
+                </div>
+
+                <!-- INFO CLIENTE -->
+                <div class="mb-6 text-sm">
+                    <p><strong class="uppercase text-xs text-gray-500">Cliente:</strong> <span id="receipt-client-name" class="font-bold"></span></p>
+                    <p><strong class="uppercase text-xs text-gray-500">ID:</strong> <span id="receipt-client-id" class="font-mono text-xs"></span></p>
+                    <p><strong class="uppercase text-xs text-gray-500">Tipo Operación:</strong> <span id="receipt-type" class="font-bold uppercase"></span></p>
+                </div>
+
+                <!-- ITEMS -->
+                <div class="mb-6">
+                    <div class="border-b border-black pb-1 mb-2">
+                        <strong class="uppercase text-xs text-gray-500">Detalle de Artículos</strong>
+                    </div>
+                    <div id="receipt-items" class="space-y-3 text-sm">
+                        <!-- Items inyectados -->
+                    </div>
+                </div>
+
+                <!-- TOTALES -->
+                <div id="receipt-financial-details" class="text-sm border-t border-black pt-4">
+                    <!-- Totales inyectados -->
+                </div>
+            </div>
+
+            <!-- CONTROLES -->
+            <div id="transaction-modal-controls" class="p-4 border-t border-gray-700 bg-gray-800 space-y-3 no-print">
+                <div id="receipt-debt-payment-section" class="hidden bg-gray-900 p-3 rounded-lg border border-red-900/50 mb-3">
+                    <h4 class="text-red-400 font-bold text-xs mb-2 uppercase tracking-wider">Abonar a esta deuda</h4>
+                    <div class="flex justify-between text-xs text-gray-400 mb-2">
+                        <span>Original: <span id="debt-original-amount"></span></span>
+                        <span>Pendiente: <strong id="debt-remaining-amount" class="text-red-400"></strong></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="number" id="debt-payment-input" placeholder="Monto" class="w-full p-2 rounded bg-gray-800 text-white text-sm border border-gray-700 focus:border-red-500 outline-none">
+                        <button id="btn-pay-specific-debt" class="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded text-sm font-bold shadow-lg">Abonar</button>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="window.print()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
+                    </button>
+                    <button id="btn-void-transaction" class="hidden flex-1 bg-yellow-600 hover:bg-yellow-500 text-white p-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                        <i data-lucide="ban" class="w-4 h-4"></i> Anular
+                    </button>
+                </div>
+                <button id="transaction-modal-delete-btn" class="w-full mt-2 bg-gray-700 hover:bg-red-900 text-gray-300 hover:text-white p-2 rounded-lg text-xs transition border border-gray-600 hover:border-red-700">
+                    <i data-lucide="trash-2" class="w-3 h-3 inline mr-1"></i> Borrar Registro (Ocultar)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Factura POS y Compras Pasadas -->
+    <div id="invoice-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[85] p-4">
+        <div class="bg-white text-black p-8 rounded-xl max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh] relative">
+            <div id="invoice-modal-content" class="print:m-0 print:p-0">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold uppercase tracking-widest border-b-2 border-black inline-block pb-1">Factura de Venta</h2>
+                </div>
+                <div class="flex justify-between text-sm mb-6">
+                    <div>
+                        <p><strong>Fecha:</strong> <span id="invoice-date"></span></p>
+                        <p><strong>Cliente:</strong> <span id="invoice-client-name"></span></p>
+                        <p class="text-xs text-gray-500">ID: <span id="invoice-client-id"></span></p>
+                    </div>
+                </div>
+                
+                <table class="w-full text-left text-sm mb-6">
+                    <thead class="border-b border-black">
+                        <tr><th>Cant</th><th>Código</th><th>Descripción</th><th class="text-right">P. Unit</th><th class="text-right">Subtotal</th></tr>
+                    </thead>
+                    <tbody id="invoice-items" class="border-b border-gray-300">
+                        <!-- Items de factura -->
+                    </tbody>
+                </table>
+                
+                <div class="flex justify-end text-sm">
+                    <div class="w-full sm:w-64 space-y-1">
+                        <p class="flex justify-between"><span>Subtotal:</span><span id="invoice-subtotal"></span></p>
+                        <p class="flex justify-between text-red-600"><span>Descuento:</span><span id="invoice-discount"></span></p>
+                        <p class="flex justify-between font-bold"><span>Base Imponible:</span><span id="invoice-tax-base"></span></p>
+                        <p class="flex justify-between"><span>IVA (<span id="invoice-iva-rate"></span>%):</span><span id="invoice-iva-amount"></span></p>
+                        <div class="border-t border-black pt-1 mt-1">
+                            <p class="flex justify-between font-bold text-lg"><span>Total a Pagar:</span><span id="invoice-total"></span></p>
+                        </div>
+                        <div class="border-t border-dashed border-gray-400 pt-1 mt-1">
+                            <p class="flex justify-between"><span>Monto Recibido:</span><span id="invoice-received"></span></p>
+                            <p class="flex justify-between font-bold text-red-600"><span>Deuda Generada:</span><span id="invoice-debt"></span></p>
+                            <p class="flex justify-between font-bold"><span>Cambio:</span><span id="invoice-change"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 text-center text-xs text-gray-500 border-t border-gray-300 pt-4">
+                    ¡Gracias por su preferencia!<br>Las recargas y compras digitales son definitivas.
+                </div>
+            </div>
+            
+            <div id="invoice-print-controls" class="mt-6 flex justify-end gap-4 border-t border-gray-200 pt-4 no-print">
+                <button onclick="document.getElementById('invoice-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded font-bold transition">Cerrar</button>
+                <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold flex items-center gap-2 transition shadow-lg"><i data-lucide="printer" class="w-4 h-4"></i> Imprimir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visor de Imágenes -->
+    <div id="image-viewer-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-[100] transition-opacity duration-300 opacity-0 backdrop-blur-xl">
+        <button onclick="window.hideImageViewer()" class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors z-[101] bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-md">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <div class="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+            <button id="viewer-prev-btn" class="absolute -left-12 md:-left-20 text-white/50 hover:text-white transition-colors p-4 hidden">
+                <i data-lucide="chevron-left" class="w-10 h-10 drop-shadow-lg"></i>
+            </button>
+            <img id="viewer-image" src="" alt="Vista previa" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl transition-opacity duration-300 border border-white/10">
+            <button id="viewer-next-btn" class="absolute -right-12 md:-right-20 text-white/50 hover:text-white transition-colors p-4 hidden">
+                <i data-lucide="chevron-right" class="w-10 h-10 drop-shadow-lg"></i>
+            </button>
+        </div>
+    </div>
+
 </div>
 
 <!-- Firebase Imports -->
@@ -1283,6 +1485,7 @@
         PURCHASE_HISTORY_COLLECTION: `artifacts/${appId}/public/data/purchase_history_v3`,
         RAFFLES_COLLECTION: `artifacts/${appId}/public/data/raffles`,
         RAFFLE_ENTRIES: `artifacts/${appId}/public/data/raffle_entries`,
+        PAYMENT_METHODS: `artifacts/${appId}/public/data/payment_methods`, // Nueva colección
     };
 
     let app, db, auth, functions; // Declaramos functions aquí
@@ -1301,6 +1504,7 @@
     let purchaseHistoryData = [];
     let allRafflesData = [];
     let filteredReportData = [];
+    let paymentMethodsData = []; // Datos de métodos de pago
     let confirmCallback = null;
     let unsubscribes = [];
     let heartbeatInterval = null; 
@@ -1595,11 +1799,12 @@
         if(tabName === 'billetera') {
              currentShopPath = { type: 'nexus', mainKey: null, subKey: null };
              window.renderMainCategories('nexus');
+             window.renderClientPaymentMethods(); // Renderizar métodos de pago al entrar a billetera
         }
     };
 
     window.changeAdminTab = (tabName) => {
-        ['users', 'products', 'raffles', 'sales', 'config', 'orders'].forEach(tab => {
+        ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments'].forEach(tab => {
             const btn = document.getElementById(`tab-admin-${tab}`);
             const content = document.getElementById(`content-admin-${tab}`);
             if(tab === tabName) {
@@ -1615,11 +1820,37 @@
         if(tabName === 'products') window.renderAdminProductManagement();
         if(tabName === 'users') window.renderUserList();
         if(tabName === 'orders') window.renderAdminOrders();
+        if(tabName === 'recharges') window.renderAdminRechargesHistory();
+        if(tabName === 'payments') window.renderAdminPaymentMethods();
     };
 
     window.renderClientProfile = () => {
         const container = document.getElementById('client-profile-details');
         if (!container || !currentUserProfile) return;
+        
+        const savedIds = currentUserProfile.savedPlayerIds || [];
+        let savedPlayersHTML = '';
+        if (savedIds.length === 0) {
+            savedPlayersHTML = '<p class="text-sm text-gray-500 italic">No tienes cuentas guardadas. Se agregarán automáticamente cuando uses la opción "Guardar" al realizar una recarga.</p>';
+        } else {
+            savedPlayersHTML = savedIds.map((p, idx) => `
+                <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 mb-2 transition hover:border-purple-500/50">
+                    <div>
+                        <p class="font-bold text-blue-300 text-sm">${p.playerName}</p>
+                        <p class="text-xs text-gray-400 font-mono">ID: ${p.playerId}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="window.editSavedPlayerId(${idx})" class="p-2 bg-blue-900/50 hover:bg-blue-600 text-blue-300 hover:text-white rounded transition" title="Editar">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="window.deleteSavedPlayerId(${idx})" class="p-2 bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white rounded transition" title="Eliminar">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         container.innerHTML = `
             <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-blue-900/30 space-y-4">
                 <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5"></i> Actualizar Mis Datos</h3>
@@ -1650,6 +1881,14 @@
                     <button onclick="window.saveClientProfile()" class="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-white transition flex justify-center items-center gap-2 shadow-lg shadow-blue-900/20 transform hover:scale-[1.02]">
                         <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
                     </button>
+                </div>
+            </div>
+
+            <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-purple-900/30 space-y-4">
+                <h3 class="text-lg font-semibold text-purple-400 flex items-center gap-2"><i data-lucide="gamepad-2" class="w-5 h-5"></i> Mis Cuentas / IDs Guardados</h3>
+                <p class="text-xs text-gray-400 mb-2">Administra los IDs de jugador que has guardado para rellenar rápidamente tus recargas.</p>
+                <div id="saved-players-list-container">
+                    ${savedPlayersHTML}
                 </div>
             </div>
 
@@ -2287,6 +2526,220 @@
         window.renderRedemptionList();
     };
     
+    window.renderClientPaymentMethods = () => {
+        // Buscar el contenedor en la vista de Billetera. Si no existe, lo inyectamos encima del área de recarga por WhatsApp
+        let container = document.getElementById('client-payment-methods-container');
+        if (!container) {
+            const rechargeArea = document.querySelector('#content-billetera .bg-slate-800\\/60.border-blue-900\\/50');
+            if (rechargeArea) {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                            <i data-lucide="landmark" class="w-5 h-5"></i> Cuentas Oficiales para Depósitos
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Puedes depositar o transferir a cualquiera de estas cuentas. Luego, envía el comprobante a nuestro WhatsApp para acreditarte el saldo.</p>
+                        <div id="client-payment-methods-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        </div>
+                    </div>
+                `;
+                rechargeArea.parentNode.insertBefore(wrapper, rechargeArea);
+                container = document.getElementById('client-payment-methods-container');
+            }
+        }
+
+        if (!container) return;
+
+        if (!paymentMethodsData || paymentMethodsData.length === 0) {
+            container.innerHTML = '<div class="col-span-full bg-slate-900/50 border border-slate-700/50 rounded-xl p-6 text-center text-gray-500">Aún no hay métodos de pago configurados.</div>';
+            return;
+        }
+
+        container.innerHTML = paymentMethodsData.map(method => {
+            const logoHtml = method.logo 
+                ? `<div class="w-12 h-12 bg-white/10 rounded-lg p-1 flex-shrink-0 flex items-center justify-center border border-white/10">
+                    <img src="${method.logo}" alt="${method.bank}" class="max-w-full max-h-full object-contain" onerror="this.src='https://placehold.co/100x100/161b22/22c55e?text=${method.bank[0]}'">
+                   </div>`
+                : `<div class="w-12 h-12 bg-green-900/40 rounded-lg flex-shrink-0 flex items-center justify-center border border-green-500/30 text-green-400 font-bold text-xl">${method.bank.substring(0, 2).toUpperCase()}</div>`;
+            
+            const accountHtml = method.account ? `
+                <div class="mt-3 bg-black/40 p-2.5 rounded-lg border border-gray-700 shadow-inner flex justify-between items-center gap-2 group/copy">
+                    <div class="min-w-0">
+                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Nº Cuenta / Tag</p>
+                        <p class="text-white font-mono font-bold truncate select-all">${method.account}</p>
+                    </div>
+                    <button onclick="window.copyText('${method.account.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-2 bg-gray-800 hover:bg-green-600 text-gray-400 hover:text-white rounded-md transition border border-gray-600 active:scale-95" title="Copiar cuenta">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            ` : '';
+
+            const idHtml = method.idNumber ? `
+                <div class="mt-2 bg-black/40 p-2.5 rounded-lg border border-gray-700 shadow-inner flex justify-between items-center gap-2 group/copy">
+                    <div class="min-w-0">
+                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Cédula / ID</p>
+                        <p class="text-white font-mono font-bold truncate select-all">${method.idNumber}</p>
+                    </div>
+                    <button onclick="window.copyText('${method.idNumber.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-2 bg-gray-800 hover:bg-green-600 text-gray-400 hover:text-white rounded-md transition border border-gray-600 active:scale-95" title="Copiar Cédula">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            ` : '';
+
+            return `
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 hover:border-green-500/50 rounded-xl p-5 shadow-lg relative overflow-hidden transition group">
+                <!-- Brillo de fondo -->
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-500/5 rounded-full blur-3xl group-hover:bg-green-500/10 transition"></div>
+                
+                <div class="flex items-center gap-3 mb-4 relative z-10">
+                    ${logoHtml}
+                    <div class="min-w-0 flex-grow">
+                        <h4 class="font-extrabold text-white text-lg truncate" title="${method.bank}">${method.bank}</h4>
+                        <p class="text-xs text-green-400 font-bold tracking-wide">${method.type || 'Moneda General'}</p>
+                    </div>
+                </div>
+
+                <div class="space-y-1 mb-2 relative z-10">
+                    ${method.owner ? `<p class="text-sm text-gray-300 truncate" title="${method.owner}"><i data-lucide="user" class="w-3 h-3 inline mr-1 text-gray-500"></i> ${method.owner}</p>` : ''}
+                    ${method.contact ? `<p class="text-sm text-gray-300 truncate"><i data-lucide="phone" class="w-3 h-3 inline mr-1 text-gray-500"></i> ${method.contact}</p>` : ''}
+                </div>
+
+                <div class="relative z-10">
+                    ${accountHtml}
+                    ${idHtml}
+                </div>
+            </div>
+            `;
+        }).join('');
+        lucide.createIcons();
+    };
+
+    window.renderAdminPaymentMethods = () => {
+        const container = document.getElementById('admin-payment-methods-list');
+        if (!container) return;
+
+        if (!paymentMethodsData || paymentMethodsData.length === 0) {
+            container.innerHTML = '<div class="col-span-full p-8 text-center border border-dashed border-gray-600 rounded-xl text-gray-500">No hay métodos de pago configurados. Haz clic en "Nuevo Método" para agregar uno.</div>';
+            return;
+        }
+
+        container.innerHTML = paymentMethodsData.map(method => `
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-3 border-b border-gray-700 pb-3">
+                        <img src="${method.logo || `https://placehold.co/100x100/161b22/22c55e?text=${method.bank[0]}`}" class="w-10 h-10 object-contain bg-gray-900 rounded p-1">
+                        <div>
+                            <h4 class="font-bold text-white">${method.bank}</h4>
+                            <p class="text-xs text-green-400">${method.type}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-1 text-sm text-gray-300 mb-4">
+                        <p><strong>Titular:</strong> ${method.owner || '-'}</p>
+                        <p><strong>Cuenta:</strong> <span class="font-mono">${method.account || '-'}</span></p>
+                        <p><strong>Cédula:</strong> <span class="font-mono">${method.idNumber || '-'}</span></p>
+                        <p><strong>Contacto:</strong> ${method.contact || '-'}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 border-t border-gray-700 pt-3">
+                    <button onclick="window.editPaymentMethod('${method.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-xs font-bold transition flex items-center justify-center gap-1"><i data-lucide="edit-2" class="w-3 h-3"></i> Editar</button>
+                    <button onclick="window.deletePaymentMethod('${method.id}')" class="flex-1 bg-red-900 hover:bg-red-800 text-white p-2 rounded text-xs font-bold transition flex items-center justify-center gap-1"><i data-lucide="trash-2" class="w-3 h-3"></i> Borrar</button>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    };
+
+    window.addNewPaymentMethod = () => {
+        document.getElementById('payment-edit-id').value = '';
+        document.getElementById('payment-bank').value = '';
+        document.getElementById('payment-logo').value = '';
+        document.getElementById('payment-type').value = '';
+        document.getElementById('payment-account').value = '';
+        document.getElementById('payment-owner').value = '';
+        document.getElementById('payment-id').value = '';
+        document.getElementById('payment-contact').value = '';
+        
+        document.getElementById('payment-modal-title').innerHTML = '<i data-lucide="plus-circle" class="w-5 h-5"></i> Nuevo Método de Pago';
+        lucide.createIcons();
+        
+        const modal = document.getElementById('payment-method-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    };
+
+    window.editPaymentMethod = (id) => {
+        const method = paymentMethodsData.find(m => m.id === id);
+        if (!method) return;
+
+        document.getElementById('payment-edit-id').value = method.id;
+        document.getElementById('payment-bank').value = method.bank || '';
+        document.getElementById('payment-logo').value = method.logo || '';
+        document.getElementById('payment-type').value = method.type || '';
+        document.getElementById('payment-account').value = method.account || '';
+        document.getElementById('payment-owner').value = method.owner || '';
+        document.getElementById('payment-id').value = method.idNumber || '';
+        document.getElementById('payment-contact').value = method.contact || '';
+
+        document.getElementById('payment-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5"></i> Editar Método de Pago';
+        lucide.createIcons();
+        
+        const modal = document.getElementById('payment-method-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    };
+
+    window.closePaymentMethodModal = () => {
+        const modal = document.getElementById('payment-method-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    window.savePaymentMethod = async () => {
+        const id = document.getElementById('payment-edit-id').value;
+        const bank = document.getElementById('payment-bank').value.trim();
+        const logo = document.getElementById('payment-logo').value.trim();
+        const type = document.getElementById('payment-type').value.trim();
+        const account = document.getElementById('payment-account').value.trim();
+        const owner = document.getElementById('payment-owner').value.trim();
+        const idNumber = document.getElementById('payment-id').value.trim();
+        const contact = document.getElementById('payment-contact').value.trim();
+
+        if (!bank) {
+            window.showModal("Datos Incompletos", "El nombre del banco o plataforma es obligatorio.");
+            return;
+        }
+
+        const data = {
+            bank, logo, type, account, owner, idNumber, contact,
+            updatedAt: serverTimestamp()
+        };
+
+        try {
+            if (id) {
+                await updateDoc(doc(db, COLLECTIONS.PAYMENT_METHODS, id), data);
+                window.showModal("Éxito", "Método de pago actualizado correctamente.");
+            } else {
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, COLLECTIONS.PAYMENT_METHODS), data);
+                window.showModal("Éxito", "Nuevo método de pago agregado.");
+            }
+            window.closePaymentMethodModal();
+        } catch (error) {
+            window.showModal("Error", "No se pudo guardar el método de pago: " + error.message);
+        }
+    };
+
+    window.deletePaymentMethod = (id) => {
+        window.showConfirmModal("Eliminar Método", "¿Estás seguro de que quieres eliminar esta cuenta de depósito? Ya no aparecerá a los clientes.", async () => {
+            try {
+                await deleteDoc(doc(db, COLLECTIONS.PAYMENT_METHODS, id));
+            } catch (error) {
+                window.showModal("Error", "No se pudo eliminar: " + error.message);
+            }
+        });
+    };
+    // FIN STREAMING_CHUNK:Lógica para Métodos de Pago
+
     // --- LÓGICA DE COMPRA Y CARRITO (Actualizado para 3 Niveles) ---
     window.pendingCartAction = null;
 
@@ -2300,8 +2753,24 @@
                 return;
             }
             window.pendingCartAction = { productId, change };
+            
+            // Poblar y mostrar la lista de cuentas guardadas si existen
+            const selectorContainer = document.getElementById('saved-players-selector-container');
+            const selector = document.getElementById('saved-players-select');
+            
+            if (currentUserProfile && currentUserProfile.savedPlayerIds && currentUserProfile.savedPlayerIds.length > 0) {
+                selectorContainer.classList.remove('hidden');
+                selector.innerHTML = '<option value="">-- Nueva Cuenta (Escribir abajo) --</option>' + 
+                    currentUserProfile.savedPlayerIds.map((p, index) => `<option value="${index}">${p.playerName} (ID: ${p.playerId})</option>`).join('');
+                selector.value = "";
+            } else {
+                selectorContainer.classList.add('hidden');
+            }
+
             document.getElementById('player-info-id').value = '';
             document.getElementById('player-info-name').value = '';
+            document.getElementById('save-player-info-cb').checked = false;
+            
             document.getElementById('player-info-modal').classList.remove('hidden');
             document.getElementById('player-info-modal').classList.add('flex');
             lucide.createIcons();
@@ -2310,13 +2779,42 @@
         }
     };
 
-    window.confirmPlayerInfoAddToCart = () => {
+    window.onSavedPlayerSelect = () => {
+        const index = document.getElementById('saved-players-select').value;
+        if (index !== "" && currentUserProfile && currentUserProfile.savedPlayerIds) {
+            const p = currentUserProfile.savedPlayerIds[index];
+            document.getElementById('player-info-id').value = p.playerId;
+            document.getElementById('player-info-name').value = p.playerName;
+        } else {
+            document.getElementById('player-info-id').value = '';
+            document.getElementById('player-info-name').value = '';
+        }
+    };
+
+    window.confirmPlayerInfoAddToCart = async () => {
         const pId = document.getElementById('player-info-id').value.trim();
         const pName = document.getElementById('player-info-name').value.trim();
+        const saveCb = document.getElementById('save-player-info-cb').checked;
         
         if (!pId || !pName) {
             window.showModal("Datos Incompletos", "Debes ingresar el ID y el Nombre de usuario para esta recarga.");
             return;
+        }
+
+        // Lógica para guardar el ID nuevo en el Perfil del usuario
+        if (saveCb && currentUserProfile) {
+            let savedIds = currentUserProfile.savedPlayerIds || [];
+            const exists = savedIds.find(p => p.playerId === pId);
+            if (!exists) {
+                savedIds.push({ playerId: pId, playerName: pName });
+                try {
+                    await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(currentUserId)), {
+                        savedPlayerIds: savedIds
+                    });
+                } catch (e) {
+                    console.error("Error guardando ID del jugador:", e);
+                }
+            }
         }
         
         const { productId, change } = window.pendingCartAction;
@@ -2350,6 +2848,64 @@
         document.getElementById('player-info-modal').classList.add('hidden');
         document.getElementById('player-info-modal').classList.remove('flex');
         window.pendingCartAction = null;
+    };
+
+    // --- NUEVAS FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE IDs GUARDADOS ---
+    window.deleteSavedPlayerId = (index) => {
+        window.showConfirmModal("Eliminar ID Guardado", "¿Estás seguro de que quieres eliminar esta cuenta de tu lista rápida?", async () => {
+            if(!currentUserProfile || !currentUserProfile.savedPlayerIds) return;
+            let newIds = [...currentUserProfile.savedPlayerIds];
+            newIds.splice(index, 1);
+            try {
+                await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(currentUserId)), { savedPlayerIds: newIds });
+                const toast = document.getElementById('toast-notification');
+                document.getElementById('toast-message').textContent = "Cuenta eliminada.";
+                toast.classList.remove('translate-y-20');
+                setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+            } catch(e) {
+                window.showModal("Error", "No se pudo eliminar: " + e.message);
+            }
+        });
+    };
+
+    window.editSavedPlayerId = (index) => {
+        if(!currentUserProfile || !currentUserProfile.savedPlayerIds) return;
+        const p = currentUserProfile.savedPlayerIds[index];
+        
+        const promptHtml = `
+            <div class="mt-2 text-left space-y-3">
+                <div>
+                    <label class="text-xs text-blue-400 font-bold uppercase mb-1 block">ID del Jugador</label>
+                    <input type="text" id="edit-saved-id-input" value="${p.playerId}" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-blue-400 font-bold uppercase mb-1 block">Nombre / Nickname</label>
+                    <input type="text" id="edit-saved-name-input" value="${p.playerName}" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:outline-none">
+                </div>
+            </div>
+        `;
+
+        window.showConfirmModal("Editar Cuenta Guardada", promptHtml, async () => {
+            const newId = document.getElementById('edit-saved-id-input').value.trim();
+            const newName = document.getElementById('edit-saved-name-input').value.trim();
+            if(!newId || !newName) {
+                window.showModal("Error", "Ambos campos son requeridos.");
+                return;
+            }
+
+            let newIds = [...currentUserProfile.savedPlayerIds];
+            newIds[index] = { playerId: newId, playerName: newName };
+            
+            try {
+                await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(currentUserId)), { savedPlayerIds: newIds });
+                const toast = document.getElementById('toast-notification');
+                document.getElementById('toast-message').textContent = "Cuenta actualizada.";
+                toast.classList.remove('translate-y-20');
+                setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+            } catch(e) {
+                window.showModal("Error", "No se pudo actualizar: " + e.message);
+            }
+        });
     };
 
     window.removeFromCart = (cartKey) => {
@@ -3397,9 +3953,16 @@
         } else if (action === 'reject') {
             const ivaRate = adminConfig.ivaPercentage || 0;
             const refundAmount = (item.price * item.quantity) * (1 + (ivaRate / 100));
+            // Cálculo proporcional de puntos a quitar
+            const subtotalTransaction = tx.subtotalCS || 0;
+            const itemSubtotal = (item.price * item.quantity) || 0;
+            const pointsToSubtract = subtotalTransaction > 0 
+                ? ((itemSubtotal / subtotalTransaction) * (tx.nexusEarned || 0)) 
+                : 0;
 
             const promptHtml = `
-                <p class="mb-4 text-gray-300">¿Rechazar este pedido y devolver automáticamente <strong>${formatCS(refundAmount)}</strong> (incluye IVA) al saldo del cliente?</p>
+                <p class="mb-4 text-gray-300">¿Rechazar este pedido y devolver automáticamente <strong>${formatCS(refundAmount)}</strong> al saldo del cliente?</p>
+                ${pointsToSubtract > 0 ? `<p class="mb-4 text-xs text-yellow-400 font-bold">⚠️ También se le descontarán ${formatNexus(pointsToSubtract)} del saldo de puntos Nexus.</p>` : ''}
                 <div class="mt-2 text-left">
                     <label class="text-xs text-red-400 font-bold uppercase mb-1 block">Motivo del rechazo (Visible para el cliente)</label>
                     <textarea id="reject-reason-input" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500 focus:outline-none placeholder-gray-500" rows="3" placeholder="Ej: ID incorrecto, región de la cuenta no coincide, etc..."></textarea>
@@ -3414,14 +3977,47 @@
                     await runTransaction(db, async (t) => {
                         const txRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, txId);
                         const userRef = doc(db, COLLECTIONS.USER_PROFILE(tx.userId));
+                        const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
                         
                         const userDoc = await t.get(userRef);
+                        const catalogDoc = await t.get(catalogRef);
+
                         if (!userDoc.exists()) throw new Error("Usuario no encontrado");
 
                         const currentFunds = userDoc.data().fundsCS || 0;
+                        const currentNexus = userDoc.data().nexusPoints || 0;
 
-                        // Se devuelven los fondos al cliente
-                        t.update(userRef, { fundsCS: currentFunds + refundAmount });
+                        // Restituir inventario y reducir vendidos en el catálogo
+                        let catalogData = null;
+                        if (catalogDoc.exists()) {
+                            catalogData = catalogDoc.data();
+                            let catalogUpdated = false;
+                            const originalProductId = item.originalProductId || item.id;
+                            
+                            for (const mainCat of catalogData.catalog) {
+                                if (mainCat.subcategories) {
+                                    for (const subCat of mainCat.subcategories) {
+                                        const product = subCat.products.find(p => p.id === originalProductId);
+                                        if (product) {
+                                            product.totalSold = Math.max(0, (product.totalSold || 0) - item.quantity);
+                                            if (!product.unlimited && product.availableCodes === undefined) {
+                                                product.inventory = (product.inventory || 0) + item.quantity;
+                                            }
+                                            catalogUpdated = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (catalogUpdated) {
+                                t.set(catalogRef, catalogData);
+                            }
+                        }
+
+                        // Se devuelven los fondos y se quitan los puntos
+                        t.update(userRef, { 
+                            fundsCS: currentFunds + refundAmount,
+                            nexusPoints: Math.max(0, currentNexus - pointsToSubtract)
+                        });
 
                         // Marcar item como rechazado y añadir el motivo
                         t.update(txRef, {
@@ -3436,13 +4032,14 @@
                             type: 'REEMBOLSO_RECARGA',
                             userId: tx.userId,
                             amount: refundAmount,
+                            pointsRemoved: pointsToSubtract,
                             refTransactionId: txId,
                             itemName: item.name,
                             reason: reasonText,
                             timestamp: serverTimestamp()
                         });
                     });
-                    window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado y el dinero se acreditó de vuelta al cliente.");
+                    window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado, el dinero se acreditó de vuelta y se ajustaron los puntos del cliente.");
                 } catch(e) { window.showModal("Error", e.message); }
             });
         }
@@ -3527,42 +4124,73 @@
         } catch (e) { console.error(e); window.showModal("Error", "Falló la creación"); }
     };
 
-    window.modifyUserFunds = async (userId, action, type) => {
+    window.modifyUserFunds = (userId, action, type) => {
         const amount = parseFloat(document.getElementById(`amount-${type}-${userId}`).value);
         if (!amount || amount < 0) return;
-        const userRef = doc(db, COLLECTIONS.USER_PROFILE(userId));
-        const field = type === 'cs' ? 'fundsCS' : 'nexusPoints';
-        try {
-            await runTransaction(db, async (transaction) => {
-                const docSnap = await transaction.get(userRef);
-                if (!docSnap.exists()) throw "User not found";
-                const current = docSnap.data()[field] || 0;
-                const newVal = action === 'add' ? current + amount : current - amount;
-                transaction.update(userRef, { [field]: newVal });
-                transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
-                    type: 'AJUSTE_MANUAL', adjustmentType: action, currency: type, amount, userId, timestamp: serverTimestamp()
+        
+        const actionText = action === 'add' ? 'Añadir' : 'Restar';
+        const typeText = type === 'cs' ? 'Saldo C$' : 'Puntos Nexus';
+        
+        window.showConfirmModal(`${actionText} ${typeText}`, `
+            <p class="text-sm text-gray-300">Se van a <strong>${action === 'add' ? 'agregar' : 'descontar'} ${amount}</strong> al usuario.</p>
+            <div class="mt-4 text-left">
+                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nota Opcional (Visible en el historial)</label>
+                <input type="text" id="admin-adjust-note" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:outline-none placeholder-gray-500" placeholder="Ej: Regalo por torneo, compensación...">
+            </div>
+        `, async () => {
+            const noteInput = document.getElementById('admin-adjust-note');
+            const note = noteInput ? noteInput.value.trim() : '';
+            
+            const userRef = doc(db, COLLECTIONS.USER_PROFILE(userId));
+            const field = type === 'cs' ? 'fundsCS' : 'nexusPoints';
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const docSnap = await transaction.get(userRef);
+                    if (!docSnap.exists()) throw "User not found";
+                    const current = docSnap.data()[field] || 0;
+                    const newVal = action === 'add' ? current + amount : current - amount;
+                    transaction.update(userRef, { [field]: newVal });
+                    transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: 'AJUSTE_MANUAL', adjustmentType: action, currency: type, amount, userId, timestamp: serverTimestamp(), note: note
+                    });
                 });
-            });
-            document.getElementById(`amount-${type}-${userId}`).value = '';
-        } catch (e) { window.showModal("Error", e); }
+                document.getElementById(`amount-${type}-${userId}`).value = '';
+                window.showModal("Éxito", "Saldos actualizados correctamente.");
+            } catch (e) { window.showModal("Error", e); }
+        });
     };
 
-    window.modifyUserDebt = async (userId, action) => {
+    window.modifyUserDebt = (userId, action) => {
         const amount = parseFloat(document.getElementById(`amount-debt-${userId}`).value);
         if (!amount || amount < 0) return;
-        const userRef = doc(db, COLLECTIONS.USER_PROFILE(userId));
-        try {
-            await runTransaction(db, async (transaction) => {
-                const docSnap = await transaction.get(userRef);
-                const current = docSnap.data().debtCS || 0;
-                const newVal = action === 'add' ? current + amount : Math.max(0, current - amount);
-                transaction.update(userRef, { debtCS: newVal });
-                transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
-                    type: action === 'add' ? 'DEBT_ADDED' : 'DEBT_PAYMENT', amount, userId, timestamp: serverTimestamp()
+        
+        const actionText = action === 'add' ? 'Añadir' : 'Reducir';
+        
+        window.showConfirmModal(`${actionText} Deuda`, `
+            <p class="text-sm text-gray-300">Se van a <strong>${action === 'add' ? 'agregar' : 'descontar'} ${formatCS(amount)}</strong> de la deuda del usuario.</p>
+            <div class="mt-4 text-left">
+                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nota Opcional (Visible en el historial)</label>
+                <input type="text" id="admin-adjust-note" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500 focus:outline-none placeholder-gray-500" placeholder="Ej: Préstamo autorizado, abono manual...">
+            </div>
+        `, async () => {
+            const noteInput = document.getElementById('admin-adjust-note');
+            const note = noteInput ? noteInput.value.trim() : '';
+
+            const userRef = doc(db, COLLECTIONS.USER_PROFILE(userId));
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const docSnap = await transaction.get(userRef);
+                    const current = docSnap.data().debtCS || 0;
+                    const newVal = action === 'add' ? current + amount : Math.max(0, current - amount);
+                    transaction.update(userRef, { debtCS: newVal });
+                    transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: action === 'add' ? 'DEBT_ADDED' : 'DEBT_PAYMENT', amount, userId, timestamp: serverTimestamp(), paymentMethod: 'MANUAL_ADMIN', note: note
+                    });
                 });
-            });
-            document.getElementById(`amount-debt-${userId}`).value = '';
-        } catch (e) { window.showModal("Error", e); }
+                document.getElementById(`amount-debt-${userId}`).value = '';
+                window.showModal("Éxito", "Deuda actualizada correctamente.");
+            } catch (e) { window.showModal("Error", e); }
+        });
     };
 
     window.updateManagedUser = async (userId) => {
@@ -4786,9 +5414,15 @@
                 color = 'text-cyan-300 font-bold'; 
             }
             else if (item.type === 'DEBT_PAYMENT') { detail = `Abono deuda ${formatCS(item.amount)}`; color = 'text-yellow-300'; }
+            else if (item.type === 'DEBT_ADDED') { detail = `Deuda añadida ${formatCS(item.amount)}`; color = 'text-red-400'; }
+            else if (item.type === 'AJUSTE_MANUAL') { detail = `Ajuste: ${item.adjustmentType === 'add' ? '+' : '-'}${item.amount} ${item.currency}`; color = 'text-blue-300'; }
             else if (item.type === 'SORTEO_ENTRADA') { detail = `Rifa: ${item.raffleType}`; color = 'text-gray-400'; }
             else { detail = item.type; }
-            return `<div class="text-xs cursor-pointer hover:bg-gray-700 p-1 rounded" onclick="window.showTransactionDetails('${item.id}', 'admin')"><span class="font-mono">${date}</span> - <span class="${color}">${detail}</span></div>`;
+            
+            if (item.note) {
+                detail += ` <div class="text-gray-400 block text-[10px] mt-0.5 italic">Nota: ${item.note}</div>`;
+            }
+            return `<div class="text-xs cursor-pointer hover:bg-gray-700 p-2 mb-1 rounded bg-gray-800/50" onclick="window.showTransactionDetails('${item.id}', 'admin')"><span class="font-mono text-gray-500">${date}</span> - <span class="${color}">${detail}</span></div>`;
         }).join('');
     };
 
@@ -4992,7 +5626,13 @@
                 let desc = item.type;
                 if (item.type === 'SORTEO_ENTRADA') desc = `Participación Sorteo: ${item.raffleType}`;
                 if (item.type === 'DEBT_PAYMENT') desc = `Abono a Deuda: ${formatCS(item.amount)}`;
+                if (item.type === 'DEBT_ADDED') desc = `Deuda Añadida: ${formatCS(item.amount)}`;
+                if (item.type === 'AJUSTE_MANUAL') desc = `Ajuste de Saldo: ${item.adjustmentType === 'add' ? '+' : '-'}${item.amount} ${item.currency === 'cs' ? 'C$' : 'Nexus'}`;
                 contentHTML = `<p class="text-gray-300 text-sm">${desc}</p>`;
+            }
+
+            if (item.note) {
+                contentHTML += `<div class="mt-2 bg-gray-900/50 p-2 rounded-lg border border-gray-700/50"><p class="text-[10px] text-gray-400 font-bold uppercase flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> Nota del Administrador</p><p class="text-xs text-gray-300 mt-0.5 italic">"${item.note}"</p></div>`;
             }
 
             let viewReceiptBtn = '';
@@ -5203,7 +5843,19 @@
             }
 
         } else {
-             itemsContainer.innerHTML = `<p class="italic text-center">${item.adjustmentType || ''} ${formatCS(item.amount)}</p>`;
+             let adjustmentDesc = item.adjustmentType === 'add' ? 'Añadido' : 'Descontado';
+             let text = item.type;
+             if (item.type === 'AJUSTE_MANUAL') text = `Ajuste: ${adjustmentDesc} ${item.amount} ${item.currency === 'cs' ? 'C$' : 'Nexus'}`;
+             if (item.type === 'DEBT_ADDED') text = `Deuda Manual Añadida: ${formatCS(item.amount)}`;
+             itemsContainer.innerHTML = `<p class="italic text-center text-sm">${text}</p>`;
+        }
+        
+        if (item.note) {
+            itemsContainer.innerHTML += `
+            <div class="mt-3 p-3 bg-gray-100 rounded border-l-2 border-blue-500">
+                <span class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nota:</span>
+                <span class="text-xs text-gray-800 italic">"${item.note}"</span>
+            </div>`;
         }
         
         document.getElementById('receipt-financial-details').innerHTML = financialHTML;
@@ -5296,6 +5948,9 @@
                      const userDoc = await transaction.get(userRef);
                      if (!userDoc.exists()) throw "Usuario no encontrado";
                      
+                     const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+                     const catalogDoc = await transaction.get(catalogRef);
+                     
                      const currentFunds = userDoc.data().fundsCS || 0;
                      const currentDebt = userDoc.data().debtCS || 0;
                      const currentNexus = userDoc.data().nexusPoints || 0;
@@ -5303,6 +5958,56 @@
                      let newFunds = currentFunds;
                      let newDebt = currentDebt;
                      let newNexus = currentNexus;
+                     
+                     // Restituir inventario y reducir ventas/canjes en el catálogo
+                     let catalogData = catalogDoc.exists() ? catalogDoc.data() : null;
+                     let catalogUpdated = false;
+
+                     if (catalogData && tData.items) {
+                         if (tData.type === 'COMPRA') {
+                             Object.values(tData.items).forEach(cartItem => {
+                                 if (cartItem.itemStatus === 'rejected') return; // Ya fue procesado
+                                 
+                                 const originalProductId = cartItem.originalProductId || cartItem.id;
+                                 for (const mainCat of catalogData.catalog) {
+                                     if (mainCat.subcategories) {
+                                         for (const subCat of mainCat.subcategories) {
+                                             const product = subCat.products.find(p => p.id === originalProductId);
+                                             if (product) {
+                                                 product.totalSold = Math.max(0, (product.totalSold || 0) - cartItem.quantity);
+                                                 if (!product.unlimited && product.availableCodes === undefined) {
+                                                     product.inventory = (product.inventory || 0) + cartItem.quantity;
+                                                 }
+                                                 catalogUpdated = true;
+                                             }
+                                         }
+                                     }
+                                 }
+                             });
+                         } else if (tData.type === 'CANJE') {
+                             Object.values(tData.items).forEach(cartItem => {
+                                 const originalProductId = cartItem.originalProductId || cartItem.id;
+                                 for (const mainCat of catalogData.nexusRedemptions) {
+                                     if (mainCat.subcategories) {
+                                         for (const subCat of mainCat.subcategories) {
+                                             const nexusItem = subCat.items.find(i => i.id === originalProductId);
+                                             if (nexusItem) {
+                                                 nexusItem.totalRedeemed = Math.max(0, (nexusItem.totalRedeemed || 0) - cartItem.quantity);
+                                                 if (!nexusItem.unlimited && nexusItem.availableCodes === undefined) {
+                                                     nexusItem.inventory = (nexusItem.inventory || 0) + cartItem.quantity;
+                                                 }
+                                                 catalogUpdated = true;
+                                             }
+                                         }
+                                     }
+                                 }
+                             });
+                         }
+                     }
+                     
+                     if (catalogUpdated) {
+                         transaction.set(catalogRef, catalogData);
+                     }
                      
                      if (tData.type === 'COMPRA') {
                          newNexus -= (tData.nexusEarned || 0);
@@ -5322,7 +6027,7 @@
                      transaction.update(userRef, { fundsCS: newFunds, debtCS: newDebt, nexusPoints: newNexus });
                      transaction.update(tRef, { status: 'anulada', voidedAt: serverTimestamp() });
                  });
-                 window.showModal("Anulada", "La transacción ha sido anulada y los saldos ajustados.");
+                 window.showModal("Anulada", "La transacción ha sido anulada, los saldos ajustados y el inventario restituido.");
                  document.getElementById('transaction-detail-modal').classList.add('hidden');
                  document.getElementById('transaction-detail-modal').classList.remove('flex');
              } catch (e) {
@@ -5693,9 +6398,147 @@
             if (!document.getElementById('content-admin-orders').classList.contains('hidden')) {
                 window.renderAdminOrders();
             }
+            if (!document.getElementById('content-admin-recharges').classList.contains('hidden')) {
+                window.renderAdminRechargesHistory();
+            }
         }, err => handleFirestoreError(err, "Admin: Historial"));
+
+        const paymentsUnsub = onSnapshot(query(collection(db, COLLECTIONS.PAYMENT_METHODS)), (snapshot) => {
+            paymentMethodsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Ordenar alfabéticamente por banco
+            paymentMethodsData.sort((a, b) => a.bank.localeCompare(b.bank));
+            
+            if (!document.getElementById('content-admin-payments').classList.contains('hidden')) {
+                window.renderAdminPaymentMethods();
+            }
+            // También actualizamos la vista del cliente si está en billetera
+            if (!document.getElementById('content-billetera').classList.contains('hidden')) {
+                window.renderClientPaymentMethods();
+            }
+        }, err => handleFirestoreError(err, "Admin: Métodos de Pago"));
         
-        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub);
+        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub, paymentsUnsub);
+    };
+
+    // --- NUEVA FUNCIÓN: Renderizar Historial de Recargas ---
+    window.renderAdminRechargesHistory = () => {
+        const container = document.getElementById('admin-recharges-history-list');
+        if (!container) return;
+
+        const searchTerm = document.getElementById('recharge-search-input').value.toLowerCase();
+        const statusFilter = document.getElementById('recharge-filter-status').value;
+
+        let rechargesList = [];
+
+        // Extraer todas las recargas individuales de las transacciones
+        purchaseHistoryData.forEach(tx => {
+            if (tx.type !== 'COMPRA' || tx.status === 'anulada' || !tx.items) return;
+
+            Object.entries(tx.items).forEach(([cartKey, item]) => {
+                if (item.requiresPlayerInfo) {
+                    const user = allUsersData.find(u => u.id === tx.userId);
+                    const clientName = user ? user.name : tx.userId;
+                    const playerId = item.playerInfo?.id || '';
+                    const playerName = item.playerInfo?.name || '';
+                    const status = item.itemStatus || 'pending'; // pending, completed, rejected
+
+                    // Filtro de Estado
+                    if (statusFilter !== 'all' && status !== statusFilter) return;
+
+                    // Filtro de Búsqueda
+                    if (searchTerm) {
+                        const searchString = `${clientName} ${playerId} ${playerName} ${item.name}`.toLowerCase();
+                        if (!searchString.includes(searchTerm)) return;
+                    }
+
+                    rechargesList.push({
+                        txId: tx.id,
+                        cartKey: cartKey,
+                        clientName: clientName,
+                        clientEmail: user ? user.email : '',
+                        playerId: playerId,
+                        playerName: playerName,
+                        productName: item.name,
+                        quantity: item.quantity,
+                        status: status,
+                        price: item.price,
+                        dateObj: tx.timestamp ? new Date(tx.timestamp.seconds * 1000) : null,
+                        completedAt: item.completedAt ? new Date(item.completedAt.seconds * 1000) : null,
+                        rejectedAt: item.rejectedAt ? new Date(item.rejectedAt.seconds * 1000) : null,
+                        rejectReason: item.rejectReason || ''
+                    });
+                }
+            });
+        });
+
+        // Ordenar por fecha de creación (más recientes primero)
+        rechargesList.sort((a, b) => (b.dateObj?.getTime() || 0) - (a.dateObj?.getTime() || 0));
+
+        if (rechargesList.length === 0) {
+            container.innerHTML = `<div class="p-8 text-center bg-gray-800/50 rounded-xl border border-gray-700/50 text-gray-400">No se encontraron recargas que coincidan con los filtros.</div>`;
+            return;
+        }
+
+        let html = '';
+        rechargesList.forEach(rec => {
+            const dateStr = rec.dateObj ? rec.dateObj.toLocaleString('es-NI') : 'Fecha desconocida';
+            
+            let statusBadge = '';
+            let actionDateStr = '';
+            let statusClass = '';
+
+            if (rec.status === 'completed') {
+                statusBadge = `<span class="bg-green-900/40 text-green-400 px-2 py-1 rounded text-xs font-bold border border-green-700/50 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> Completada</span>`;
+                actionDateStr = rec.completedAt ? `<p class="text-[10px] text-green-400 mt-1">Entregada: ${rec.completedAt.toLocaleString('es-NI')}</p>` : '';
+                statusClass = 'border-l-4 border-l-green-500';
+            } else if (rec.status === 'rejected') {
+                statusBadge = `<span class="bg-red-900/40 text-red-400 px-2 py-1 rounded text-xs font-bold border border-red-700/50 flex items-center gap-1"><i data-lucide="x-circle" class="w-3 h-3"></i> Rechazada</span>`;
+                actionDateStr = rec.rejectedAt ? `<p class="text-[10px] text-red-400 mt-1">Rechazada: ${rec.rejectedAt.toLocaleString('es-NI')}</p>` : '';
+                if (rec.rejectReason) {
+                    actionDateStr += `<p class="text-[10px] text-red-300 italic mt-0.5">Motivo: ${rec.rejectReason}</p>`;
+                }
+                statusClass = 'border-l-4 border-l-red-500 opacity-75';
+            } else {
+                statusBadge = `<span class="bg-yellow-900/40 text-yellow-400 px-2 py-1 rounded text-xs font-bold border border-yellow-700/50 flex items-center gap-1"><i data-lucide="loader" class="w-3 h-3 animate-spin"></i> Pendiente</span>`;
+                statusClass = 'border-l-4 border-l-yellow-500';
+            }
+
+            html += `
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-sm transition hover:bg-gray-750 ${statusClass} flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                <div class="flex-grow space-y-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        ${statusBadge}
+                        <span class="text-xs text-gray-500 font-mono tracking-widest uppercase">REF: ${rec.txId.slice(0,6)}</span>
+                    </div>
+                    <p class="font-bold text-white text-lg">${rec.productName} <span class="text-sm font-normal text-gray-400">x${rec.quantity}</span></p>
+                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mt-2">
+                        <p class="text-blue-300"><span class="text-gray-500 text-xs">ID Jugador:</span> <strong class="font-mono bg-blue-900/30 px-1 rounded select-all">${rec.playerId}</strong></p>
+                        <p class="text-purple-300"><span class="text-gray-500 text-xs">Nick:</span> <strong>${rec.playerName}</strong></p>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2"><i data-lucide="user" class="w-3 h-3 inline mr-1"></i>Cliente: ${rec.clientName} <span class="opacity-50">(${rec.clientEmail})</span></p>
+                </div>
+                <div class="text-right flex flex-col items-end min-w-[150px]">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Solicitada el</p>
+                    <p class="text-xs text-gray-300 font-mono bg-gray-900/50 px-2 py-1 rounded border border-gray-700">${dateStr}</p>
+                    ${actionDateStr}
+                    
+                    ${rec.status === 'pending' ? `
+                    <div class="flex gap-2 mt-3 w-full">
+                         <button onclick="window.processPendingOrder('${rec.txId}', '${rec.cartKey}', 'complete')" class="flex-1 bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-1.5 px-2 rounded shadow transition flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></button>
+                         <button onclick="window.processPendingOrder('${rec.txId}', '${rec.cartKey}', 'reject')" class="flex-1 bg-red-900 hover:bg-red-800 text-white text-xs font-bold py-1.5 px-2 rounded shadow border border-red-700 transition flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+                    ` : `
+                    <button onclick="window.showTransactionDetails('${rec.txId}', 'admin')" class="mt-3 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-xs text-white rounded transition shadow-sm border border-gray-600 flex items-center gap-1">
+                        <i data-lucide="file-text" class="w-3 h-3"></i> Ver Factura
+                    </button>
+                    `}
+                </div>
+            </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        lucide.createIcons();
     };
 
     const initApp = async () => {
