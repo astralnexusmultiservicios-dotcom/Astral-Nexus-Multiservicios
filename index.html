@@ -6517,12 +6517,9 @@
 
         if (currentUserId !== 'SYSTEM_ADMIN') {
             const historyUnsub = onSnapshot(query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", currentUserId)), (snapshot) => {
-                // CORRECCIÓN CLAVE: Asignar al array global para que la función de estadísticas pueda leerlo.
-                purchaseHistoryData = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                purchaseHistoryData.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-                
-                window.renderPurchaseHistory(purchaseHistoryData);
-                window.renderClientProfile(); // Refrescar el perfil para actualizar las estadísticas dinámicas
+                let history = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                history.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                window.renderPurchaseHistory(history);
             }, err => handleFirestoreError(err, "Historial de Cliente"));
             unsubscribes.push(historyUnsub);
         }
@@ -6530,8 +6527,19 @@
             allRafflesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             window.renderClientRaffles(allRafflesData);
         }, err => handleFirestoreError(err, "Sorteos Cliente"));
+
+        // NUEVO: Escuchador de Métodos de Pago para el Cliente
+        const paymentsUnsub = onSnapshot(query(collection(db, COLLECTIONS.PAYMENT_METHODS)), (snapshot) => {
+            paymentMethodsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            paymentMethodsData.sort((a, b) => a.bank.localeCompare(b.bank)); // Ordenar alfabéticamente
+            
+            // Renderizar si el cliente está en la pestaña Billetera
+            if (!document.getElementById('content-billetera').classList.contains('hidden')) {
+                window.renderClientPaymentMethods();
+            }
+        }, err => handleFirestoreError(err, "Cliente: Métodos de Pago"));
         
-        unsubscribes.push(profileUnsub, rafflesUnsub);
+        unsubscribes.push(profileUnsub, rafflesUnsub, paymentsUnsub);
     };
 
     const startAdminListeners = (user) => {
