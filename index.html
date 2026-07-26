@@ -745,7 +745,12 @@
                 
                 <!-- Pestaña 4: Ventas y Reportes -->
                 <div id="content-admin-sales" class="hidden">
-                    <h3 class="text-2xl font-bold mb-4 text-red-400">📊 Reportes y Punto de Venta</h3>
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4 border-b border-gray-700/50 pb-4">
+                        <h3 class="text-2xl font-bold text-red-400 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-6 h-6"></i> Reportes y Punto de Venta</h3>
+                        <button onclick="window.showGlobalVolumeModal()" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.4)] transition transform hover:-translate-y-0.5 border border-blue-400/20 flex items-center gap-2">
+                            <i data-lucide="activity" class="w-5 h-5"></i> Volumen Global de Recargas
+                        </button>
+                    </div>
 
                     <!-- Punto de Venta / Registro Manual -->
                     <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-red-700 mb-8">
@@ -1116,6 +1121,26 @@
             <div class="flex justify-end gap-3">
                 <button onclick="window.hideClientPayDebtModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-bold transition">Cancelar</button>
                 <button onclick="window.processClientDebtPayment()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition shadow-lg shadow-red-900/30">Confirmar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Volumen Global de Recargas -->
+    <div id="global-volume-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[80] p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-[#0f172a] rounded-2xl max-w-xl w-full shadow-[0_0_40px_rgba(59,130,246,0.3)] border border-blue-900/50 flex flex-col max-h-[90vh] overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center relative z-10 bg-slate-900/50 backdrop-blur-md">
+                <h3 class="text-xl font-extrabold text-blue-400 flex items-center gap-2 uppercase tracking-wide">
+                    <i data-lucide="activity" class="w-6 h-6 text-indigo-400"></i> Métricas In-Game
+                </h3>
+                <button onclick="window.closeGlobalVolumeModal()" class="text-slate-500 hover:text-white transition bg-slate-800 hover:bg-slate-700 p-2 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div id="global-volume-content" class="p-6 overflow-y-auto flex-grow custom-scrollbar relative z-10">
+                <!-- Contenido inyectado dinámicamente -->
             </div>
         </div>
     </div>
@@ -1807,14 +1832,16 @@
         ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments'].forEach(tab => {
             const btn = document.getElementById(`tab-admin-${tab}`);
             const content = document.getElementById(`content-admin-${tab}`);
-            if(tab === tabName) {
-                btn.classList.add('tab-active', 'text-white');
-                btn.classList.remove('text-gray-400');
-                content.classList.remove('hidden');
-            } else {
-                btn.classList.remove('tab-active', 'text-white');
-                btn.classList.add('text-gray-400');
-                content.classList.add('hidden');
+            if (btn && content) {
+                if(tab === tabName) {
+                    btn.classList.add('tab-active', 'text-white');
+                    btn.classList.remove('text-gray-400');
+                    content.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('tab-active', 'text-white');
+                    btn.classList.add('text-gray-400');
+                    content.classList.add('hidden');
+                }
             }
         });
         if(tabName === 'products') window.renderAdminProductManagement();
@@ -1822,6 +1849,62 @@
         if(tabName === 'orders') window.renderAdminOrders();
         if(tabName === 'recharges') window.renderAdminRechargesHistory();
         if(tabName === 'payments') window.renderAdminPaymentMethods();
+    };
+
+    window.calculateClientVolume = () => {
+        const volumeStats = [];
+        let totalPersonalUnits = 0;
+        const statsMap = {};
+
+        // Utilizamos purchaseHistoryData que, para el cliente, contiene solo sus propias compras
+        purchaseHistoryData.forEach(tx => {
+            if (tx.type !== 'COMPRA' || tx.status === 'anulada' || !tx.items) return;
+
+            Object.values(tx.items).forEach(cartItem => {
+                const productId = cartItem.originalProductId || cartItem.id;
+                const qty = cartItem.quantity || 1;
+                
+                // Encontrar a qué plataforma pertenece el producto
+                let platform = 'Otros';
+                if (productsCatalog && productsCatalog.catalog) {
+                    for (const mainCat of productsCatalog.catalog) {
+                        if (mainCat.subcategories) {
+                            for (const subCat of mainCat.subcategories) {
+                                if (subCat.products.some(p => p.id === productId)) {
+                                    platform = subCat.title;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!statsMap[platform]) {
+                    statsMap[platform] = { numericVolume: 0, itemsSold: 0 };
+                }
+                statsMap[platform].itemsSold += qty;
+
+                // Extraer el valor numérico del nombre del paquete (Ej: "500 Diamantes" -> 500)
+                const matches = cartItem.name.match(/\d+/g);
+                if (matches) {
+                    let itemNumericValue = 0;
+                    matches.forEach(numStr => itemNumericValue += parseInt(numStr, 10));
+                    statsMap[platform].numericVolume += (itemNumericValue * qty);
+                    totalPersonalUnits += (itemNumericValue * qty);
+                }
+            });
+        });
+
+        // Convertir mapa a array para facilitar su uso
+        for (const platform in statsMap) {
+            volumeStats.push({
+                platform,
+                numericVolume: statsMap[platform].numericVolume,
+                itemsSold: statsMap[platform].itemsSold
+            });
+        }
+
+        return { volumeStats, totalPersonalUnits };
     };
 
     window.renderClientProfile = () => {
@@ -1851,7 +1934,81 @@
             `).join('');
         }
 
+        // --- NUEVO: Construcción de Estadísticas Personales ---
+        const myStats = window.calculateClientVolume();
+        let myStatsHtml = '';
+        
+        if (!myStats || myStats.volumeStats.length === 0) {
+            myStatsHtml = '<p class="text-sm text-gray-500 italic text-center py-4">Aún no tienes recargas registradas para generar tus estadísticas.</p>';
+        } else {
+            const sortedStats = myStats.volumeStats.sort((a,b) => b.numericVolume - a.numericVolume || b.itemsSold - a.itemsSold);
+            myStatsHtml = sortedStats.map(stat => {
+                let icon = '🎮'; let color = 'indigo'; let currency = 'Monedas';
+                const lower = stat.platform.toLowerCase();
+                
+                if (lower.includes('free fire')) { icon = '💎'; color = 'cyan'; currency = 'Diamantes'; }
+                else if (lower.includes('roblox')) { icon = '🟩'; color = 'emerald'; currency = 'Robux'; }
+                else if (lower.includes('pubg')) { icon = '🟡'; color = 'yellow'; currency = 'UC'; }
+                else if (lower.includes('cod') || lower.includes('call of duty')) { icon = '🪙'; color = 'yellow'; currency = 'CP'; }
+                else if (lower.includes('mobile legends')) { icon = '💰'; color = 'amber'; currency = 'Diamantes'; }
+
+                const volumeDisplay = stat.numericVolume > 0 
+                    ? `<span class="font-bold text-${color}-400">${stat.numericVolume.toLocaleString('en-US')} ${currency}</span>`
+                    : `<span class="font-bold text-gray-300">${stat.itemsSold.toLocaleString('en-US')} Packs</span>`;
+
+                return `
+                <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 mb-2 transition hover:bg-slate-800 hover:border-${color}-500/50 shadow-inner">
+                    <div class="flex items-center gap-2 text-sm text-gray-200 font-bold">
+                        <span class="text-lg drop-shadow-md">${icon}</span> ${stat.platform}
+                    </div>
+                    <div class="text-sm text-right leading-tight">
+                        ${volumeDisplay}
+                        <p class="text-[10px] text-gray-500 font-mono">(${stat.itemsSold} Trans.)</p>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            if (myStats.totalPersonalUnits > 0) {
+                 myStatsHtml += `
+                 <div class="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center bg-slate-900/80 p-3 rounded-lg border border-blue-500/20 shadow-lg">
+                    <span class="text-xs text-blue-300 uppercase tracking-widest font-bold flex items-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Suma Total In-Game
+                    </span> 
+                    <span class="text-xl font-black text-white drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]">${myStats.totalPersonalUnits.toLocaleString('en-US')}</span>
+                 </div>`;
+            }
+        }
+
         container.innerHTML = `
+            <!-- NUEVO: Panel de Estadísticas Personales y Globales -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-blue-500/30 flex flex-col justify-between group overflow-hidden relative">
+                    <div class="absolute -right-10 -top-10 bg-blue-500/10 w-32 h-32 rounded-full blur-3xl group-hover:bg-blue-500/20 transition"></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-400 mb-1 flex items-center gap-2 relative z-10"><i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-300"></i> Mi Récord de Recargas</h3>
+                        <p class="text-xs text-gray-400 mb-4 relative z-10 border-b border-slate-700/50 pb-3">Tus recargas totales acumuladas personalmente.</p>
+                        <div class="relative z-10 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+                            ${myStatsHtml}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-indigo-500/30 flex flex-col justify-between group overflow-hidden relative">
+                    <div class="absolute -left-10 -bottom-10 bg-indigo-500/10 w-32 h-32 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition pointer-events-none"></div>
+                    <div class="relative z-10 text-center flex flex-col h-full items-center justify-center space-y-4">
+                        <div class="w-16 h-16 bg-indigo-900/30 rounded-full flex items-center justify-center mb-2 border border-indigo-500/30 shadow-inner group-hover:scale-110 transition duration-300">
+                            <i data-lucide="globe" class="w-8 h-8 text-indigo-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-indigo-400">Impacto Global de la Comunidad</h3>
+                        <p class="text-sm text-gray-400 max-w-[220px] mx-auto">Descubre cuántas recargas hemos procesado a nivel mundial gracias a ustedes.</p>
+                        
+                        <button onclick="window.showGlobalVolumeModal()" class="w-full mt-auto py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.4)] transition transform hover:-translate-y-0.5 border border-indigo-400/20 flex items-center justify-center gap-2">
+                            <i data-lucide="activity" class="w-4 h-4"></i> Ver Volumen Global
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-blue-900/30 space-y-4">
                 <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5"></i> Actualizar Mis Datos</h3>
                 
@@ -6360,9 +6517,12 @@
 
         if (currentUserId !== 'SYSTEM_ADMIN') {
             const historyUnsub = onSnapshot(query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", currentUserId)), (snapshot) => {
-                let history = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                history.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-                window.renderPurchaseHistory(history);
+                // CORRECCIÓN CLAVE: Asignar al array global para que la función de estadísticas pueda leerlo.
+                purchaseHistoryData = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                purchaseHistoryData.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                
+                window.renderPurchaseHistory(purchaseHistoryData);
+                window.renderClientProfile(); // Refrescar el perfil para actualizar las estadísticas dinámicas
             }, err => handleFirestoreError(err, "Historial de Cliente"));
             unsubscribes.push(historyUnsub);
         }
@@ -6539,6 +6699,205 @@
 
         container.innerHTML = html;
         lucide.createIcons();
+    };
+
+    window.calculateGlobalVolume = () => {
+        const volumeStats = [];
+        let totalGlobalUnits = 0;
+
+        if (!productsCatalog || !productsCatalog.catalog) return null;
+
+        productsCatalog.catalog.forEach(mainCat => {
+            if(mainCat.subcategories) {
+                mainCat.subcategories.forEach(subCat => {
+                    let subCatNumericVolume = 0;
+                    let subCatItemsSold = 0;
+                    
+                    subCat.products.forEach(p => {
+                        const sold = p.totalSold || 0;
+                        if (sold > 0) {
+                            subCatItemsSold += sold;
+                            // Busca todos los números dentro del nombre del producto y los suma
+                            const matches = p.name.match(/\d+/g);
+                            if (matches) {
+                                let itemNumericValue = 0;
+                                matches.forEach(numStr => {
+                                    itemNumericValue += parseInt(numStr, 10);
+                                });
+                                subCatNumericVolume += (itemNumericValue * sold);
+                            }
+                        }
+                    });
+
+                    if (subCatItemsSold > 0) {
+                        volumeStats.push({
+                            platform: subCat.title,
+                            mainCat: mainCat.title,
+                            numericVolume: subCatNumericVolume,
+                            itemsSold: subCatItemsSold
+                        });
+                        totalGlobalUnits += subCatNumericVolume;
+                    }
+                });
+            }
+        });
+
+        return { volumeStats, totalGlobalUnits };
+    };
+
+    window.showGlobalVolumeModal = async () => {
+        const stats = window.calculateGlobalVolume();
+        const container = document.getElementById('global-volume-content');
+        
+        let html = '';
+        if (!stats || stats.volumeStats.length === 0) {
+            html = `
+                <div class="text-center py-10">
+                    <i data-lucide="inbox" class="w-16 h-16 text-slate-700 mx-auto mb-4"></i>
+                    <p class="text-slate-400 font-medium">Aún no hay suficientes ventas registradas para generar este reporte.</p>
+                </div>`;
+        } else {
+            // Ordenamos por volumen numérico, y si es 0, por ítems vendidos
+            const sortedStats = stats.volumeStats.sort((a, b) => {
+                if (b.numericVolume !== a.numericVolume) return b.numericVolume - a.numericVolume;
+                return b.itemsSold - a.itemsSold;
+            });
+
+            html += sortedStats.map(stat => {
+                // Determina colores e iconos basándose en nombres populares
+                let icon = '🎮'; let color = 'indigo'; let currency = 'Monedas';
+                const lower = stat.platform.toLowerCase();
+                
+                if (lower.includes('free fire')) { icon = '💎'; color = 'cyan'; currency = 'Diamantes'; }
+                else if (lower.includes('roblox')) { icon = '🟩'; color = 'emerald'; currency = 'Robux'; }
+                else if (lower.includes('pubg')) { icon = '🟡'; color = 'yellow'; currency = 'UC'; }
+                else if (lower.includes('cod') || lower.includes('call of duty')) { icon = '🪙'; color = 'yellow'; currency = 'CP'; }
+                else if (lower.includes('mobile legends')) { icon = '💰'; color = 'amber'; currency = 'UC'; }
+
+                const volumeDisplay = stat.numericVolume > 0 
+                    ? `<p class="text-2xl font-black text-${color}-400 drop-shadow-[0_0_8px_currentColor]">${stat.numericVolume.toLocaleString('en-US')}</p><p class="text-[10px] text-${color}-300 uppercase tracking-widest font-bold">${currency} Totales</p>`
+                    : `<p class="text-xl font-bold text-slate-300 drop-shadow-md">${stat.itemsSold.toLocaleString('en-US')}</p><p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Transacciones</p>`;
+
+                return `
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-${color}-500/30 flex justify-between items-center mb-3 shadow-lg hover:bg-slate-750 hover:border-${color}-500/60 transition group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-${color}-500/0 to-${color}-500/5 group-hover:to-${color}-500/10 transition"></div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-${color}-900/40 border border-${color}-500/30 flex items-center justify-center text-xl shadow-inner">
+                            ${icon}
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-lg leading-tight group-hover:text-${color}-300 transition">${stat.platform}</p>
+                            <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">${stat.mainCat}</p>
+                        </div>
+                    </div>
+                    <div class="text-right relative z-10 flex flex-col items-end justify-center min-h-[50px]">
+                        ${volumeDisplay}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            if (stats.totalGlobalUnits > 0) {
+                html += `
+                <div class="mt-6 pt-5 border-t border-slate-700/50">
+                    <div class="bg-gradient-to-r from-blue-900/60 to-indigo-900/60 p-5 rounded-xl border border-blue-500/40 flex justify-between items-center shadow-[0_0_20px_rgba(59,130,246,0.15)] relative overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none"></div>
+                        <div class="relative z-10">
+                            <span class="font-bold text-blue-300 uppercase tracking-widest text-xs block mb-1">Impacto Global In-Game</span>
+                            <span class="text-xs text-blue-200/70">Sumatoria de todas las recargas</span>
+                        </div>
+                        <div class="text-right relative z-10">
+                            <span class="text-4xl font-black text-white drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]">${stats.totalGlobalUnits.toLocaleString('en-US')}</span>
+                            <span class="text-xs font-bold text-blue-400 uppercase tracking-widest block mt-1">Unidades</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        }
+
+        // Añadir contenedor de carga para el Ranking Top 10
+        html += `<div id="leaderboard-container" class="mt-8 pt-6 border-t border-slate-700 text-center"><i data-lucide="loader" class="w-8 h-8 text-yellow-500 animate-spin mx-auto"></i><p class="text-xs text-slate-500 mt-2 uppercase tracking-widest">Calculando Salón de la Fama...</p></div>`;
+
+        container.innerHTML = html;
+
+        const modal = document.getElementById('global-volume-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Lógica asíncrona para obtener y calcular el Top 10 Global
+        try {
+            const usersSnap = await getDocs(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION));
+            const historySnap = await getDocs(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+            
+            const usersMap = {};
+            usersSnap.forEach(doc => { usersMap[doc.id] = doc.data().name; });
+
+            const spendMap = {};
+            historySnap.forEach(doc => {
+                const tx = doc.data();
+                if (tx.type === 'COMPRA' && tx.status !== 'anulada') {
+                    // Sumamos el subtotal (inversión en poder adquisitivo del usuario)
+                    spendMap[tx.userId] = (spendMap[tx.userId] || 0) + (tx.subtotalCS || 0);
+                }
+            });
+
+            // Convertir a Array, ordenar de mayor a menor y tomar el Top 10
+            const leaderboard = Object.keys(spendMap)
+                .map(userId => ({ userId, name: usersMap[userId] || 'Usuario Eliminado', spent: spendMap[userId] }))
+                .sort((a, b) => b.spent - a.spent)
+                .slice(0, 10);
+
+            let leaderboardHtml = `
+                <h4 class="text-xl font-black text-yellow-400 flex items-center gap-2 mb-4 justify-center uppercase tracking-widest drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]">
+                    <i data-lucide="trophy" class="w-6 h-6 text-yellow-300"></i> Top 10 Récords Mundiales
+                </h4>
+                <div class="space-y-2">`;
+
+            if (leaderboard.length === 0) {
+                leaderboardHtml += `<p class="text-center text-slate-500">Sin registros de compras válidas.</p>`;
+            } else {
+                leaderboard.forEach((user, index) => {
+                    let rankClass = "bg-slate-800/50 border-slate-700/50 text-slate-300";
+                    let icon = `<span class="font-black text-slate-600 w-6 text-center text-lg">#${index+1}</span>`;
+                    
+                    if (index === 0) {
+                        rankClass = "bg-gradient-to-r from-yellow-900/60 to-yellow-600/20 border-yellow-500/50 text-yellow-400 transform scale-[1.02] shadow-[0_0_15px_rgba(250,204,21,0.2)] z-10 relative";
+                        icon = `<i data-lucide="crown" class="w-6 h-6 text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.8)]"></i>`;
+                    } else if (index === 1) {
+                        rankClass = "bg-gradient-to-r from-gray-800 to-gray-700 border-gray-400/50 text-gray-200";
+                        icon = `<span class="font-black text-gray-300 w-6 text-center text-lg drop-shadow-md">#2</span>`;
+                    } else if (index === 2) {
+                        rankClass = "bg-gradient-to-r from-orange-900/40 to-slate-800 border-orange-500/30 text-orange-400";
+                        icon = `<span class="font-black text-orange-400 w-6 text-center text-lg drop-shadow-md">#3</span>`;
+                    }
+
+                    leaderboardHtml += `
+                    <div class="flex justify-between items-center p-3 rounded-xl border ${rankClass} transition-all hover:brightness-125">
+                        <div class="flex items-center gap-3">
+                            ${icon}
+                            <span class="font-bold uppercase tracking-wide truncate max-w-[150px] sm:max-w-[200px]">${user.name}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-widest block mb-0.5">Poder de Compra</span>
+                            <span class="font-black font-mono tracking-wider">${formatCS(user.spent)}</span>
+                        </div>
+                    </div>`;
+                });
+            }
+            leaderboardHtml += `</div>`;
+            document.getElementById('leaderboard-container').innerHTML = leaderboardHtml;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        } catch (e) {
+            console.error("Error al cargar Leaderboard:", e);
+            document.getElementById('leaderboard-container').innerHTML = `<p class="text-center text-red-400 text-xs">Error al cargar el Salón de la Fama.</p>`;
+        }
+    };
+
+    window.closeGlobalVolumeModal = () => {
+        const modal = document.getElementById('global-volume-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     };
 
     const initApp = async () => {
