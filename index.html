@@ -314,10 +314,13 @@
         <div class="container mx-auto p-4 flex justify-between items-center">
              <div class="flex items-center gap-3">
                 <img id="app-logo-display" src="https://placehold.co/100x100/161b22/60a5fa?text=AN" alt="Logo" class="h-10 w-10 rounded-full object-cover hidden shadow-lg shadow-blue-500/20" onerror="this.onerror=null; this.src='https://placehold.co/100x100/161b22/60a5fa?text=Logo';">
-                <!-- Título dinámico sin emoji, más limpio y 3D -->
-                <h1 id="app-title-display" class="astral-text-effect">ASTRAL NEXUS</h1>
+                <!-- Título actualizado a Mayúsculas por defecto -->
+                <h1 id="app-title-display" class="text-3xl font-extrabold astral-text-effect tracking-tight">🌌 ASTRAL NEXUS</h1>
             </div>
             <div id="user-info" class="text-sm text-slate-400 flex items-center space-x-2">
+                <!-- NUEVO: Selector de Divisa -->
+                <select id="currency-selector" onchange="window.changeCurrency(this.value)" class="hidden bg-slate-800 text-emerald-400 font-bold border border-slate-700/50 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-500 transition shadow-inner">
+                </select>
                 <span id="user-display-id" class="hidden sm:inline font-mono bg-slate-800 border border-slate-700 px-3 py-1 rounded-full text-xs shadow-inner">No Autenticado</span>
                 <!-- Botón de Admin (Oculto por defecto, solo visible para el admin logueado) -->
                 <button id="admin-dashboard-btn" onclick="window.showAdminDashboard()" class="hidden px-3 py-1 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 rounded-full text-xs transition font-bold text-white shadow-lg border border-red-500/50 flex items-center gap-1 transform hover:scale-105">
@@ -1024,6 +1027,37 @@
                             <button onclick="window.updateAdminPassword()" class="w-full p-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition">Cambiar Contraseña</button>
                         </div>
                     </div>
+
+                    <!-- NUEVA SECCIÓN DE DIVISAS -->
+                    <div class="mt-6 p-6 bg-slate-800/60 rounded-xl shadow-xl border border-emerald-900/50 space-y-4">
+                        <h3 class="text-xl font-semibold text-emerald-400 flex items-center gap-2"><i data-lucide="coins" class="w-5 h-5"></i> 💱 Divisas y Tasas de Cambio</h3>
+                        <p class="text-sm text-gray-400">Define las monedas que tus clientes pueden elegir para visualizar los precios. Todos los datos internos se guardarán en tu Moneda Base (Tasa: 1).</p>
+                        
+                        <div id="admin-currencies-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                            <!-- Monedas Inyectadas aquí -->
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-slate-700 bg-slate-900/40 p-4 rounded-xl border border-slate-700/50">
+                            <h4 class="font-bold text-emerald-300 mb-3 text-sm">Añadir / Editar Divisa</h4>
+                            <div class="flex flex-wrap gap-3 items-end">
+                                <input type="hidden" id="currency-edit-id">
+                                <div class="flex-grow min-w-[150px]">
+                                    <label class="text-[10px] uppercase text-gray-400 font-bold mb-1 block">Nombre Moneda</label>
+                                    <input type="text" id="currency-name" placeholder="Ej: Dólar" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-sm focus:border-emerald-500 outline-none">
+                                </div>
+                                <div class="w-24">
+                                    <label class="text-[10px] uppercase text-gray-400 font-bold mb-1 block">Símbolo</label>
+                                    <input type="text" id="currency-symbol" placeholder="Ej: $" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-sm focus:border-emerald-500 outline-none">
+                                </div>
+                                <div class="w-32">
+                                    <label class="text-[10px] uppercase text-gray-400 font-bold mb-1 block">Equivale a (C$)</label>
+                                    <input type="number" id="currency-rate" placeholder="Ej: 37" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-sm focus:border-emerald-500 outline-none" step="0.01">
+                                </div>
+                                <button onclick="window.saveCurrency()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg font-bold text-sm shadow-lg shadow-emerald-900/30 transition flex items-center gap-1"><i data-lucide="save" class="w-4 h-4"></i> Guardar</button>
+                                <button onclick="window.resetCurrencyForm()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg font-bold text-sm transition">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Pestaña 6: Pedidos de Recargas -->
@@ -1511,6 +1545,7 @@
         RAFFLES_COLLECTION: `artifacts/${appId}/public/data/raffles`,
         RAFFLE_ENTRIES: `artifacts/${appId}/public/data/raffle_entries`,
         PAYMENT_METHODS: `artifacts/${appId}/public/data/payment_methods`, // Nueva colección
+        CURRENCIES: `artifacts/${appId}/public/data/currencies`, // Nueva colección para divisas
     };
 
     let app, db, auth, functions; // Declaramos functions aquí
@@ -1530,6 +1565,8 @@
     let allRafflesData = [];
     let filteredReportData = [];
     let paymentMethodsData = []; // Datos de métodos de pago
+    let currenciesData = []; // Datos de divisas
+    window.currentSelectedCurrency = 'base'; // Divisa seleccionada por defecto
     let confirmCallback = null;
     let unsubscribes = [];
     let heartbeatInterval = null; 
@@ -1605,8 +1642,17 @@
 
     // --- FUNCIONES DE UTILIDAD ---
     const formatCS = (amount) => {
-        const symbol = adminConfig.currencySymbol || 'C$';
-        return `${symbol} ${parseFloat(amount || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+        let currency = currenciesData.find(c => c.id === window.currentSelectedCurrency);
+        // Si no se encuentra o el array está vacío, forzamos usar la configuración base
+        if (!currency && currenciesData.length > 0) {
+            currency = currenciesData.find(c => c.isBase) || currenciesData[0];
+        }
+        
+        const symbol = currency ? currency.symbol : (adminConfig.currencySymbol || 'C$');
+        const rate = currency ? (currency.rate || 1) : 1;
+        const converted = parseFloat(amount || 0) / rate;
+        
+        return `${symbol} ${converted.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     };
     const formatNexus = (amount) => `${parseFloat(amount || 0).toFixed(2)} Puntos`;
     
@@ -1656,8 +1702,8 @@
             return;
         }
 
-        const symbol = adminConfig.currencySymbol || 'C$';
-        const message = `👋 Hola, soy ${currentUserProfile.name}\n🆔 ID: ${currentUserId}\n💰 Solicito una recarga de saldo por: ${symbol} ${amount}`;
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$' };
+        const message = `👋 Hola, soy ${currentUserProfile.name}\n🆔 ID: ${currentUserId}\n💰 Solicito una recarga de saldo por: ${currency.symbol} ${amount}`;
         const encodedMessage = encodeURIComponent(message);
         
         const url = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
@@ -1803,10 +1849,17 @@
         updateImageViewer();
     };
 
+    window.currentlyManagedUserId = null;
+
     window.toggleManagement = (userId) => {
         const details = document.getElementById(`management-details-${userId}`);
         details.classList.toggle('hidden');
-        if(!details.classList.contains('hidden')) { window.renderHistoryForUser(userId); }
+        if(!details.classList.contains('hidden')) { 
+            window.currentlyManagedUserId = userId;
+            window.renderHistoryForUser(userId); 
+        } else {
+            if (window.currentlyManagedUserId === userId) window.currentlyManagedUserId = null;
+        }
     }
     
     window.changeClientTab = (tabName) => {
@@ -1849,6 +1902,7 @@
         if(tabName === 'orders') window.renderAdminOrders();
         if(tabName === 'recharges') window.renderAdminRechargesHistory();
         if(tabName === 'payments') window.renderAdminPaymentMethods();
+        if(tabName === 'config' && window.renderAdminCurrencies) window.renderAdminCurrencies();
     };
 
     window.calculateClientVolume = () => {
@@ -2325,6 +2379,11 @@
                      <span class="text-[10px] font-bold text-red-500 uppercase">Offline</span>
                    </div>`;
 
+            // Obtenemos símbolo para los placeholders
+            const currencySymbol = window.currentSelectedCurrency !== 'base' 
+                ? (currenciesData.find(c => c.id === window.currentSelectedCurrency)?.symbol || adminConfig.currencySymbol)
+                : adminConfig.currencySymbol;
+
             return `
             <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition shadow-sm">
                 <div class="flex flex-wrap justify-between items-center gap-2">
@@ -2357,19 +2416,19 @@
                     
                     <h4 class="font-semibold text-red-300 pt-2 border-t border-gray-600">Gestionar Fondos</h4>
                     <div class="flex space-x-2">
-                        <input type="number" id="amount-cs-${user.id}" placeholder="Cantidad" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
+                        <input type="number" id="amount-cs-${user.id}" placeholder="Cantidad (${currencySymbol})" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
                         <button onclick="window.modifyUserFunds('${user.id}', 'add', 'cs')" class="w-1/4 p-2 bg-green-600 text-xs">Añadir</button>
                         <button onclick="window.modifyUserFunds('${user.id}', 'subtract', 'cs')" class="w-1/4 p-2 bg-red-600 text-xs">Restar</button>
                     </div>
-                    <div class="flex space-x-2">
-                        <input type="number" id="amount-nexus-${user.id}" placeholder="Cantidad Puntos" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
+                    <div class="flex space-x-2 mt-2">
+                        <input type="number" id="amount-nexus-${user.id}" placeholder="Cantidad Puntos Nexus" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
                         <button onclick="window.modifyUserFunds('${user.id}', 'add', 'nexus')" class="w-1/4 p-2 bg-green-600 text-xs">Añadir Puntos</button>
                         <button onclick="window.modifyUserFunds('${user.id}', 'subtract', 'nexus')" class="w-1/4 p-2 bg-red-600 text-xs">Restar Puntos</button>
                     </div>
 
                     <h4 class="font-semibold text-red-300 pt-2 border-t border-gray-600">Gestionar Deuda</h4>
                     <div class="flex space-x-2">
-                        <input type="number" id="amount-debt-${user.id}" placeholder="Cantidad Deuda" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
+                        <input type="number" id="amount-debt-${user.id}" placeholder="Cantidad Deuda (${currencySymbol})" class="w-1/2 p-2 rounded-lg bg-gray-700 text-sm" />
                         <button onclick="window.modifyUserDebt('${user.id}', 'add')" class="w-1/4 p-2 bg-red-800 text-xs">Añadir Deuda</button>
                         <button onclick="window.modifyUserDebt('${user.id}', 'subtract')" class="w-1/4 p-2 bg-yellow-600 text-xs">Pagar/Reducir</button>
                     </div>
@@ -2396,6 +2455,15 @@
         
         container.innerHTML = statsHTML + listHTML;
         lucide.createIcons();
+
+        /* Restaurar estado abierto del panel de gestión si se re-dibuja por cambio de moneda */
+        if (window.currentlyManagedUserId) {
+            const details = document.getElementById(`management-details-${window.currentlyManagedUserId}`);
+            if (details) {
+                details.classList.remove('hidden');
+                window.renderHistoryForUser(window.currentlyManagedUserId);
+            }
+        }
     };
 
     window.renderShop = () => {
@@ -3570,13 +3638,14 @@
 
     // --- GESTIÓN DE PRODUCTOS ADMIN (3 Niveles) ---
     window.calculateProfit = (id) => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
         const price = parseFloat(document.getElementById(`prod-price-${id}`).value) || 0;
         const cost = parseFloat(document.getElementById(`prod-cost-${id}`).value) || 0;
-        const profit = price - cost;
+        const profit = price - cost; // La ganancia se calcula en la moneda seleccionada
         const span = document.getElementById(`prod-profit-${id}`);
         if(span) {
-            span.textContent = `Ganancia: ${formatCS(profit)}`;
-            span.className = `text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'}`;
+            span.textContent = `Ganancia: ${currency.symbol} ${profit.toFixed(2)}`;
+            span.className = `text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'} self-center`;
         }
     };
 
@@ -3602,6 +3671,9 @@
         const nexusContainer = document.getElementById('admin-nexus-redemption-list');
         if (!productContainer || !nexusContainer || !productsCatalog) return;
         
+        // Obtener moneda y tasa actual para mostrar los precios convertidos
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
+
         const renderCategoryBlock = (type, catalogList) => {
             return catalogList.map(mainCat => {
                 const mainImageUrlsText = Array.isArray(mainCat.imageUrls) ? mainCat.imageUrls.join('\n') : (mainCat.imageUrl || '');
@@ -3641,7 +3713,11 @@
                                     ${(type === 'products' ? subCat.products : subCat.items).map(item => {
                                         const pImage = Array.isArray(item.imageUrls) ? item.imageUrls.join('\n') : (item.imageUrl || '');
                                         if (type === 'products') {
-                                            const profit = (item.price || 0) - (item.cost || 0);
+                                            // Convertir precios a la moneda seleccionada para mostrarlos
+                                            const displayPrice = ((item.price || 0) / currency.rate).toFixed(2);
+                                            const displayCost = ((item.cost || 0) / currency.rate).toFixed(2);
+                                            const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
+                                            
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
                                                 <div class="md:col-span-2">
@@ -3649,12 +3725,12 @@
                                                     <input type="text" id="prod-name-${item.id}" value="${item.name}" class="w-full p-1 rounded bg-gray-700" placeholder="Nombre"/>
                                                 </div>
                                                 <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Precio Venta</label>
-                                                    <input type="number" id="prod-price-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${item.price}" class="w-full p-1 rounded bg-gray-700 text-green-300 font-bold" placeholder="Precio"/>
+                                                    <label class="text-[10px] text-gray-400 block mb-1">Precio Venta (${currency.symbol})</label>
+                                                    <input type="number" step="0.01" id="prod-price-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayPrice}" class="w-full p-1 rounded bg-gray-700 text-green-300 font-bold" placeholder="Precio"/>
                                                 </div>
                                                 <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Unit.</label>
-                                                    <input type="number" id="prod-cost-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${item.cost || 0}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
+                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Unit. (${currency.symbol})</label>
+                                                    <input type="number" step="0.01" id="prod-cost-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayCost}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
                                                 </div>
                                                 <div>
                                                     <label class="text-[10px] text-gray-400 block mb-1">Stock</label>
@@ -3670,7 +3746,7 @@
                                                          <textarea id="prod-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción detallada del producto">${item.description || ''}</textarea>
                                                      </div>
                                                      <div class="flex flex-col items-end">
-                                                         <span id="prod-profit-${item.id}" class="text-xs font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${formatCS(profit)}</span>
+                                                         <span id="prod-profit-${item.id}" class="text-xs font-bold ${profitDisplay >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${currency.symbol} ${profitDisplay}</span>
                                                          <div class="flex items-center gap-1 mt-1">
                                                              <label class="text-[10px] text-gray-400" title="Editar total vendidos manualmente">Vendidos:</label>
                                                              <input type="number" id="prod-sold-${item.id}" value="${item.totalSold || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-blue-300 font-bold text-right text-[10px] focus:outline-none focus:border-blue-500" min="0">
@@ -3692,6 +3768,7 @@
                                                 </div>
                                             </div>`;
                                         } else {
+                                            const displayMoneyCost = ((item.cost || 0) / currency.rate).toFixed(2);
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs border border-yellow-900">
                                                 <div class="md:col-span-2">
@@ -3703,8 +3780,8 @@
                                                     <input type="number" id="nexus-cost-${item.id}" value="${item.nexusCost}" class="w-full p-1 rounded bg-gray-700 text-yellow-300 font-bold" placeholder="Pts"/>
                                                 </div>
                                                 <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Real</label>
-                                                    <input type="number" id="nexus-money-cost-${item.id}" value="${item.cost || 0}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
+                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Real (${currency.symbol})</label>
+                                                    <input type="number" step="0.01" id="nexus-money-cost-${item.id}" value="${displayMoneyCost}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
                                                 </div>
                                                 <div>
                                                     <label class="text-[10px] text-gray-400 block mb-1">Stock</label>
@@ -3911,9 +3988,17 @@
     };
 
     window.updateDeepProduct = async (mainKey, subKey, prodId) => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const rate = currency.rate;
+
         const name = document.getElementById(`prod-name-${prodId}`).value;
-        const price = parseFloat(document.getElementById(`prod-price-${prodId}`).value);
-        const cost = parseFloat(document.getElementById(`prod-cost-${prodId}`).value) || 0; 
+        const inputPrice = parseFloat(document.getElementById(`prod-price-${prodId}`).value) || 0;
+        const inputCost = parseFloat(document.getElementById(`prod-cost-${prodId}`).value) || 0; 
+        
+        // Convertimos el precio de la divisa visual a la moneda base
+        const price = inputPrice * rate;
+        const cost = inputCost * rate;
+        
         const inv = parseInt(document.getElementById(`prod-inv-${prodId}`).value);
         const desc = document.getElementById(`prod-desc-${prodId}`).value; 
         const imgs = document.getElementById(`prod-img-${prodId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
@@ -3978,9 +4063,16 @@
     };
 
     window.updateDeepNexusItem = async (mainKey, subKey, itemId) => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const rate = currency.rate;
+
         const name = document.getElementById(`nexus-name-${itemId}`).value;
         const cost = parseFloat(document.getElementById(`nexus-cost-${itemId}`).value); 
-        const moneyCost = parseFloat(document.getElementById(`nexus-money-cost-${itemId}`).value) || 0; 
+        
+        // Convertimos el costo fiat de la divisa visual a la base
+        const inputMoneyCost = parseFloat(document.getElementById(`nexus-money-cost-${itemId}`).value) || 0; 
+        const moneyCost = inputMoneyCost * rate;
+        
         const inv = parseInt(document.getElementById(`nexus-inv-${itemId}`).value);
         const desc = document.getElementById(`nexus-desc-${itemId}`).value; 
         const imgs = document.getElementById(`nexus-img-${itemId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
@@ -4264,9 +4356,16 @@
         const name = document.getElementById('new-user-name').value.trim();
         const contact = document.getElementById('new-user-contact').value.trim();
         const password = document.getElementById('new-user-password').value;
-        const funds = parseFloat(document.getElementById('initial-funds-cs').value) || 0;
-        const debt = parseFloat(document.getElementById('initial-debt-cs').value) || 0;
+        const fundsInput = parseFloat(document.getElementById('initial-funds-cs').value) || 0;
+        const debtInput = parseFloat(document.getElementById('initial-debt-cs').value) || 0;
         const nexus = parseFloat(document.getElementById('initial-nexus-points').value) || 0;
+
+        let currency = currenciesData.find(c => c.id === window.currentSelectedCurrency);
+        const rate = currency ? (currency.rate || 1) : 1;
+
+        // Convertir la entrada a moneda base antes de guardar
+        const funds = fundsInput * rate;
+        const debt = debtInput * rate;
 
         if (!id || !name) { window.showModal("Error", "ID y Nombre son obligatorios"); return; }
         
@@ -4287,14 +4386,21 @@
     };
 
     window.modifyUserFunds = (userId, action, type) => {
-        const amount = parseFloat(document.getElementById(`amount-${type}-${userId}`).value);
-        if (!amount || amount < 0) return;
+        const inputAmount = parseFloat(document.getElementById(`amount-${type}-${userId}`).value);
+        if (!inputAmount || inputAmount < 0) return;
+        
+        let currency = currenciesData.find(c => c.id === window.currentSelectedCurrency);
+        const rate = currency ? (currency.rate || 1) : 1;
+        
+        // Si el ajuste es en dinero, convertir a la moneda base. Los Puntos Nexus no se convierten.
+        const amount = type === 'cs' ? inputAmount * rate : inputAmount;
+        const displayAmount = type === 'cs' ? formatCS(amount) : formatNexus(amount);
         
         const actionText = action === 'add' ? 'Añadir' : 'Restar';
-        const typeText = type === 'cs' ? 'Saldo C$' : 'Puntos Nexus';
+        const typeText = type === 'cs' ? 'Saldo' : 'Puntos Nexus';
         
         window.showConfirmModal(`${actionText} ${typeText}`, `
-            <p class="text-sm text-gray-300">Se van a <strong>${action === 'add' ? 'agregar' : 'descontar'} ${amount}</strong> al usuario.</p>
+            <p class="text-sm text-gray-300">Se van a <strong>${action === 'add' ? 'agregar' : 'descontar'} ${displayAmount}</strong> al usuario.</p>
             <div class="mt-4 text-left">
                 <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nota Opcional (Visible en el historial)</label>
                 <input type="text" id="admin-adjust-note" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 focus:outline-none placeholder-gray-500" placeholder="Ej: Regalo por torneo, compensación...">
@@ -4323,8 +4429,12 @@
     };
 
     window.modifyUserDebt = (userId, action) => {
-        const amount = parseFloat(document.getElementById(`amount-debt-${userId}`).value);
-        if (!amount || amount < 0) return;
+        const inputAmount = parseFloat(document.getElementById(`amount-debt-${userId}`).value);
+        if (!inputAmount || inputAmount < 0) return;
+        
+        let currency = currenciesData.find(c => c.id === window.currentSelectedCurrency);
+        const rate = currency ? (currency.rate || 1) : 1;
+        const amount = inputAmount * rate; // Convertir a moneda base
         
         const actionText = action === 'add' ? 'Añadir' : 'Reducir';
         
@@ -4466,6 +4576,15 @@
     };
 
     window.updatePosSummary = () => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
+        const rate = currency.rate;
+
+        // Actualización dinámica de etiquetas según la divisa seleccionada
+        const lblReceived = document.querySelector('label[for="pos-amount-received"]');
+        if (lblReceived) lblReceived.textContent = `Monto Recibido (${currency.symbol})`;
+        const optDiscType = document.getElementById('pos-discount-type');
+        if (optDiscType && optDiscType.options[0].value === 'amount') optDiscType.options[0].text = currency.symbol;
+
         const list = document.getElementById('pos-cart-summary');
         const cartItems = Object.values(posCart);
         list.innerHTML = cartItems.map(p => `
@@ -4480,17 +4599,22 @@
                 <button onclick="window.removeFromPosCart('${p.id}')" class="ml-1 text-red-400 hover:text-red-300">🗑️</button>
             </div>`).join('');
         
-        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-        const discountVal = parseFloat(document.getElementById('pos-discount').value) || 0;
+        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0); // Siempre en Moneda Base
+        
+        // Conversión del input ingresado visualmente a Moneda Base
+        const discountInput = parseFloat(document.getElementById('pos-discount').value) || 0;
         const discountType = document.getElementById('pos-discount-type').value;
-        const discount = discountType === 'amount' ? discountVal : subtotal * (discountVal/100);
+        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
         
         const ivaRate = adminConfig.ivaPercentage || 0;
         const taxBase = Math.max(0, subtotal - discount);
         const ivaAmount = taxBase * (ivaRate/100);
         const total = taxBase + ivaAmount;
         
-        const received = parseFloat(document.getElementById('pos-amount-received').value) || 0;
+        // Conversión del monto recibido de Divisa Visual a Moneda Base
+        const receivedInput = parseFloat(document.getElementById('pos-amount-received').value) || 0;
+        const received = receivedInput * rate; 
+        
         const change = Math.max(0, received - total);
         const debt = Math.max(0, total - received);
 
@@ -4509,16 +4633,24 @@
     window.finalizePosSale = async () => {
         if(!posClient || Object.keys(posCart).length === 0) return;
         
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const rate = currency.rate;
+
         const cartItems = Object.values(posCart);
         const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-        const discountVal = parseFloat(document.getElementById('pos-discount').value) || 0;
+        
+        const discountInput = parseFloat(document.getElementById('pos-discount').value) || 0;
         const discountType = document.getElementById('pos-discount-type').value;
-        const discount = discountType === 'amount' ? discountVal : subtotal * (discountVal/100);
+        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
+        
         const ivaRate = adminConfig.ivaPercentage || 0;
         const taxBase = Math.max(0, subtotal - discount);
         const ivaAmount = taxBase * (ivaRate/100);
         const total = taxBase + ivaAmount;
-        const received = parseFloat(document.getElementById('pos-amount-received').value) || 0;
+        
+        const receivedInput = parseFloat(document.getElementById('pos-amount-received').value) || 0;
+        const received = receivedInput * rate; // Guardamos en base
+        
         const debt = Math.max(0, total - received);
         const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
 
@@ -4682,7 +4814,16 @@
     };
 
     window.updatePastPurchaseSummary = () => {
-         const list = document.getElementById('past-purchase-cart-summary');
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
+        const rate = currency.rate;
+
+        // Actualización dinámica de etiquetas
+        const lblPaid = document.querySelector('label[for="past-purchase-amount-paid"]');
+        if (lblPaid) lblPaid.textContent = `Monto Pagado en ese momento (${currency.symbol})`;
+        const optDiscType = document.getElementById('past-purchase-discount-type');
+        if (optDiscType && optDiscType.options[0].value === 'amount') optDiscType.options[0].text = currency.symbol;
+
+        const list = document.getElementById('past-purchase-cart-summary');
         const cartItems = Object.values(pastPurchaseCart);
         list.innerHTML = cartItems.map(p => `
             <div class="flex justify-between items-center mb-1 bg-gray-700 p-1 rounded">
@@ -4696,17 +4837,20 @@
                 <button onclick="window.removeFromPastPurchaseCart('${p.id}')" class="ml-1 text-red-400 hover:text-red-300">🗑️</button>
             </div>`).join('');
         
-        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-        const discountVal = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
+        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0); // Base currency
+        
+        const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
         const discountType = document.getElementById('past-purchase-discount-type').value;
-        const discount = discountType === 'amount' ? discountVal : subtotal * (discountVal/100);
+        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
         
         const ivaRate = adminConfig.ivaPercentage || 0;
         const taxBase = Math.max(0, subtotal - discount);
         const ivaAmount = taxBase * (ivaRate/100);
         const total = taxBase + ivaAmount;
         
-        const received = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+        const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+        const received = receivedInput * rate; // Convertir visual a base
+        
         const change = Math.max(0, received - total);
         const debt = Math.max(0, total - received);
 
@@ -4729,17 +4873,24 @@
         const customDate = new Date(dateVal);
         const ts = Timestamp.fromDate(customDate);
 
-        // Same logic as POS but with custom timestamp
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const rate = currency.rate;
+
         const cartItems = Object.values(pastPurchaseCart);
         const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-        const discountVal = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
+        
+        const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
         const discountType = document.getElementById('past-purchase-discount-type').value;
-        const discount = discountType === 'amount' ? discountVal : subtotal * (discountVal/100);
+        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
+        
         const ivaRate = adminConfig.ivaPercentage || 0;
         const taxBase = Math.max(0, subtotal - discount);
         const ivaAmount = taxBase * (ivaRate/100);
         const total = taxBase + ivaAmount;
-        const received = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+        
+        const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+        const received = receivedInput * rate; // Base currency
+        
         const debt = Math.max(0, total - received);
         const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
 
@@ -5242,14 +5393,34 @@
         }
     };
     
+    window.updateRaffleLabels = () => {
+        const costType = document.getElementById('raffle-cost-type').value;
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$' };
+        const costLabel = document.getElementById('label-raffle-entry-cost');
+        const potLabel = document.getElementById('label-raffle-initial-pot');
+        
+        if (costType === 'nexus') {
+            if (costLabel) costLabel.textContent = 'Costo de Entrada (Puntos Nexus)';
+            if (potLabel) potLabel.textContent = 'Bote Inicial (Puntos Nexus) (Opcional)';
+        } else {
+            if (costLabel) costLabel.textContent = `Costo de Entrada (${currency.symbol})`;
+            if (potLabel) potLabel.textContent = `Bote Inicial (${currency.symbol}) (Opcional)`;
+        }
+    };
+
     window.addNewRaffle = () => {
         document.getElementById('raffle-edit-id').value = '';
         document.getElementById('raffle-name').value = '';
         document.getElementById('raffle-image-url').value = '';
         document.getElementById('raffle-category').value = '';
         document.getElementById('raffle-entry-cost').value = 1;
+        document.getElementById('raffle-cost-type').value = 'cs';
+        document.getElementById('raffle-prize-type').value = 'pot';
         document.getElementById('raffle-initial-pot').value = 0;
         document.getElementById('raffle-prize-description').value = '';
+        
+        window.toggleRafflePrizeFields();
+        window.updateRaffleLabels();
         
         document.getElementById('raffle-modal-title').textContent = "Crear Nuevo Sorteo";
         const modal = document.getElementById('raffle-edit-modal');
@@ -5261,17 +5432,24 @@
         const r = allRafflesData.find(x => x.id === id);
         if(!r) return;
         
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const isNexus = r.costType === 'nexus';
+        const displayCost = isNexus ? r.entryCost : parseFloat((r.entryCost / currency.rate).toFixed(2));
+        const displayPot = isNexus ? (r.pot || 0) : parseFloat(((r.pot || 0) / currency.rate).toFixed(2));
+
         document.getElementById('raffle-edit-id').value = r.id;
         document.getElementById('raffle-name').value = r.name;
         document.getElementById('raffle-image-url').value = r.imageUrl || '';
         document.getElementById('raffle-category').value = r.category || '';
-        document.getElementById('raffle-entry-cost').value = r.entryCost;
+        document.getElementById('raffle-entry-cost').value = displayCost;
         document.getElementById('raffle-cost-type').value = r.costType;
         document.getElementById('raffle-prize-type').value = r.prizeType;
-        document.getElementById('raffle-initial-pot').value = r.pot || 0;
+        document.getElementById('raffle-initial-pot').value = displayPot;
         document.getElementById('raffle-prize-description').value = r.prizeDescription || '';
         
         window.toggleRafflePrizeFields();
+        window.updateRaffleLabels();
+        
         document.getElementById('raffle-modal-title').textContent = "Editar Sorteo";
         const modal = document.getElementById('raffle-edit-modal');
         modal.classList.remove('hidden');
@@ -5291,14 +5469,25 @@
 
     window.saveRaffle = async () => {
         const id = document.getElementById('raffle-edit-id').value;
+        
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        const costType = document.getElementById('raffle-cost-type').value;
+        const isNexus = costType === 'nexus';
+        
+        const rawCost = parseFloat(document.getElementById('raffle-entry-cost').value) || 0;
+        const rawPot = parseFloat(document.getElementById('raffle-initial-pot').value) || 0;
+        
+        const finalCost = isNexus ? rawCost : rawCost * currency.rate;
+        const finalPot = isNexus ? rawPot : rawPot * currency.rate;
+
         const data = {
             name: document.getElementById('raffle-name').value,
             imageUrl: document.getElementById('raffle-image-url').value,
             category: document.getElementById('raffle-category').value,
-            entryCost: parseFloat(document.getElementById('raffle-entry-cost').value),
-            costType: document.getElementById('raffle-cost-type').value,
+            entryCost: finalCost,
+            costType: costType,
             prizeType: document.getElementById('raffle-prize-type').value,
-            pot: parseFloat(document.getElementById('raffle-initial-pot').value) || 0,
+            pot: finalPot,
             prizeDescription: document.getElementById('raffle-prize-description').value
         };
         
@@ -6094,6 +6283,10 @@
     };
 
     window.showClientPayDebtModal = () => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$' };
+        const lblPayDebt = document.getElementById('label-pay-debt-amount');
+        if(lblPayDebt) lblPayDebt.textContent = `Monto a pagar (${currency.symbol})`;
+
         document.getElementById('pay-debt-modal-funds').textContent = formatCS(currentUserFunds.cs);
         document.getElementById('pay-debt-modal-debt').textContent = formatCS(currentUserFunds.debt);
         document.getElementById('client-debt-payment-amount').value = Math.min(currentUserFunds.cs, currentUserFunds.debt);
@@ -6514,7 +6707,45 @@
             }
         }, err => handleFirestoreError(err, "Escuchar Catálogo"));
 
-        unsubscribes.push(unsubConfig, unsubProducts);
+        // NUEVO: Sincronización Global de Divisas
+        const unsubCurrencies = onSnapshot(collection(db, COLLECTIONS.CURRENCIES), async (snapshot) => {
+            if (snapshot.empty) {
+                // Iniciar la base de datos de monedas por defecto (Córdoba y Dólar)
+                await setDoc(doc(db, COLLECTIONS.CURRENCIES, 'base'), { name: 'Córdoba', symbol: adminConfig.currencySymbol || 'C$', rate: 1, isBase: true });
+                await setDoc(doc(db, COLLECTIONS.CURRENCIES, 'usd'), { name: 'Dólar', symbol: '$', rate: 37, isBase: false });
+                return;
+            }
+            
+            currenciesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Renderizar Selector del Cliente
+            const selector = document.getElementById('currency-selector');
+            if (selector) {
+                selector.innerHTML = currenciesData.map(c => `<option value="${c.id}">${c.symbol} - ${c.name}</option>`).join('');
+                
+                // Tratar de recordar la última moneda que el cliente usó
+                const saved = localStorage.getItem('astral_nexus_preferred_currency');
+                if (saved && currenciesData.find(c => c.id === saved)) {
+                    window.currentSelectedCurrency = saved;
+                    selector.value = saved;
+                } else {
+                    const baseCur = currenciesData.find(c => c.isBase) || currenciesData[0];
+                    window.currentSelectedCurrency = baseCur ? baseCur.id : 'base';
+                    selector.value = window.currentSelectedCurrency;
+                }
+                selector.classList.remove('hidden');
+            }
+
+            // Renderizar en Panel Admin
+            if (document.getElementById('admin-dashboard-view') && !document.getElementById('admin-dashboard-view').classList.contains('hidden')) {
+                if (window.renderAdminCurrencies) window.renderAdminCurrencies();
+            }
+            
+            // Forzar actualización visual si se cambia una tasa en vivo
+            if (window.changeCurrency) window.changeCurrency(window.currentSelectedCurrency, true);
+        }, err => handleFirestoreError(err, "Escuchar Divisas"));
+
+        unsubscribes.push(unsubConfig, unsubProducts, unsubCurrencies);
     };
 
     const startClientListeners = (user) => {
@@ -6939,6 +7170,159 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     };
+
+    // --- FUNCIONES GESTIÓN DE DIVISAS (ADMIN Y CLIENTE) ---
+    window.changeCurrency = (id, silent = false) => {
+        window.currentSelectedCurrency = id;
+        localStorage.setItem('astral_nexus_preferred_currency', id);
+        
+        if (!silent) {
+            // Re-renderizamos todas las vistas relevantes para aplicar la nueva conversión de precios
+            if (document.getElementById('client-view') && !document.getElementById('client-view').classList.contains('hidden')) {
+                 window.updateClientWalletDisplay();
+                 window.renderCartSummary();
+                 if (!document.getElementById('content-tienda').classList.contains('hidden')) {
+                     if(currentShopPath.mainKey && currentShopPath.subKey) {
+                         window.showProducts('shop', currentShopPath.mainKey, currentShopPath.subKey);
+                     } else if (currentShopPath.mainKey) {
+                         window.renderSubCategories('shop', currentShopPath.mainKey);
+                     } else {
+                         window.renderMainCategories('shop');
+                     }
+                 }
+                 window.renderClientProfile();
+                 if (allRafflesData.length > 0) window.renderClientRaffles(allRafflesData);
+                 if (purchaseHistoryData.length > 0) window.renderPurchaseHistory(purchaseHistoryData);
+            }
+            
+            // Actualización integral de la vista Admin (POS, Reportes, Sorteos, Usuarios)
+            if (document.getElementById('admin-dashboard-view') && !document.getElementById('admin-dashboard-view').classList.contains('hidden')) {
+                 // Panel de Ventas
+                 window.updatePosSummary();
+                 window.updatePastPurchaseSummary();
+                 window.renderPosProductList(); 
+                 window.renderPastPurchaseProductList(); 
+                 
+                 // Tabla de Ventas e Historiales
+                 const activeTab = document.querySelector('.sales-history-tab-active')?.dataset.period || 'day';
+                 if (window.changeSalesHistoryView) window.changeSalesHistoryView(activeTab);
+                 
+                 // Reportes (recalcula si está abierto)
+                 if (document.getElementById('report-summary-container') && !document.getElementById('report-summary-container').classList.contains('hidden')) {
+                     if (window.generateDateReport) window.generateDateReport('range');
+                 }
+
+                 // Sorteos (Refresco visual de etiquetas y listas)
+                 if (window.updateRaffleLabels) window.updateRaffleLabels();
+                 if (window.renderAdminRaffles && allRafflesData.length > 0) {
+                     getRaffleParticipants().then(parts => window.renderAdminRaffles(allRafflesData, parts));
+                 }
+                 
+                 // Productos, Usuarios y Pedidos
+                 if (!document.getElementById('content-admin-users').classList.contains('hidden')) {
+                     window.renderUserList(); 
+                 }
+                 if (!document.getElementById('content-admin-products').classList.contains('hidden')) {
+                     window.renderAdminProductManagement(); 
+                 }
+                 if (window.renderAdminOrders) window.renderAdminOrders();
+                 if (window.renderAdminRechargesHistory) window.renderAdminRechargesHistory();
+
+                 // Prevención: Ocultar Modales (Facturas) abiertos para evitar que retengan cifras viejas
+                 const txModal = document.getElementById('transaction-detail-modal');
+                 if (txModal) txModal.style.display = 'none';
+                 const invModal = document.getElementById('invoice-modal');
+                 if (invModal) invModal.classList.add('hidden');
+            }
+        }
+    };
+
+    window.renderAdminCurrencies = () => {
+        const container = document.getElementById('admin-currencies-list');
+        if (!container) return;
+        
+        container.innerHTML = currenciesData.map(c => `
+            <div class="bg-slate-900/50 border ${c.isBase ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'border-slate-700/50'} rounded-xl p-4 shadow-md flex justify-between items-center relative overflow-hidden group">
+                ${c.isBase ? '<div class="absolute -top-6 -right-6 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>' : ''}
+                <div class="relative z-10">
+                    <h4 class="font-bold text-white flex items-center gap-2 text-lg">
+                        ${c.name} 
+                        ${c.isBase ? '<span class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Base</span>' : ''}
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-1">Símbolo: <span class="font-bold text-blue-300 font-mono text-sm">${c.symbol}</span></p>
+                    <p class="text-xs text-slate-400 mt-0.5">Tasa: <span class="font-bold text-yellow-300 font-mono">1 ${c.symbol} = ${c.rate} Base</span></p>
+                </div>
+                <div class="flex flex-col gap-2 relative z-10">
+                    <button onclick="window.editCurrency('${c.id}')" class="bg-blue-600/80 hover:bg-blue-500 text-white p-2 rounded-lg text-xs transition border border-blue-500/50" title="Editar"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                    ${!c.isBase ? `<button onclick="window.deleteCurrency('${c.id}')" class="bg-red-900/80 hover:bg-red-800 text-white p-2 rounded-lg text-xs transition border border-red-700/50" title="Eliminar"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                </div>
+            </div>
+        `).join('');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.editCurrency = (id) => {
+        const c = currenciesData.find(x => x.id === id);
+        if(!c) return;
+        document.getElementById('currency-edit-id').value = c.id;
+        document.getElementById('currency-name').value = c.name;
+        document.getElementById('currency-symbol').value = c.symbol;
+        document.getElementById('currency-rate').value = c.rate;
+        if(c.isBase) {
+            document.getElementById('currency-rate').disabled = true; // Base siempre es 1
+            document.getElementById('currency-rate').title = "La moneda base siempre tiene tasa de 1";
+        }
+        else document.getElementById('currency-rate').disabled = false;
+        
+        // Efecto scroll suave
+        document.getElementById('currency-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('currency-name').focus();
+    };
+
+    window.resetCurrencyForm = () => {
+        document.getElementById('currency-edit-id').value = '';
+        document.getElementById('currency-name').value = '';
+        document.getElementById('currency-symbol').value = '';
+        document.getElementById('currency-rate').value = '';
+        document.getElementById('currency-rate').disabled = false;
+    };
+
+    window.saveCurrency = async () => {
+        const id = document.getElementById('currency-edit-id').value;
+        const name = document.getElementById('currency-name').value.trim();
+        const symbol = document.getElementById('currency-symbol').value.trim();
+        let rate = parseFloat(document.getElementById('currency-rate').value);
+        
+        if (!name || !symbol || isNaN(rate) || rate <= 0) {
+            window.showModal("Error", "Completa todos los campos con valores válidos mayores a 0.");
+            return;
+        }
+
+        try {
+            if (id) {
+                const c = currenciesData.find(x => x.id === id);
+                if (c && c.isBase) rate = 1; // Forzar tasa 1 en la base
+                await updateDoc(doc(db, COLLECTIONS.CURRENCIES, id), { name, symbol, rate });
+            } else {
+                await addDoc(collection(db, COLLECTIONS.CURRENCIES), { name, symbol, rate, isBase: false });
+            }
+            window.resetCurrencyForm();
+            window.showModal("Éxito", "Divisa guardada correctamente.");
+        } catch(e) {
+            window.showModal("Error al guardar divisa", e.message);
+        }
+    };
+
+    window.deleteCurrency = (id) => {
+        window.showConfirmModal("Eliminar Divisa", "¿Estás seguro que quieres eliminar esta moneda? Los usuarios que la usaban volverán a la moneda principal.", async () => {
+            try {
+                await deleteDoc(doc(db, COLLECTIONS.CURRENCIES, id));
+            } catch(e) {
+                window.showModal("Error", e.message);
+            }
+        });
+    };
+    // --- FIN GESTIÓN DE DIVISAS ---
 
     const initApp = async () => {
         if (firebaseConfig.projectId) {
