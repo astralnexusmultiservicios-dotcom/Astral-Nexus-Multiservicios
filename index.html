@@ -340,6 +340,23 @@
             </svg>
             <p class="mt-4 text-gray-500">Conectando con la base de datos...</p>
         </div>
+
+        <!-- MANTENIMIENTO MODO VISTA -->
+        <div id="maintenance-view" class="hidden max-w-lg mx-auto p-10 text-center bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-yellow-500/50 fade-in relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="w-24 h-24 mb-6 rounded-full bg-yellow-900/30 flex items-center justify-center border-4 border-yellow-500/50 shadow-[0_0_30px_rgba(234,179,8,0.3)] animate-pulse">
+                    <i data-lucide="wrench" class="w-12 h-12 text-yellow-400"></i>
+                </div>
+                <h2 class="text-3xl font-black text-white mb-2 tracking-wide uppercase drop-shadow-md">Tienda en Mantenimiento</h2>
+                <div class="w-16 h-1 bg-yellow-500 rounded-full mb-6 shadow-[0_0_10px_rgba(234,179,8,0.8)]"></div>
+                <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                    Estamos actualizando nuestro catálogo y mejorando los sistemas intergalácticos.<br>
+                    <strong class="text-yellow-400 mt-2 block">¡Volvemos en unos minutos!</strong>
+                </p>
+                <p class="text-xs text-slate-500 font-mono tracking-widest uppercase">Astral Nexus Core Team</p>
+            </div>
+        </div>
         
         <!-- Login de Cliente con ID (Diseño Mejorado) -->
         <div id="client-login-view" class="hidden max-w-md mx-auto p-8 bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 fade-in relative overflow-hidden">
@@ -468,6 +485,15 @@
                         Cerrar Sesión
                     </button>
                 </div>
+            </div>
+
+            <!-- NUEVO: Banner de Anuncios Globales -->
+            <div id="global-announcement-banner" class="hidden mb-6 rounded-xl p-4 shadow-lg flex items-center justify-between animate-pulse transition-all duration-300">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="megaphone" class="w-6 h-6"></i>
+                    <span id="global-announcement-text" class="font-bold text-sm md:text-base tracking-wide"></span>
+                </div>
+                <button onclick="document.getElementById('global-announcement-banner').classList.add('hidden')" class="opacity-70 hover:opacity-100 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
             <!-- Botón Flotante de WhatsApp -->
@@ -682,6 +708,9 @@
                         <div class="lg:col-span-3 space-y-4">
                              <div class="flex flex-wrap gap-4 items-center border-b border-gray-700 pb-4">
                                 <h3 class="text-xl font-semibold text-red-400 flex-grow">Lista de Usuarios Registrados</h3>
+                                <button onclick="window.exportUsersCSV()" class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-bold text-white shadow-lg flex items-center gap-2 transition transform hover:scale-105 active:scale-95">
+                                    <i data-lucide="download" class="w-4 h-4"></i> Exportar Base (CSV)
+                                </button>
                                  <select id="user-sort-select" onchange="window.renderUserList()" class="bg-gray-700 rounded-lg p-2 text-sm">
                                     <option value="name">Ordenar por Nombre</option>
                                     <option value="rank">Ordenar por Ranking</option>
@@ -703,6 +732,17 @@
                      <h3 class="text-2xl font-bold text-red-400 mb-4">🛒 Gestión de Catálogo (3 Niveles)</h3>
                      <p class="text-sm text-gray-400 mb-4">Estructura: Categoría Principal > Subcategoría > Productos</p>
                      
+                     <!-- NUEVO PANEL DE ALERTA DE STOCK BAJO -->
+                     <div id="admin-low-stock-alert" class="hidden mb-6 p-5 bg-orange-900/40 rounded-xl border border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)] relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                        <h4 class="font-bold text-orange-400 mb-3 flex items-center gap-2 relative z-10 text-lg uppercase tracking-wider">
+                            <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i> Atención: Inventario Bajo
+                        </h4>
+                        <div id="admin-low-stock-list" class="space-y-2 relative z-10 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                            <!-- Los items bajos en stock se renderizan aquí -->
+                        </div>
+                     </div>
+
                      <div class="p-4 bg-blue-900/30 rounded-lg border border-blue-700 mb-6">
                         <h4 class="font-bold text-blue-300 mb-2">➕ Añadir Categoría Principal</h4>
                         <div class="flex gap-2">
@@ -971,6 +1011,14 @@
                                   <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                                 </label>
                             </div>
+                            <!-- MODO MANTENIMIENTO -->
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-700/50 mt-2">
+                                <label for="maintenance-enabled-toggle" class="font-bold text-yellow-400 flex items-center gap-2"><i data-lucide="wrench" class="w-4 h-4"></i> MODO MANTENIMIENTO</label>
+                                <label class="relative inline-flex items-center cursor-pointer" title="Activa para cerrar la tienda al público.">
+                                  <input type="checkbox" id="maintenance-enabled-toggle" class="sr-only peer" onchange="window.toggleMaintenanceState(this.checked)">
+                                  <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                                </label>
+                            </div>
                             <!-- NUEVA SECCIÓN DE IVA -->
                             <hr class="border-slate-700 my-4">
                             <h4 class="text-lg font-semibold text-red-300">Impuesto al Valor Agregado (IVA)</h4>
@@ -1028,6 +1076,40 @@
                         </div>
                     </div>
 
+                    <!-- NUEVA SECCIÓN DE ANUNCIOS GLOBALES -->
+                    <div class="mt-6 p-6 bg-slate-800/60 rounded-xl shadow-xl border border-blue-900/50 space-y-4">
+                        <h3 class="text-xl font-semibold text-blue-400 flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5"></i> 📢 Banner de Anuncios Globales</h3>
+                        <p class="text-sm text-gray-400">Muestra un mensaje importante a todos tus clientes en la parte superior de la tienda.</p>
+                        
+                        <div class="flex items-center justify-between pt-2">
+                            <label for="announcement-enabled-toggle" class="font-semibold text-slate-300">Activar Anuncio para Clientes</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" id="announcement-enabled-toggle" class="sr-only peer">
+                              <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Mensaje del Aviso</label>
+                                <textarea id="announcement-message" placeholder="Ej: ¡Los servidores de Free Fire están en mantenimiento!" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-blue-500 outline-none" rows="2"></textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Color de Alerta</label>
+                                <select id="announcement-color" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-blue-500 outline-none">
+                                    <option value="blue">Azul (Informativo / General)</option>
+                                    <option value="red">Rojo (Urgente / Problemas)</option>
+                                    <option value="yellow">Amarillo (Advertencia)</option>
+                                    <option value="green">Verde (Promoción / Éxito)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button onclick="window.saveAnnouncementConfig()" class="w-full p-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2 mt-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Guardar Anuncio
+                        </button>
+                    </div>
+
                     <!-- NUEVA SECCIÓN DE DIVISAS -->
                     <div class="mt-6 p-6 bg-slate-800/60 rounded-xl shadow-xl border border-emerald-900/50 space-y-4">
                         <h3 class="text-xl font-semibold text-emerald-400 flex items-center gap-2"><i data-lucide="coins" class="w-5 h-5"></i> 💱 Divisas y Tasas de Cambio</h3>
@@ -1064,6 +1146,10 @@
                 <div id="content-admin-orders" class="hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-2xl font-bold text-yellow-400 flex items-center gap-2"><i data-lucide="gamepad-2" class="w-6 h-6"></i> Pedidos Pendientes (Recargas)</h3>
+                        <!-- BOTÓN COPIAR EN LOTE -->
+                        <button onclick="window.copyAllPendingOrders()" id="btn-copy-batch-orders" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg flex items-center gap-2 transition active:scale-95 border border-blue-400/30">
+                            <i data-lucide="copy" class="w-4 h-4"></i> Copiar IDs en Lote
+                        </button>
                     </div>
                     <div id="admin-pending-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Las órdenes pendientes se renderizarán aquí -->
@@ -1183,6 +1269,33 @@
     <div id="toast-notification" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-xl transform translate-y-20 transition-transform duration-300 z-[90] flex items-center gap-2 pointer-events-none">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
         <span id="toast-message" class="text-sm font-bold">Notificación</span>
+    </div>
+
+    <!-- Modal Editar Info Jugador (Admin) -->
+    <div id="edit-player-info-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[85] p-4">
+        <div class="bg-[#161b22] p-6 rounded-xl max-w-sm w-full shadow-2xl border border-blue-600/50 relative">
+            <button onclick="window.closeEditPlayerInfoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-xl font-bold mb-4 text-blue-400 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5"></i> Editar Datos de Jugador</h3>
+            
+            <input type="hidden" id="edit-pinfo-txid">
+            <input type="hidden" id="edit-pinfo-cartkey">
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">ID del Jugador</label>
+                    <input type="text" id="edit-pinfo-id" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Nombre / Nickname</label>
+                    <input type="text" id="edit-pinfo-name" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-blue-500 outline-none">
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="window.closeEditPlayerInfoModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold transition">Cancelar</button>
+                <button onclick="window.savePlayerInfoEdit()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold shadow-lg shadow-blue-900/30 transition">Guardar Cambios</button>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Confirmación (CORREGIDO) -->
@@ -1553,7 +1666,7 @@
     let currentUserProfile = null;
     let currentUserFunds = { cs: 0, nexus: 0, debt: 0 };
     let productsCatalog = { catalog: [], nexusRedemptions: [] };
-    let adminConfig = { nexusValueInCS: 35, adminPass: 'admin123', nexusEnabled: true, ivaPercentage: 15, currencySymbol: 'C$' };
+    let adminConfig = { nexusValueInCS: 35, adminPass: 'admin123', nexusEnabled: true, ivaPercentage: 15, currencySymbol: 'C$', maintenanceMode: false };
     let shoppingCart = {};
     let posCart = {}; 
     let posClient = null; 
@@ -1757,7 +1870,7 @@
         return null;
     };
     const showView = (viewId) => {
-        ['loader', 'client-login-view', 'client-register-view', 'client-view', 'admin-dashboard-view'].forEach(id => {
+        ['loader', 'client-login-view', 'client-register-view', 'client-view', 'admin-dashboard-view', 'maintenance-view'].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.classList.add('hidden');
         });
@@ -1903,6 +2016,61 @@
         if(tabName === 'recharges') window.renderAdminRechargesHistory();
         if(tabName === 'payments') window.renderAdminPaymentMethods();
         if(tabName === 'config' && window.renderAdminCurrencies) window.renderAdminCurrencies();
+    };
+
+    window.toggleMaintenanceState = async (isEnabled) => {
+        try {
+            adminConfig.maintenanceMode = isEnabled;
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), { maintenanceMode: isEnabled });
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = isEnabled ? "Modo Mantenimiento Activado" : "Tienda Abierta al Público";
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        } catch(e) {
+            console.error(e);
+            window.showModal("Error", "No se pudo actualizar el estado de mantenimiento.");
+            document.getElementById('maintenance-enabled-toggle').checked = !isEnabled;
+        }
+    };
+
+    window.copyAllPendingOrders = () => {
+        let copyText = "";
+        let count = 0;
+        
+        purchaseHistoryData.forEach(tx => {
+            if (tx.type !== 'COMPRA' || tx.status === 'anulada' || !tx.items) return;
+            Object.values(tx.items).forEach(item => {
+                if (item.requiresPlayerInfo && item.itemStatus === 'pending') {
+                    const qtyStr = item.quantity > 1 ? ` (x${item.quantity})` : '';
+                    copyText += `Juego: ${item.name}${qtyStr}\n`;
+                    copyText += `ID: ${item.playerInfo?.id || '?'}\n`;
+                    copyText += `Nick: ${item.playerInfo?.name || '?'}\n`;
+                    copyText += `--------------------\n`;
+                    count++;
+                }
+            });
+        });
+
+        if (count === 0) {
+            window.showModal("Aviso", "No hay pedidos pendientes para copiar.");
+            return;
+        }
+
+        window.copyText(copyText.trim());
+        
+        const btn = document.getElementById('btn-copy-batch-orders');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> ¡Copiados (${count})!`;
+        btn.classList.add('bg-green-600');
+        btn.classList.remove('bg-blue-600');
+        lucide.createIcons();
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('bg-green-600');
+            btn.classList.add('bg-blue-600');
+            lucide.createIcons();
+        }, 3000);
     };
 
     window.calculateClientVolume = () => {
@@ -2432,13 +2600,13 @@
                         <button onclick="window.modifyUserDebt('${user.id}', 'add')" class="w-1/4 p-2 bg-red-800 text-xs">Añadir Deuda</button>
                         <button onclick="window.modifyUserDebt('${user.id}', 'subtract')" class="w-1/4 p-2 bg-yellow-600 text-xs">Pagar/Reducir</button>
                     </div>
+                    ${user.debtCS > 0 && user.contact ? `
+                    <button onclick="window.sendWhatsAppDebtReminder('${user.id}')" class="w-full p-2 bg-[#25D366] hover:bg-[#128C7E] rounded-lg font-bold text-xs mt-3 flex items-center justify-center gap-2 text-white shadow-lg transition active:scale-95">
+                        <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                        Enviar Recordatorio de Cobro (WhatsApp)
+                    </button>` : ''}
 
-                    <h4 class="font-semibold text-yellow-300 pt-2 border-t border-gray-600">Permisos</h4>
-                    <button onclick="window.toggleAdminStatus('${user.id}', ${!user.isAdmin})" class="w-full p-2 ${user.isAdmin ? 'bg-red-900 hover:bg-red-800' : 'bg-green-700 hover:bg-green-600'} rounded-lg font-bold text-xs">
-                        ${user.isAdmin ? '🔻 Revocar Permisos de Admin' : '🔺 Promover a Administrador'}
-                    </button>
-
-                    <h4 class="font-semibold text-red-300 pt-2 border-t border-gray-600">Historial de Transacciones</h4>
+                    <h4 class="font-semibold text-yellow-300 pt-2 border-t border-gray-600 mt-4">Permisos</h4>
                     <div id="history-for-${user.id}" class="space-y-2 max-h-48 overflow-y-auto bg-gray-900 p-2 rounded-lg">
                         <p class="text-gray-500 text-center">Cargando historial...</p>
                     </div>
@@ -3675,7 +3843,9 @@
         const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
 
         const renderCategoryBlock = (type, catalogList) => {
-            return catalogList.map(mainCat => {
+            let lowStockItems = [];
+
+            const htmlContent = catalogList.map(mainCat => {
                 const mainImageUrlsText = Array.isArray(mainCat.imageUrls) ? mainCat.imageUrls.join('\n') : (mainCat.imageUrl || '');
                 const colorClass = type === 'products' ? 'blue' : 'yellow';
                 
@@ -3718,6 +3888,19 @@
                                             const displayCost = ((item.cost || 0) / currency.rate).toFixed(2);
                                             const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
                                             
+                                            // LOGICA ALERTA DE STOCK (Products)
+                                            if (!item.unlimited) {
+                                                if (item.requiresPlayerInfo) {
+                                                    // Es manual, no usa códigos digitales, usa el inventory. No avisamos por stock bajo porque no requiere stock pre-comprado (normalmente el admin recarga tras recibir el pago).
+                                                } else if (item.availableCodes !== undefined) {
+                                                    // Es digital por código
+                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Digital' });
+                                                } else {
+                                                    // Físico o digital sin códigos listados (inventory manual)
+                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Físico/Manual' });
+                                                }
+                                            }
+
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
                                                 <div class="md:col-span-2">
@@ -3769,6 +3952,16 @@
                                             </div>`;
                                         } else {
                                             const displayMoneyCost = ((item.cost || 0) / currency.rate).toFixed(2);
+                                            
+                                            // LOGICA ALERTA DE STOCK (Nexus)
+                                            if (!item.unlimited) {
+                                                if (item.availableCodes !== undefined) {
+                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Canje Digital' });
+                                                } else {
+                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Canje Físico/Manual' });
+                                                }
+                                            }
+
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs border border-yellow-900">
                                                 <div class="md:col-span-2">
@@ -3822,10 +4015,36 @@
                     </div>
                 </div>`;
             }).join('');
+            
+            return { html: htmlContent, lowStock: lowStockItems };
         };
 
-        productContainer.innerHTML = renderCategoryBlock('products', productsCatalog.catalog);
-        nexusContainer.innerHTML = renderCategoryBlock('nexus', productsCatalog.nexusRedemptions);
+        const prodRender = renderCategoryBlock('products', productsCatalog.catalog);
+        const nexusRender = renderCategoryBlock('nexus', productsCatalog.nexusRedemptions);
+        
+        productContainer.innerHTML = prodRender.html;
+        nexusContainer.innerHTML = nexusRender.html;
+        
+        // Renderizar Panel de Stock Bajo
+        const allLowStock = [...prodRender.lowStock, ...nexusRender.lowStock];
+        const lowStockPanel = document.getElementById('admin-low-stock-alert');
+        const lowStockList = document.getElementById('admin-low-stock-list');
+        
+        if (allLowStock.length > 0) {
+            lowStockList.innerHTML = allLowStock.map(i => `
+                <div class="flex justify-between items-center bg-black/30 p-2 rounded border border-orange-500/20 text-sm">
+                    <span class="font-bold text-white truncate pr-2">${i.name}</span>
+                    <div class="flex gap-3 items-center flex-shrink-0 text-xs">
+                        <span class="text-orange-300 bg-orange-900/40 px-2 py-0.5 rounded border border-orange-700/50">${i.type}</span>
+                        <span class="font-bold ${i.inv === 0 ? 'text-red-400 bg-red-900/40' : 'text-orange-400 bg-orange-900/40'} px-2 py-0.5 rounded border ${i.inv===0?'border-red-700':'border-orange-700/50'}">Quedan: ${i.inv}</span>
+                    </div>
+                </div>
+            `).join('');
+            lowStockPanel.classList.remove('hidden');
+        } else {
+            lowStockPanel.classList.add('hidden');
+        }
+
         lucide.createIcons();
     };
 
@@ -4156,9 +4375,14 @@
                                         <span class="text-[10px] text-gray-500 uppercase font-bold w-12">ID:</span>
                                         <span class="font-mono text-emerald-400 text-lg font-bold">${item.playerInfo?.id || 'No provisto'}</span>
                                     </div>
-                                    <button onclick="window.copyText('${(item.playerInfo?.id || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold" title="Copiar ID Jugador">
-                                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar
-                                    </button>
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="window.openEditPlayerInfoModal('${tx.id}', '${cartKey}', '${(item.playerInfo?.id || '').replace(/'/g, "\\'")}', '${(item.playerInfo?.name || '').replace(/'/g, "\\'")}')" class="p-1.5 bg-yellow-600 hover:bg-yellow-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold" title="Editar Info">
+                                            <i data-lucide="edit-2" class="w-4 h-4"></i> Editar
+                                        </button>
+                                        <button onclick="window.copyText('${(item.playerInfo?.id || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold" title="Copiar ID Jugador">
+                                            <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-700/50">
                                     <span class="text-[10px] text-gray-500 uppercase font-bold w-12">Nick:</span>
@@ -4296,6 +4520,50 @@
                     window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado, el dinero se acreditó de vuelta y se ajustaron los puntos del cliente.");
                 } catch(e) { window.showModal("Error", e.message); }
             });
+        }
+    };
+
+    window.openEditPlayerInfoModal = (txId, cartKey, currentId, currentName) => {
+        document.getElementById('edit-pinfo-txid').value = txId;
+        document.getElementById('edit-pinfo-cartkey').value = cartKey;
+        document.getElementById('edit-pinfo-id').value = currentId || '';
+        document.getElementById('edit-pinfo-name').value = currentName || '';
+        const modal = document.getElementById('edit-player-info-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        lucide.createIcons();
+    };
+
+    window.closeEditPlayerInfoModal = () => {
+        const modal = document.getElementById('edit-player-info-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    window.savePlayerInfoEdit = async () => {
+        const txId = document.getElementById('edit-pinfo-txid').value;
+        const cartKey = document.getElementById('edit-pinfo-cartkey').value;
+        const newId = document.getElementById('edit-pinfo-id').value.trim();
+        const newName = document.getElementById('edit-pinfo-name').value.trim();
+
+        if (!newId) {
+            window.showModal("Error", "El ID del jugador es obligatorio.");
+            return;
+        }
+
+        try {
+            const txRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, txId);
+            await updateDoc(txRef, {
+                [`items.${cartKey}.playerInfo.id`]: newId,
+                [`items.${cartKey}.playerInfo.name`]: newName
+            });
+            window.closeEditPlayerInfoModal();
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = "Datos del jugador actualizados correctamente.";
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        } catch (e) {
+            window.showModal("Error", "No se pudo actualizar: " + e.message);
         }
     };
 
@@ -5336,6 +5604,7 @@
             await setDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), {
                 appName: name, currencySymbol: cur, logoUrl: logo, nexusEnabled: enabled,
                 businessAddress: addr, businessContact: cont, businessRuc: ruc
+                // maintenanceMode is not saved here, it is toggled specifically by its checkbox.
             }, { merge: true });
             window.showModal("Éxito", "Configuración general y personalización guardada exitosamente.");
         }
@@ -5390,6 +5659,77 @@
             }
         } else {
             window.showModal("Error", "Las contraseñas nuevas no coinciden.");
+        }
+    };
+
+    // --- NUEVAS FUNCIONES POWER-ADMIN ---
+    window.exportUsersCSV = () => {
+        if (!allUsersData || allUsersData.length === 0) {
+            window.showModal("Error", "No hay usuarios registrados para exportar.");
+            return;
+        }
+        
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
+
+        const headers = ["ID_Usuario", "Nombre_Completo", "Email", "Teléfono_Contacto", `Total_Comprado_Neto_(${currency.symbol})`, `Deuda_Pendiente_(${currency.symbol})`, `Saldos_Billetera_(${currency.symbol})`, "Puntos_Nexus"];
+        
+        const rows = allUsersData.map(u => [
+            u.id,
+            `"${(u.name || '').replace(/"/g, '""')}"`,
+            u.email || 'Sin correo',
+            `"${(u.contact || '').replace(/"/g, '""')}"`,
+            ((u.totalSpent || 0) / currency.rate).toFixed(2),
+            ((u.debtCS || 0) / currency.rate).toFixed(2),
+            ((u.fundsCS || 0) / currency.rate).toFixed(2),
+            (u.nexusPoints || 0).toFixed(2)
+        ].join(","));
+        
+        // Agregar BOM para que Excel detecte correctamente los caracteres especiales y tildes (UTF-8)
+        const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(","), ...rows].join("\n"); 
+        const encodedUri = encodeURI(csvContent);
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `astral_nexus_clientes_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    window.sendWhatsAppDebtReminder = (userId) => {
+        const user = allUsersData.find(u => u.id === userId);
+        if(!user || !user.contact || user.debtCS <= 0) return;
+        
+        const cleanNumber = user.contact.replace(/\D/g, '');
+        if (!cleanNumber) {
+            window.showModal("Error de Formato", "El número de contacto del usuario no tiene un formato válido para WhatsApp (Asegúrate de que no incluya letras o símbolos).");
+            return;
+        }
+        
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
+        const convertedDebt = user.debtCS / currency.rate;
+        
+        const appName = adminConfig.appName || 'Astral Nexus';
+        const message = `👋 Hola *${user.name}*,\n\nEste es un recordatorio amigable de *${appName}*. 🌌\n\nTienes un saldo pendiente en tu cuenta por el monto de: *${currency.symbol} ${convertedDebt.toFixed(2)}*.\n\nTe agradeceríamos mucho si pudieras realizar tu abono pronto para que sigas disfrutando de tus recargas y compras sin interrupciones.\n\n¡Muchas gracias por tu preferencia! ✨`;
+        
+        const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
+    window.saveAnnouncementConfig = async () => {
+        const enabled = document.getElementById('announcement-enabled-toggle').checked;
+        const message = document.getElementById('announcement-message').value.trim();
+        const color = document.getElementById('announcement-color').value;
+        
+        try {
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), {
+                announcementEnabled: enabled,
+                announcementMessage: message,
+                announcementColor: color
+            });
+            window.showModal("¡Anuncio Guardado!", "El banner global ha sido actualizado y guardado correctamente. Todos los clientes lo verán al instante.");
+        } catch(e) {
+            window.showModal("Error", "No se pudo guardar la configuración del anuncio: " + e.message);
         }
     };
     
@@ -5756,7 +6096,7 @@
         container.innerHTML = userHistory.map(item => {
             const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleDateString('es-NI') : 'N/A';
             let detail = '', color = 'text-green-300';
-            if (item.status === 'anulada') { detail = `(Anulada) Compra`; color = 'text-gray-500 line-through'; }
+            if (item.status === 'anulada') { detail = `(Anulada) Fondos/Puntos Revertidos`; color = 'text-gray-500 line-through'; }
             else if (item.type === 'COMPRA') { detail = `Compra de ${formatCS(item.totalCS)}`; color = 'text-red-300'; }
             else if (item.type === 'CANJE') { detail = `Canjeó "${item.item}"`; color = 'text-yellow-300'; }
             else if (item.type === 'SORTEO_GANADO') { 
@@ -5768,6 +6108,8 @@
             else if (item.type === 'DEBT_ADDED') { detail = `Deuda añadida ${formatCS(item.amount)}`; color = 'text-red-400'; }
             else if (item.type === 'AJUSTE_MANUAL') { detail = `Ajuste: ${item.adjustmentType === 'add' ? '+' : '-'}${item.amount} ${item.currency}`; color = 'text-blue-300'; }
             else if (item.type === 'SORTEO_ENTRADA') { detail = `Rifa: ${item.raffleType}`; color = 'text-gray-400'; }
+            else if (item.type === 'REEMBOLSO_RECARGA') { detail = `Reembolso: +${formatCS(item.amount)} | -${formatNexus(item.pointsRemoved)}`; color = 'text-green-400'; }
+            else if (item.type === 'SORTEO_REEMBOLSO') { detail = `Reembolso Sorteo: +${item.currency==='nexus'?formatNexus(item.amount):formatCS(item.amount)}`; color = 'text-green-400'; }
             else { detail = item.type; }
             
             if (item.note) {
@@ -5803,9 +6145,7 @@
                 </div>`;
             }
 
-            if(item.status === 'anulada') {
-                 contentHTML = `<p class="text-gray-500 line-through font-bold">COMPRA ANULADA</p>`;
-            } else if (item.type === 'COMPRA') {
+            if (item.type === 'COMPRA') {
                 borderColor = 'border-blue-900';
                 if(item.items) {
                     contentHTML = Object.values(item.items).map(p => {
@@ -5979,6 +6319,29 @@
             } else if (item.type === 'SORTEO_GANADO') {
                 const prize = item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon);
                 contentHTML = `<p class="text-green-400 font-bold">🏆 Ganaste: ${item.prizeDesc || prize}</p><p class="text-xs text-gray-400">En sorteo: ${item.raffleName}</p>`;
+            } else if (item.type === 'REEMBOLSO_RECARGA') {
+                borderColor = 'border-green-900/50';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-green-900/40 text-green-400 px-2 py-1 rounded text-[10px] font-bold border border-green-700/50 flex items-center gap-1"><i data-lucide="refresh-ccw" class="w-3 h-3"></i> REEMBOLSO DE RECARGA</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-1">Item: <span class="font-bold text-white">${item.itemName || 'Desconocido'}</span></p>
+                <p class="text-gray-300 text-sm mb-2">Motivo: <span class="text-white italic">"${item.reason || 'Pedido rechazado por el administrador'}"</span></p>
+                <div class="bg-black/40 p-3 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm">
+                    <div class="flex justify-between items-center"><span class="text-gray-400">Fondos Devueltos:</span><span class="text-green-400 font-bold">+ ${formatCS(item.amount)}</span></div>
+                    ${item.pointsRemoved > 0 ? `<div class="flex justify-between items-center"><span class="text-gray-400">Puntos Restados:</span><span class="text-red-400 font-bold">- ${formatNexus(item.pointsRemoved)}</span></div>` : ''}
+                </div>`;
+            } else if (item.type === 'SORTEO_REEMBOLSO') {
+                borderColor = 'border-purple-900/50';
+                const amtStr = item.currency === 'nexus' ? formatNexus(item.amount) : formatCS(item.amount);
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-purple-900/40 text-purple-400 px-2 py-1 rounded text-[10px] font-bold border border-purple-700/50 flex items-center gap-1"><i data-lucide="ticket" class="w-3 h-3"></i> REEMBOLSO DE SORTEO</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">Participación cancelada. Se devolvió la entrada.</p>
+                <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex justify-between text-sm">
+                    <span class="text-gray-400">Devolución:</span><span class="text-green-400 font-bold">+ ${amtStr}</span>
+                </div>`;
             } else {
                 let desc = item.type;
                 if (item.type === 'SORTEO_ENTRADA') desc = `Participación Sorteo: ${item.raffleType}`;
@@ -5986,6 +6349,19 @@
                 if (item.type === 'DEBT_ADDED') desc = `Deuda Añadida: ${formatCS(item.amount)}`;
                 if (item.type === 'AJUSTE_MANUAL') desc = `Ajuste de Saldo: ${item.adjustmentType === 'add' ? '+' : '-'}${item.amount} ${item.currency === 'cs' ? 'C$' : 'Nexus'}`;
                 contentHTML = `<p class="text-gray-300 text-sm">${desc}</p>`;
+            }
+
+            if (item.status === 'anulada') {
+                borderColor = 'border-red-900/80';
+                contentHTML = `
+                <div class="bg-red-900/20 p-3 rounded-lg border border-red-500/30 mb-3 shadow-inner">
+                     <p class="text-red-400 font-bold flex items-center gap-1 uppercase tracking-wider text-sm mb-1"><i data-lucide="ban" class="w-4 h-4"></i> TRANSACCIÓN ANULADA</p>
+                     <p class="text-gray-300 text-xs">Esta operación fue anulada. El dinero o la deuda, junto con los Puntos Nexus de esta transacción, han sido revertidos al saldo original.</p>
+                </div>
+                <div class="opacity-50 grayscale pointer-events-none relative">
+                    <div class="absolute inset-0 z-10"></div>
+                    ${contentHTML}
+                </div>`;
             }
 
             if (item.note) {
@@ -6208,6 +6584,37 @@
                  financialHTML = `<div class="border-t border-black pt-2 mt-2 font-bold text-center text-lg">ITEM PARA RETIRAR</div>`;
             }
 
+        } else if (item.type === 'REEMBOLSO_RECARGA') {
+            itemsContainer.innerHTML = `
+                <div class="mb-4">
+                    <p class="text-sm font-bold text-gray-800 uppercase border-b border-gray-300 pb-1 mb-2"><i data-lucide="refresh-ccw" class="w-4 h-4 inline-block mb-1"></i> Reembolso de Recarga</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Item:</strong> ${item.itemName || 'Desconocido'}</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Ref. Original:</strong> ${item.refTransactionId?.slice(0,8).toUpperCase() || 'N/A'}</p>
+                </div>
+                <div class="bg-gray-100 p-3 rounded border-l-4 border-red-500 mb-2">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Motivo del Rechazo / Reembolso:</p>
+                    <p class="text-sm text-gray-800 italic">"${item.reason || 'Sin especificar'}"</p>
+                </div>
+            `;
+            financialHTML = `
+                <div class="border-t border-black pt-2 mt-2">
+                    <div class="flex justify-between text-green-700 font-bold text-sm"><span>Fondos Devueltos:</span><span>+${formatCS(item.amount)}</span></div>
+                    ${item.pointsRemoved > 0 ? `<div class="flex justify-between text-red-600 font-bold mt-1 text-sm"><span>Puntos Restados:</span><span>-${formatNexus(item.pointsRemoved)}</span></div>` : ''}
+                </div>
+            `;
+        } else if (item.type === 'SORTEO_REEMBOLSO') {
+            const amtStr = item.currency === 'nexus' ? formatNexus(item.amount) : formatCS(item.amount);
+            itemsContainer.innerHTML = `
+                <div class="mb-4">
+                    <p class="text-sm font-bold text-gray-800 uppercase border-b border-gray-300 pb-1 mb-2"><i data-lucide="ticket" class="w-4 h-4 inline-block mb-1"></i> Reembolso de Sorteo</p>
+                    <p class="text-xs text-gray-800 mt-1">Participación cancelada.</p>
+                </div>
+            `;
+            financialHTML = `
+                <div class="border-t border-black pt-2 mt-2">
+                    <div class="flex justify-between text-green-700 font-bold text-sm"><span>Entrada Devuelta:</span><span>+${amtStr}</span></div>
+                </div>
+            `;
         } else {
              let adjustmentDesc = item.adjustmentType === 'add' ? 'Añadido' : 'Descontado';
              let text = item.type;
@@ -6224,6 +6631,15 @@
             </div>`;
         }
         
+        if (isVoid) {
+            financialHTML += `
+                <div class="mt-4 bg-red-50 p-3 rounded border border-red-200">
+                    <p class="text-xs text-red-800 font-bold uppercase mb-1 flex items-center gap-1"><i data-lucide="info" class="w-4 h-4"></i> ESTADO DE ANULACIÓN</p>
+                    <p class="text-[10px] text-red-600 leading-tight">Los cobros y asignaciones mostrados arriba fueron revertidos por el Administrador. El cliente recuperó sus fondos/cupo y sus puntos Nexus fueron ajustados correspondientemente. El inventario ha sido restaurado.</p>
+                </div>
+            `;
+        }
+
         document.getElementById('receipt-financial-details').innerHTML = financialHTML;
         
         modal.style.display = 'flex';
@@ -6624,9 +7040,15 @@
             document.getElementById('user-display-id').textContent = `ID: ${currentUserId}`;
             document.getElementById('user-display-id').classList.remove('hidden');
             if (userData.isAdmin) { document.getElementById('admin-dashboard-btn').classList.remove('hidden'); } else { document.getElementById('admin-dashboard-btn').classList.add('hidden'); }
-            showView('client-view');
-            startClientListeners(auth.currentUser);
-            window.changeClientTab('tienda');
+            
+            if (adminConfig && adminConfig.maintenanceMode && !userData.isAdmin) {
+                showView('maintenance-view');
+                startClientListeners(auth.currentUser);
+            } else {
+                showView('client-view');
+                startClientListeners(auth.currentUser);
+                window.changeClientTab('tienda');
+            }
         } else { loginMessage.textContent = "ID no válido."; }
     };
 
@@ -6677,6 +7099,39 @@
                 document.getElementById('app-title-display').textContent = adminConfig.appName ? adminConfig.appName.toUpperCase() : '🌌 ASTRAL NEXUS';
                 const logoEl = document.getElementById('app-logo-display');
                 if (adminConfig.logoUrl) { logoEl.src = adminConfig.logoUrl; logoEl.classList.remove('hidden'); } else { logoEl.classList.add('hidden'); }
+                
+                // MODO MANTENIMIENTO HANDLING
+                if (adminConfig.maintenanceMode && currentUserProfile && !currentUserProfile.isAdmin) {
+                    showView('maintenance-view');
+                } else if (!adminConfig.maintenanceMode && currentUserProfile && !currentUserProfile.isAdmin) {
+                     // Si se apaga el mantenimiento, regresamos al cliente a la vista normal de la tienda
+                     if (!document.getElementById('maintenance-view').classList.contains('hidden')) {
+                         showView('client-view');
+                     }
+                }
+
+                // --- NUEVO: Sincronización en Vivo del Banner de Anuncios ---
+                const banner = document.getElementById('global-announcement-banner');
+                if (banner) {
+                    if (adminConfig.announcementEnabled && adminConfig.announcementMessage) {
+                        document.getElementById('global-announcement-text').textContent = adminConfig.announcementMessage;
+                        
+                        // Limpiar clases de colores previos
+                        banner.className = 'mb-6 rounded-xl p-4 shadow-xl flex items-center justify-between animate-pulse transition-all duration-300';
+                        
+                        // Aplicar color configurado
+                        if (adminConfig.announcementColor === 'red') banner.classList.add('bg-red-600', 'text-white', 'border', 'border-red-400', 'shadow-red-900/50');
+                        else if (adminConfig.announcementColor === 'blue') banner.classList.add('bg-blue-600', 'text-white', 'border', 'border-blue-400', 'shadow-blue-900/50');
+                        else if (adminConfig.announcementColor === 'yellow') banner.classList.add('bg-yellow-500', 'text-yellow-900', 'border', 'border-yellow-400', 'shadow-yellow-900/50');
+                        else if (adminConfig.announcementColor === 'green') banner.classList.add('bg-green-600', 'text-white', 'border', 'border-green-400', 'shadow-green-900/50');
+                        else banner.classList.add('bg-blue-600', 'text-white'); // Color por defecto
+                        
+                        banner.classList.remove('hidden');
+                    } else {
+                        banner.classList.add('hidden');
+                    }
+                }
+
                 const adminView = document.getElementById('admin-dashboard-view');
                 if (adminView && !adminView.classList.contains('hidden')) {
                      document.getElementById('admin-nexus-rate').textContent = formatCS(adminConfig.nexusValueInCS);
@@ -6688,6 +7143,19 @@
                      document.getElementById('new-business-contact').value = adminConfig.businessContact || '';
                      document.getElementById('new-business-ruc').value = adminConfig.businessRuc || '';
                      document.getElementById('nexus-enabled-toggle').checked = adminConfig.nexusEnabled !== false;
+
+                     // Llenar datos en el formulario del Banner (Admin)
+                     const toggleAnnounce = document.getElementById('announcement-enabled-toggle');
+                     if(toggleAnnounce) toggleAnnounce.checked = adminConfig.announcementEnabled === true;
+                     
+                     const toggleMaintenance = document.getElementById('maintenance-enabled-toggle');
+                     if(toggleMaintenance) toggleMaintenance.checked = adminConfig.maintenanceMode === true;
+                     
+                     const msgInput = document.getElementById('announcement-message');
+                     if(msgInput) msgInput.value = adminConfig.announcementMessage || '';
+                     
+                     const colorInput = document.getElementById('announcement-color');
+                     if(colorInput) colorInput.value = adminConfig.announcementColor || 'blue';
                 }
             }
         }, err => handleFirestoreError(err, "Escuchar Configuración"));
@@ -6941,9 +7409,14 @@
                             <p class="text-blue-300"><span class="text-gray-500 text-[10px] uppercase font-bold w-12 inline-block">ID:</span> <strong class="font-mono text-emerald-400 text-lg">${rec.playerId}</strong></p>
                             <p class="text-purple-300"><span class="text-gray-500 text-[10px] uppercase font-bold w-12 inline-block">Nick:</span> <strong>${rec.playerName}</strong></p>
                         </div>
-                        <button onclick="window.copyText('${rec.playerId.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold h-fit" title="Copiar ID Jugador">
-                            <i data-lucide="copy" class="w-4 h-4"></i> Copiar
-                        </button>
+                        <div class="flex gap-2 items-center h-fit">
+                            <button onclick="window.openEditPlayerInfoModal('${rec.txId}', '${rec.cartKey}', '${rec.playerId.replace(/'/g, "\\'")}', '${rec.playerName.replace(/'/g, "\\'")}')" class="p-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold" title="Editar Info">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="window.copyText('${rec.playerId.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition shadow-sm active:scale-95 flex items-center gap-1 text-xs font-bold" title="Copiar ID Jugador">
+                                <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+                            </button>
+                        </div>
                     </div>
 
                     <p class="text-xs text-gray-400 mt-3"><i data-lucide="user" class="w-3 h-3 inline mr-1"></i>Cliente: ${rec.clientName} <span class="opacity-50">(${rec.clientEmail})</span></p>
@@ -7358,6 +7831,7 @@
                     if (!user.isAnonymous) {
                         if (user.emailVerified) {
                             currentUserId = user.uid;
+                            let userIsAdmin = false;
                             
                             try {
                                 const docRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
@@ -7365,6 +7839,7 @@
                                 
                                 if (!docSnap.exists()) {
                                     const isMasterAdmin = user.email === 'anthonyfonjim@gmail.com';
+                                    userIsAdmin = isMasterAdmin;
                                     await setDoc(docRef, {
                                         userId: user.uid,
                                         email: user.email,
@@ -7374,8 +7849,10 @@
                                         createdAt: serverTimestamp()
                                     });
                                 } else {
-                                    if (user.email === 'anthonyfonjim@gmail.com' && !docSnap.data().isAdmin) {
+                                    userIsAdmin = docSnap.data().isAdmin;
+                                    if (user.email === 'anthonyfonjim@gmail.com' && !userIsAdmin) {
                                         await updateDoc(docRef, { isAdmin: true });
+                                        userIsAdmin = true;
                                     }
                                 }
                             } catch (e) {
@@ -7386,14 +7863,20 @@
                             document.getElementById('user-display-id').classList.remove('hidden');
                             
                             bootstrapData(user);
-                            showView('client-view');
+                            if (adminConfig && adminConfig.maintenanceMode && !userIsAdmin) {
+                                showView('maintenance-view');
+                            } else {
+                                showView('client-view');
+                                window.changeClientTab('tienda');
+                            }
                             startClientListeners(user);
-                            window.changeClientTab('tienda');
                         } else {
                             await signOut(auth);
                         }
                     } else {
                         bootstrapData(user);
+                        // Aseguramos que los usuarios no logueados siempre vean el login, NUNCA la vista de mantenimiento.
+                        // Así el admin puede iniciar sesión en cualquier momento desde afuera.
                         showView('client-login-view');
                     }
                 });
