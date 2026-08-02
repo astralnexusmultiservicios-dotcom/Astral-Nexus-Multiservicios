@@ -610,6 +610,69 @@
                         </div>
                     </div>
 
+                    <!-- NUEVA SECCIÓN: Recompensa Diaria (Cofre Diario) -->
+                    <div id="daily-chest-container" class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-900/50 p-6 mb-8 relative overflow-hidden group">
+                        <!-- Efecto visual sutil -->
+                        <div class="absolute top-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 group-hover:bg-purple-500/20 transition duration-500"></div>
+                        <div class="absolute bottom-0 right-0 w-24 h-24 bg-fuchsia-500/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                        
+                        <h3 class="text-xl font-bold text-purple-400 mb-2 flex items-center gap-2 relative z-10">
+                            <i data-lucide="gift" class="w-6 h-6 text-fuchsia-400"></i> Cofre Diario Nexus
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-5 relative z-10 max-w-xl">
+                            ¡Entra a la tienda todos los días y reclama Puntos Nexus totalmente gratis! Tus puntos se sumarán automáticamente a tu saldo para que los canjees por premios.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-4 relative z-10">
+                            <button id="btn-daily-reward" onclick="window.claimDailyReward()" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-900/40 transform active:scale-95 flex items-center justify-center gap-2">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i> Abrir Cofre Diario
+                            </button>
+                            <p id="daily-reward-timer" class="text-sm text-fuchsia-300 hidden font-medium flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4"></i> Vuelve mañana para abrir un nuevo cofre.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN: Transferencia P2P -->
+                    <div id="p2p-transfer-container" class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-indigo-900/50 p-6 mb-8 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none transition duration-500 group-hover:bg-indigo-500/20"></div>
+                        
+                        <h3 class="text-xl font-bold text-indigo-400 mb-2 flex items-center gap-2 relative z-10">
+                            <i data-lucide="send" class="w-6 h-6 text-blue-400"></i> Enviar Puntos a un Amigo
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-5 relative z-10 max-w-xl">
+                            Transfiere tus Puntos Nexus a otra cuenta ingresando su correo electrónico registrado. Se aplicará una comisión del <strong id="p2p-fee-display-text" class="text-indigo-300">0%</strong>.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                            <div>
+                                <label class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1 block ml-1">Correo del Destinatario</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+                                    </div>
+                                    <input type="email" id="transfer-recipient-email" placeholder="amigo@correo.com" class="w-full pl-10 p-3 rounded-xl bg-slate-950 text-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1 block ml-1">Puntos a Enviar</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-500"></i>
+                                    </div>
+                                    <input type="number" id="transfer-amount" oninput="window.updateTransferFeeUI()" placeholder="Ej: 100" class="w-full pl-10 p-3 rounded-xl bg-slate-950 text-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition" min="1">
+                                </div>
+                                <div class="flex justify-between items-center mt-2 px-1">
+                                    <span class="text-[10px] text-gray-500 font-bold">Comisión: <span id="transfer-fee-amount" class="text-red-400">0.00</span></span>
+                                    <span class="text-xs font-bold text-gray-300">Total a descontar: <span id="transfer-total-deduction" class="text-yellow-400">0.00</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.transferNexusPoints()" class="w-full mt-4 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20 transform active:scale-95 relative z-10">
+                            <i data-lucide="send" class="w-4 h-4"></i> Enviar Puntos
+                        </button>
+                    </div>
+
                     <!-- NUEVA SECCIÓN: Solicitud de Saldo por WhatsApp -->
                     <div class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-900/50 p-6 mb-8 relative overflow-hidden">
                         <!-- Efecto visual sutil -->
@@ -1107,6 +1170,58 @@
                         
                         <button onclick="window.saveAnnouncementConfig()" class="w-full p-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2 mt-2">
                             <i data-lucide="save" class="w-4 h-4"></i> Guardar Anuncio
+                        </button>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN DE COFRE DIARIO (ADMIN) -->
+                    <div class="mt-6 p-6 bg-slate-800/60 rounded-xl shadow-xl border border-purple-900/50 space-y-4">
+                        <h3 class="text-xl font-semibold text-purple-400 flex items-center gap-2"><i data-lucide="gift" class="w-5 h-5"></i> 🎁 Configuración Cofre Diario</h3>
+                        <p class="text-sm text-gray-400">Controla la recompensa diaria. Puedes poner valores negativos en el "Premio Mínimo" para que actúe como una "Trampa" (restará puntos al azar si le toca a un cliente).</p>
+                        
+                        <div class="flex items-center justify-between pt-2">
+                            <label for="chest-enabled-toggle" class="font-semibold text-slate-300">Activar Cofre Diario para Clientes</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="chest-enabled-toggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Premio Mínimo (Ej: -5)</label>
+                                <input type="number" id="chest-min-points" placeholder="-5" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-purple-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Premio Máximo (Ej: 10)</label>
+                                <input type="number" id="chest-max-points" placeholder="10" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-purple-500 outline-none">
+                            </div>
+                        </div>
+                        
+                        <button onclick="window.saveChestConfig()" class="w-full p-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2 mt-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Guardar Configuración del Cofre
+                        </button>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN DE TRANSFERENCIAS P2P -->
+                    <div class="mt-6 p-6 bg-slate-800/60 rounded-xl shadow-xl border border-indigo-900/50 space-y-4">
+                        <h3 class="text-xl font-semibold text-indigo-400 flex items-center gap-2"><i data-lucide="send" class="w-5 h-5"></i> 💸 Transferencias P2P (Usuarios)</h3>
+                        <p class="text-sm text-gray-400">Permite que los usuarios se envíen Puntos Nexus entre ellos. Puedes cobrar una comisión que se "quemará" (desaparecerá del sistema) para controlar la inflación.</p>
+                        
+                        <div class="flex items-center justify-between pt-2">
+                            <label for="p2p-enabled-toggle" class="font-semibold text-slate-300">Activar Envíos entre Usuarios</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="p2p-enabled-toggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Comisión por Envío (%)</label>
+                            <input type="number" id="p2p-fee-percentage" placeholder="Ej: 5" class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-indigo-500 outline-none" min="0" max="100">
+                        </div>
+                        
+                        <button onclick="window.saveP2PConfig()" class="w-full p-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2 mt-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Guardar Configuración P2P
                         </button>
                     </div>
 
@@ -1666,7 +1781,7 @@
     let currentUserProfile = null;
     let currentUserFunds = { cs: 0, nexus: 0, debt: 0 };
     let productsCatalog = { catalog: [], nexusRedemptions: [] };
-    let adminConfig = { nexusValueInCS: 35, adminPass: 'admin123', nexusEnabled: true, ivaPercentage: 15, currencySymbol: 'C$', maintenanceMode: false };
+    let adminConfig = { nexusValueInCS: 35, adminPass: 'admin123', nexusEnabled: true, ivaPercentage: 15, currencySymbol: 'C$', maintenanceMode: false, dailyChestEnabled: true, dailyChestMin: 1, dailyChestMax: 5, p2pEnabled: true, p2pFeePercentage: 5 };
     let shoppingCart = {};
     let posCart = {}; 
     let posClient = null; 
@@ -3139,8 +3254,303 @@
         }
 
         window.renderRedemptionList();
+        window.updateDailyRewardUI();
+        window.updateP2PVisibility();
+    };
+
+    window.saveChestConfig = async () => {
+        const enabled = document.getElementById('chest-enabled-toggle').checked;
+        const min = parseInt(document.getElementById('chest-min-points').value) || 0;
+        const max = parseInt(document.getElementById('chest-max-points').value) || 0;
+
+        if (min > max) {
+            window.showModal("Error", "El valor mínimo no puede ser mayor al máximo.");
+            return;
+        }
+
+        try {
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), {
+                dailyChestEnabled: enabled,
+                dailyChestMin: min,
+                dailyChestMax: max
+            });
+            window.showModal("¡Guardado!", "La configuración del cofre diario ha sido actualizada. Entrará en vigor inmediatamente para los clientes.");
+        } catch(e) {
+            window.showModal("Error", "No se pudo guardar la configuración: " + e.message);
+        }
+    };
+
+    window.updateDailyRewardUI = () => {
+        const container = document.getElementById('daily-chest-container');
+        if (!container) return;
+
+        // Ocultar la sección entera si el admin la apagó
+        if (adminConfig.dailyChestEnabled === false) {
+            container.classList.add('hidden');
+            return;
+        } else {
+            container.classList.remove('hidden');
+        }
+
+        const btn = document.getElementById('btn-daily-reward');
+        const timerText = document.getElementById('daily-reward-timer');
+        if (!btn || !timerText) return;
+
+        if (!currentUserProfile || !currentUserProfile.lastDailyReward) {
+            btn.disabled = false;
+            btn.className = "w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-900/40 transform active:scale-95 flex items-center justify-center gap-2";
+            btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i> Abrir Cofre Diario`;
+            timerText.classList.add('hidden');
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+            return;
+        }
+
+        const lastRewardDate = new Date(currentUserProfile.lastDailyReward.seconds * 1000);
+        const now = new Date();
+        
+        // Comprobar si ya reclamó hoy (comparando Día, Mes y Año local)
+        const isSameDay = lastRewardDate.getDate() === now.getDate() && 
+                          lastRewardDate.getMonth() === now.getMonth() && 
+                          lastRewardDate.getFullYear() === now.getFullYear();
+
+        if (isSameDay) {
+            btn.disabled = true;
+            btn.className = "w-full sm:w-auto px-8 py-3 bg-gray-700 text-gray-400 font-bold rounded-xl cursor-not-allowed flex items-center justify-center gap-2 opacity-75 border border-gray-600";
+            btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i> Recompensado Hoy`;
+            timerText.classList.remove('hidden');
+        } else {
+            btn.disabled = false;
+            btn.className = "w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-900/40 transform active:scale-95 flex items-center justify-center gap-2";
+            btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i> Abrir Cofre Diario`;
+            timerText.classList.add('hidden');
+        }
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.claimDailyReward = async () => {
+        if (!currentUserId || !currentUserProfile) return;
+        const btn = document.getElementById('btn-daily-reward');
+        if (btn.disabled) return;
+        
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Abriendo...`;
+        
+        try {
+            if (adminConfig.dailyChestEnabled === false) throw new Error("El Cofre Diario está desactivado actualmente.");
+
+            const min = adminConfig.dailyChestMin !== undefined ? adminConfig.dailyChestMin : 1;
+            const max = adminConfig.dailyChestMax !== undefined ? adminConfig.dailyChestMax : 5;
+            
+            // Genera número aleatorio entre el min y el max
+            let rewardPoints = Math.floor(Math.random() * (max - min + 1)) + min;
+            
+            let finalReward = 0;
+            let transactionType = 'RECOMPENSA_DIARIA';
+            let message = '';
+            let title = '';
+            
+            await runTransaction(db, async (transaction) => {
+                const userRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                const userDoc = await transaction.get(userRef);
+                
+                if (!userDoc.exists()) throw new Error("Usuario no existe");
+                
+                const data = userDoc.data();
+                if (data.lastDailyReward) {
+                    const lastDate = new Date(data.lastDailyReward.seconds * 1000);
+                    const now = new Date();
+                    const isSameDay = lastDate.getDate() === now.getDate() && 
+                                      lastDate.getMonth() === now.getMonth() && 
+                                      lastDate.getFullYear() === now.getFullYear();
+                    if (isSameDay) throw new Error("Ya reclamaste tu recompensa de hoy. Vuelve mañana.");
+                }
+                
+                const currentNexus = data.nexusPoints || 0;
+
+                // Evitar que el saldo quede en negativo si cae en una trampa muy grande
+                if (rewardPoints < 0 && Math.abs(rewardPoints) > currentNexus) {
+                    rewardPoints = -currentNexus; // Solo pierde lo que tiene
+                }
+
+                finalReward = rewardPoints;
+                const newNexus = currentNexus + finalReward;
+
+                if (finalReward > 0) {
+                    title = "🎉 ¡Cofre Abierto!";
+                    message = `¡Felicidades! Has ganado <strong>${finalReward.toFixed(2)} Puntos Nexus</strong>.`;
+                    transactionType = 'RECOMPENSA_DIARIA';
+                } else if (finalReward === 0) {
+                    title = "📦 Cofre Vacío";
+                    message = `¡Vaya! Parece que alguien ya vació este cofre. No ganaste ni perdiste puntos esta vez.`;
+                    transactionType = 'RECOMPENSA_DIARIA_VACIA';
+                } else {
+                    title = "☠️ ¡Cofre Trampa!";
+                    message = `¡Oh no! El cofre tenía una trampa y has perdido <strong>${Math.abs(finalReward).toFixed(2)} Puntos Nexus</strong>. ¡Más suerte para la próxima!`;
+                    transactionType = 'RECOMPENSA_DIARIA_TRAMPA';
+                }
+                
+                transaction.update(userRef, { 
+                    nexusPoints: newNexus,
+                    lastDailyReward: serverTimestamp()
+                });
+                
+                const historyRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+                transaction.set(historyRef, {
+                    type: transactionType,
+                    userId: currentUserId,
+                    amount: finalReward,
+                    timestamp: serverTimestamp()
+                });
+            });
+            
+            window.showModal(title, `${message}<br><br>Vuelve mañana para abrir otro cofre.`);
+            window.updateClientWalletDisplay();
+            
+        } catch (error) {
+            window.showModal("Aviso", error.message || "No se pudo reclamar la recompensa.");
+        } finally {
+            window.updateDailyRewardUI();
+        }
     };
     
+    // --- LÓGICA DE TRANSFERENCIAS P2P ---
+    window.saveP2PConfig = async () => {
+        const enabled = document.getElementById('p2p-enabled-toggle').checked;
+        const fee = parseFloat(document.getElementById('p2p-fee-percentage').value) || 0;
+        try {
+            await updateDoc(doc(db, COLLECTIONS.SETTINGS, 'adminConfig'), {
+                p2pEnabled: enabled,
+                p2pFeePercentage: fee
+            });
+            window.showModal("¡Guardado!", "La configuración de transferencias ha sido actualizada. Entrará en vigor inmediatamente.");
+        } catch(e) {
+            window.showModal("Error", "No se pudo guardar la configuración: " + e.message);
+        }
+    };
+
+    window.updateTransferFeeUI = () => {
+        const amount = parseFloat(document.getElementById('transfer-amount').value) || 0;
+        const feePercent = adminConfig.p2pFeePercentage || 0;
+        const feeAmount = amount * (feePercent / 100);
+        const total = amount + feeAmount;
+        
+        document.getElementById('transfer-fee-amount').textContent = formatNexus(feeAmount);
+        document.getElementById('transfer-total-deduction').textContent = formatNexus(total);
+    };
+
+    window.updateP2PVisibility = () => {
+        const container = document.getElementById('p2p-transfer-container');
+        if (!container) return;
+        if (adminConfig.p2pEnabled === false) {
+            container.classList.add('hidden');
+        } else {
+            container.classList.remove('hidden');
+            const feeEl = document.getElementById('p2p-fee-display-text');
+            if (feeEl) feeEl.textContent = `${adminConfig.p2pFeePercentage || 0}%`;
+        }
+    };
+
+    window.transferNexusPoints = async () => {
+        if (!currentUserId || !currentUserProfile) return;
+        if (adminConfig.p2pEnabled === false) {
+            window.showModal("Desactivado", "Las transferencias están temporalmente desactivadas por el administrador.");
+            return;
+        }
+
+        const recipientEmail = document.getElementById('transfer-recipient-email').value.trim().toLowerCase();
+        const amount = parseFloat(document.getElementById('transfer-amount').value);
+
+        if (!recipientEmail || isNaN(amount) || amount <= 0) {
+            window.showModal("Error", "Ingresa un correo válido y un monto mayor a 0.");
+            return;
+        }
+
+        if (recipientEmail === currentUserProfile.email) {
+            window.showModal("Error", "No puedes enviarte puntos a ti mismo.");
+            return;
+        }
+
+        const feePercent = adminConfig.p2pFeePercentage || 0;
+        const feeAmount = amount * (feePercent / 100);
+        const totalDeduction = amount + feeAmount;
+
+        if (currentUserFunds.nexus < totalDeduction) {
+            window.showModal("Puntos Insuficientes", `Necesitas ${formatNexus(totalDeduction)} (incluyendo comisión) para hacer este envío.`);
+            return;
+        }
+
+        window.showConfirmModal("Confirmar Envío", `¿Estás seguro de enviar <strong>${formatNexus(amount)}</strong> al usuario con correo <strong>${recipientEmail}</strong>?<br><br>Se descontará un total de <strong>${formatNexus(totalDeduction)}</strong> de tu cuenta (incluyendo ${formatNexus(feeAmount)} de comisión que se cobrará el sistema).`, async () => {
+            try {
+                // 1. Buscar destinatario
+                const q = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("email", "==", recipientEmail), limit(1));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    window.showModal("Usuario no encontrado", "No existe ninguna cuenta registrada con ese correo electrónico en la tienda.");
+                    return;
+                }
+                
+                const recipientId = snap.docs[0].id;
+
+                // 2. Ejecutar transacción segura
+                await runTransaction(db, async (t) => {
+                    const senderRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                    const receiverRef = doc(db, COLLECTIONS.USER_PROFILE(recipientId));
+                    
+                    const senderDoc = await t.get(senderRef);
+                    const receiverDoc = await t.get(receiverRef);
+
+                    if (!senderDoc.exists() || !receiverDoc.exists()) throw new Error("Fallo al obtener información de las cuentas.");
+                    
+                    const senderNexus = senderDoc.data().nexusPoints || 0;
+                    const receiverNexus = receiverDoc.data().nexusPoints || 0;
+
+                    if (senderNexus < totalDeduction) throw new Error("INSUFFICIENT");
+
+                    // Actualizar saldos
+                    t.update(senderRef, { nexusPoints: senderNexus - totalDeduction });
+                    t.update(receiverRef, { nexusPoints: receiverNexus + amount });
+
+                    // Registrar en historial para Remitente
+                    t.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: 'TRANSFERENCIA_ENVIADA',
+                        userId: currentUserId,
+                        amount: amount,
+                        fee: feeAmount,
+                        totalDeducted: totalDeduction,
+                        recipientEmail: recipientEmail,
+                        recipientId: recipientId,
+                        timestamp: serverTimestamp()
+                    });
+
+                    // Registrar en historial para Destinatario
+                    t.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: 'TRANSFERENCIA_RECIBIDA',
+                        userId: recipientId,
+                        amount: amount,
+                        senderEmail: currentUserProfile.email,
+                        senderId: currentUserId,
+                        timestamp: serverTimestamp()
+                    });
+                });
+
+                window.showModal("¡Envío Exitoso!", `Has enviado ${formatNexus(amount)} a ${recipientEmail} exitosamente.`);
+                document.getElementById('transfer-recipient-email').value = '';
+                document.getElementById('transfer-amount').value = '';
+                window.updateTransferFeeUI();
+                
+            } catch (e) {
+                if (e.message === 'INSUFFICIENT') {
+                    window.showModal("Error", "Fondos insuficientes al procesar la transferencia en tiempo real.");
+                } else if (e.code === 'permission-denied' || (e.message && e.message.includes('permissions'))) {
+                    window.showModal("Error de Permisos", "Tus reglas de Firebase impiden que busques otros usuarios para enviar saldo. Modifica las reglas temporalmente.");
+                } else {
+                    window.showModal("Error", e.message || e);
+                }
+            }
+        });
+    };
+
     window.renderClientPaymentMethods = () => {
         // Buscar el contenedor en la vista de Billetera. Si no existe, lo inyectamos encima del área de recarga por WhatsApp
         let container = document.getElementById('client-payment-methods-container');
@@ -6338,6 +6748,11 @@
             else if (item.type === 'SORTEO_ENTRADA') { detail = `Rifa: ${item.raffleType}`; color = 'text-gray-400'; }
             else if (item.type === 'REEMBOLSO_RECARGA') { detail = `Reembolso: +${formatCS(item.amount)} | -${formatNexus(item.pointsRemoved)}`; color = 'text-green-400'; }
             else if (item.type === 'SORTEO_REEMBOLSO') { detail = `Reembolso Sorteo: +${item.currency==='nexus'?formatNexus(item.amount):formatCS(item.amount)}`; color = 'text-green-400'; }
+            else if (item.type === 'RECOMPENSA_DIARIA') { detail = `Cofre Diario: +${item.amount.toFixed(2)} Pts`; color = 'text-purple-400 font-bold'; }
+            else if (item.type === 'RECOMPENSA_DIARIA_VACIA') { detail = `Cofre Diario: Vacío (0 Pts)`; color = 'text-gray-400'; }
+            else if (item.type === 'RECOMPENSA_DIARIA_TRAMPA') { detail = `Cofre Diario Trampa: ${item.amount.toFixed(2)} Pts`; color = 'text-red-500 font-bold'; }
+            else if (item.type === 'TRANSFERENCIA_ENVIADA') { detail = `Envío P2P a ${item.recipientEmail}: -${formatNexus(item.totalDeducted)}`; color = 'text-indigo-400'; }
+            else if (item.type === 'TRANSFERENCIA_RECIBIDA') { detail = `Recibo P2P de ${item.senderEmail}: +${formatNexus(item.amount)}`; color = 'text-emerald-400 font-bold'; }
             else { detail = item.type; }
             
             if (item.note) {
@@ -6569,6 +6984,55 @@
                 <p class="text-gray-300 text-sm mb-2">Participación cancelada. Se devolvió la entrada.</p>
                 <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex justify-between text-sm">
                     <span class="text-gray-400">Devolución:</span><span class="text-green-400 font-bold">+ ${amtStr}</span>
+                </div>`;
+            } else if (item.type === 'RECOMPENSA_DIARIA') {
+                borderColor = 'border-purple-900/50';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-purple-900/40 text-purple-400 px-2 py-1 rounded text-[10px] font-bold border border-purple-700/50 flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3"></i> COFRE DIARIO</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">¡Abriste tu recompensa diaria!</p>
+                <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Puntos Obtenidos:</span><span class="text-yellow-400 font-bold text-lg">+ ${item.amount.toFixed(2)} Pts</span>
+                </div>`;
+            } else if (item.type === 'RECOMPENSA_DIARIA_VACIA') {
+                borderColor = 'border-gray-700';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-gray-800 text-gray-400 px-2 py-1 rounded text-[10px] font-bold border border-gray-600 flex items-center gap-1"><i data-lucide="package-open" class="w-3 h-3"></i> COFRE VACÍO</span>
+                </div>
+                <p class="text-gray-400 text-sm mb-2">El cofre no tenía nada esta vez. No ganaste ni perdiste puntos.</p>`;
+            } else if (item.type === 'RECOMPENSA_DIARIA_TRAMPA') {
+                borderColor = 'border-red-900/50';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-red-900/40 text-red-400 px-2 py-1 rounded text-[10px] font-bold border border-red-700/50 flex items-center gap-1"><i data-lucide="skull" class="w-3 h-3"></i> COFRE TRAMPA</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">¡Caíste en una trampa al abrir el cofre!</p>
+                <div class="bg-black/40 p-2 rounded-lg border border-red-900/50 flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Puntos Perdidos:</span><span class="text-red-500 font-bold text-lg">${item.amount.toFixed(2)} Pts</span>
+                </div>`;
+            } else if (item.type === 'TRANSFERENCIA_ENVIADA') {
+                borderColor = 'border-indigo-900/50';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-indigo-900/40 text-indigo-400 px-2 py-1 rounded text-[10px] font-bold border border-indigo-700/50 flex items-center gap-1"><i data-lucide="send" class="w-3 h-3"></i> ENVÍO P2P</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">Enviaste Puntos Nexus a <span class="font-bold text-white">${item.recipientEmail}</span></p>
+                <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm">
+                    <div class="flex justify-between items-center"><span class="text-gray-400">Puntos Enviados:</span><span class="text-white font-bold">${formatNexus(item.amount)}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400">Comisión Sistema:</span><span class="text-red-400 font-bold">- ${formatNexus(item.fee)}</span></div>
+                    <div class="flex justify-between items-center pt-1 mt-1 border-t border-gray-700"><span class="text-gray-400">Total Descontado:</span><span class="text-red-500 font-bold">- ${formatNexus(item.totalDeducted)}</span></div>
+                </div>`;
+            } else if (item.type === 'TRANSFERENCIA_RECIBIDA') {
+                borderColor = 'border-emerald-900/50';
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-emerald-900/40 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold border border-emerald-700/50 flex items-center gap-1"><i data-lucide="download" class="w-3 h-3"></i> RECEPCIÓN P2P</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">Recibiste Puntos Nexus de <span class="font-bold text-white">${item.senderEmail}</span></p>
+                <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Puntos Recibidos:</span><span class="text-emerald-400 font-bold text-lg">+ ${formatNexus(item.amount)}</span>
                 </div>`;
             } else {
                 let desc = item.type;
@@ -7393,7 +7857,27 @@
                      
                      const colorInput = document.getElementById('announcement-color');
                      if(colorInput) colorInput.value = adminConfig.announcementColor || 'blue';
+
+                     // Llenar datos en el formulario del Cofre Diario (Admin)
+                     const toggleChest = document.getElementById('chest-enabled-toggle');
+                     if(toggleChest) toggleChest.checked = adminConfig.dailyChestEnabled !== false;
+                     
+                     const minInput = document.getElementById('chest-min-points');
+                     if(minInput) minInput.value = adminConfig.dailyChestMin !== undefined ? adminConfig.dailyChestMin : 1;
+                     
+                     const maxInput = document.getElementById('chest-max-points');
+                     if(maxInput) maxInput.value = adminConfig.dailyChestMax !== undefined ? adminConfig.dailyChestMax : 5;
+                     
+                     // Llenar datos en el formulario de P2P (Admin)
+                     const toggleP2P = document.getElementById('p2p-enabled-toggle');
+                     if(toggleP2P) toggleP2P.checked = adminConfig.p2pEnabled !== false;
+                     
+                     const feeP2P = document.getElementById('p2p-fee-percentage');
+                     if(feeP2P) feeP2P.value = adminConfig.p2pFeePercentage !== undefined ? adminConfig.p2pFeePercentage : 5;
                 }
+                
+                // Actualizar la visibilidad de la carta P2P para el cliente en vivo
+                window.updateP2PVisibility();
             }
         }, err => handleFirestoreError(err, "Escuchar Configuración"));
 
