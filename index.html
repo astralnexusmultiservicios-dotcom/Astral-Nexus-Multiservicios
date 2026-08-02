@@ -732,17 +732,6 @@
                      <h3 class="text-2xl font-bold text-red-400 mb-4">🛒 Gestión de Catálogo (3 Niveles)</h3>
                      <p class="text-sm text-gray-400 mb-4">Estructura: Categoría Principal > Subcategoría > Productos</p>
                      
-                     <!-- NUEVO PANEL DE ALERTA DE STOCK BAJO -->
-                     <div id="admin-low-stock-alert" class="hidden mb-6 p-5 bg-orange-900/40 rounded-xl border border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)] relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-                        <h4 class="font-bold text-orange-400 mb-3 flex items-center gap-2 relative z-10 text-lg uppercase tracking-wider">
-                            <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i> Atención: Inventario Bajo
-                        </h4>
-                        <div id="admin-low-stock-list" class="space-y-2 relative z-10 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                            <!-- Los items bajos en stock se renderizan aquí -->
-                        </div>
-                     </div>
-
                      <div class="p-4 bg-blue-900/30 rounded-lg border border-blue-700 mb-6">
                         <h4 class="font-bold text-blue-300 mb-2">➕ Añadir Categoría Principal</h4>
                         <div class="flex gap-2">
@@ -2740,7 +2729,9 @@
         titleEl.textContent = `${mainCat.title} > ${subCat.title}`;
         containerEl.innerHTML = '';
 
-        const items = isShop ? subCat.products : subCat.items;
+        const allItems = isShop ? subCat.products : subCat.items;
+        const items = (allItems || []).filter(item => !item.isHidden); // NUEVO: Filtrar productos ocultos
+
         if(!items || items.length === 0) {
              containerEl.innerHTML = '<p class="col-span-3 text-center text-gray-500">No hay productos en esta categoría.</p>';
              return;
@@ -2774,10 +2765,21 @@
                     ? `<input type="number" value="${quantity}" disabled class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield] opacity-50 cursor-not-allowed" title="Edita cantidades específicas en el panel de Mi Carrito">`
                     : `<input type="number" min="0" onchange="window.setCartQuantity('${product.id}', this.value)" value="${quantity}" class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield]" ${isOutOfStock ? 'disabled' : ''}>`;
 
+                const badgeHTML = product.badge ? `
+                    <div class="absolute top-2 left-2 z-20 px-2 py-1 text-[10px] font-black text-white uppercase tracking-widest rounded-md shadow-lg ${
+                        product.badge === 'OFERTA' ? 'bg-gradient-to-r from-red-600 to-orange-500 animate-pulse shadow-red-500/50' :
+                        product.badge === 'NUEVO' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-cyan-500/50' :
+                        'bg-gradient-to-r from-yellow-500 to-orange-400 shadow-yellow-500/50'
+                    }">
+                        ${product.badge === 'OFERTA' ? '🔥 ' : product.badge === 'NUEVO' ? '✨ ' : '⚡ '}${product.badge}
+                    </div>
+                ` : '';
+
                 containerEl.innerHTML += `
                     <div class="neon-card-wrapper rounded-2xl ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
                         <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl flex flex-col justify-between overflow-hidden relative z-10 h-full">
                             <div class="neon-img-box h-44 bg-slate-900/50 flex items-center justify-center p-4 cursor-pointer relative" onclick="window.showImageViewer('${safeImagesJson}')">
+                                 ${badgeHTML}
                                  <img src="${mainImageUrl}" alt="${product.name}" class="max-w-full max-h-full object-contain drop-shadow-xl hover:scale-105 transition duration-300 relative z-10" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/e6edf3?text=Error';">
                             </div>
                             <div class="p-4 flex-grow flex flex-col relative z-10">
@@ -2815,10 +2817,21 @@
 
                 const btnDisabled = !canAfford || isOutOfStock;
 
+                const badgeHTML = item.badge ? `
+                    <div class="absolute top-2 left-2 z-20 px-2 py-1 text-[10px] font-black text-white uppercase tracking-widest rounded-md shadow-lg ${
+                        item.badge === 'OFERTA' ? 'bg-gradient-to-r from-red-600 to-orange-500 animate-pulse shadow-red-500/50' :
+                        item.badge === 'NUEVO' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-cyan-500/50' :
+                        'bg-gradient-to-r from-yellow-500 to-orange-400 shadow-yellow-500/50'
+                    }">
+                        ${item.badge === 'OFERTA' ? '🔥 ' : item.badge === 'NUEVO' ? '✨ ' : '⚡ '}${item.badge}
+                    </div>
+                ` : '';
+
                 containerEl.innerHTML += `
                     <div class="neon-card-wrapper rounded-lg ${isOutOfStock || !canAfford ? 'opacity-60 grayscale' : ''}">
                         <div class="bg-gray-800/90 rounded-lg flex flex-col justify-between overflow-hidden border border-yellow-800/50 relative z-10 h-full">
                             <div class="neon-img-box h-40 bg-black/50 flex items-center justify-center p-2 cursor-pointer relative" onclick="window.showImageViewer('${safeImagesJson}')">
+                                 ${badgeHTML}
                                  <img src="${mainImageUrl}" alt="${item.name}" class="max-w-full max-h-full object-contain relative z-10 drop-shadow-xl hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/FBC02D?text=Error';">
                             </div>
                             <div class="p-4 flex-grow flex flex-col relative z-10">
@@ -3843,8 +3856,6 @@
         const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
 
         const renderCategoryBlock = (type, catalogList) => {
-            let lowStockItems = [];
-
             const htmlContent = catalogList.map(mainCat => {
                 const mainImageUrlsText = Array.isArray(mainCat.imageUrls) ? mainCat.imageUrls.join('\n') : (mainCat.imageUrl || '');
                 const colorClass = type === 'products' ? 'blue' : 'yellow';
@@ -3887,19 +3898,6 @@
                                             const displayPrice = ((item.price || 0) / currency.rate).toFixed(2);
                                             const displayCost = ((item.cost || 0) / currency.rate).toFixed(2);
                                             const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
-                                            
-                                            // LOGICA ALERTA DE STOCK (Products)
-                                            if (!item.unlimited) {
-                                                if (item.requiresPlayerInfo) {
-                                                    // Es manual, no usa códigos digitales, usa el inventory. No avisamos por stock bajo porque no requiere stock pre-comprado (normalmente el admin recarga tras recibir el pago).
-                                                } else if (item.availableCodes !== undefined) {
-                                                    // Es digital por código
-                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Digital' });
-                                                } else {
-                                                    // Físico o digital sin códigos listados (inventory manual)
-                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Físico/Manual' });
-                                                }
-                                            }
 
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
@@ -3938,11 +3936,28 @@
                                                 </div>
                                                 <textarea id="prod-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen (una por línea)">${pImage}</textarea>
                                                 
-                                                <div class="md:col-span-6 mt-2 border-t border-gray-700 pt-2">
-                                                    <label class="flex items-center gap-2 text-xs text-yellow-400 font-bold cursor-pointer mb-2">
-                                                        <input type="checkbox" id="prod-req-info-${item.id}" ${item.requiresPlayerInfo ? 'checked' : ''} onchange="window.toggleDigitalConfig('${item.id}', this.checked)" class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-yellow-500 focus:ring-yellow-500">
-                                                        Requiere ID de Jugador (Recargas Manuales)
-                                                    </label>
+                                                <div class="md:col-span-6 mt-2 flex flex-col md:flex-row gap-4 border-t border-gray-700 pt-2">
+                                                    <div class="flex-1">
+                                                        <label class="flex items-center gap-2 text-xs text-red-400 font-bold cursor-pointer mb-2">
+                                                            <input type="checkbox" id="prod-hidden-${item.id}" ${item.isHidden ? 'checked' : ''} class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-red-500 focus:ring-red-500">
+                                                            👻 Ocultar de la Tienda (No visible para clientes)
+                                                        </label>
+                                                        <label class="flex items-center gap-2 text-xs text-yellow-400 font-bold cursor-pointer mb-2">
+                                                            <input type="checkbox" id="prod-req-info-${item.id}" ${item.requiresPlayerInfo ? 'checked' : ''} onchange="window.toggleDigitalConfig('${item.id}', this.checked)" class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-yellow-500 focus:ring-yellow-500">
+                                                            Requiere ID de Jugador (Recargas Manuales)
+                                                        </label>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label class="text-[10px] text-gray-400 block mb-1 font-bold">🏷️ Etiqueta Promocional</label>
+                                                        <select id="prod-badge-${item.id}" class="w-full p-1.5 rounded bg-gray-900 text-xs text-white border border-gray-600 focus:border-blue-500 outline-none">
+                                                            <option value="" ${!item.badge ? 'selected' : ''}>Ninguna</option>
+                                                            <option value="OFERTA" ${item.badge === 'OFERTA' ? 'selected' : ''}>🔥 OFERTA</option>
+                                                            <option value="NUEVO" ${item.badge === 'NUEVO' ? 'selected' : ''}>✨ NUEVO</option>
+                                                            <option value="HOT" ${item.badge === 'HOT' ? 'selected' : ''}>⚡ HOT</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="md:col-span-6 mt-2">
                                                     <div id="digital-config-container-${item.id}" class="transition-all duration-300 ${item.requiresPlayerInfo ? 'opacity-30 pointer-events-none grayscale' : ''}">
                                                         <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
                                                         <input type="text" id="prod-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)" ${item.requiresPlayerInfo ? 'disabled' : ''}/>
@@ -3952,15 +3967,6 @@
                                             </div>`;
                                         } else {
                                             const displayMoneyCost = ((item.cost || 0) / currency.rate).toFixed(2);
-                                            
-                                            // LOGICA ALERTA DE STOCK (Nexus)
-                                            if (!item.unlimited) {
-                                                if (item.availableCodes !== undefined) {
-                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Canje Digital' });
-                                                } else {
-                                                    if (item.inventory <= 5) lowStockItems.push({ name: item.name, inv: item.inventory, type: 'Canje Físico/Manual' });
-                                                }
-                                            }
 
                                             return `
                                             <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs border border-yellow-900">
@@ -3998,7 +4004,24 @@
                                                 </div>
                                                 <textarea id="nexus-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen">${pImage}</textarea>
                                                 
-                                                <div class="md:col-span-6 mt-2 border-t border-yellow-900 pt-2">
+                                                <div class="md:col-span-6 mt-2 flex flex-col md:flex-row gap-4 border-t border-yellow-900 pt-2">
+                                                    <div class="flex-1">
+                                                        <label class="flex items-center gap-2 text-xs text-red-400 font-bold cursor-pointer mb-2">
+                                                            <input type="checkbox" id="nexus-hidden-${item.id}" ${item.isHidden ? 'checked' : ''} class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-red-500 focus:ring-red-500">
+                                                            👻 Ocultar de la Tienda
+                                                        </label>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label class="text-[10px] text-gray-400 block mb-1 font-bold">🏷️ Etiqueta Promocional</label>
+                                                        <select id="nexus-badge-${item.id}" class="w-full p-1.5 rounded bg-gray-900 text-xs text-white border border-gray-600 focus:border-yellow-500 outline-none">
+                                                            <option value="" ${!item.badge ? 'selected' : ''}>Ninguna</option>
+                                                            <option value="OFERTA" ${item.badge === 'OFERTA' ? 'selected' : ''}>🔥 OFERTA</option>
+                                                            <option value="NUEVO" ${item.badge === 'NUEVO' ? 'selected' : ''}>✨ NUEVO</option>
+                                                            <option value="HOT" ${item.badge === 'HOT' ? 'selected' : ''}>⚡ HOT</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="md:col-span-6 mt-2">
                                                     <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
                                                     <input type="text" id="nexus-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)"/>
                                                     <textarea id="nexus-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente.">${(item.availableCodes || []).join('\n')}</textarea>
@@ -4016,7 +4039,7 @@
                 </div>`;
             }).join('');
             
-            return { html: htmlContent, lowStock: lowStockItems };
+            return { html: htmlContent };
         };
 
         const prodRender = renderCategoryBlock('products', productsCatalog.catalog);
@@ -4024,26 +4047,6 @@
         
         productContainer.innerHTML = prodRender.html;
         nexusContainer.innerHTML = nexusRender.html;
-        
-        // Renderizar Panel de Stock Bajo
-        const allLowStock = [...prodRender.lowStock, ...nexusRender.lowStock];
-        const lowStockPanel = document.getElementById('admin-low-stock-alert');
-        const lowStockList = document.getElementById('admin-low-stock-list');
-        
-        if (allLowStock.length > 0) {
-            lowStockList.innerHTML = allLowStock.map(i => `
-                <div class="flex justify-between items-center bg-black/30 p-2 rounded border border-orange-500/20 text-sm">
-                    <span class="font-bold text-white truncate pr-2">${i.name}</span>
-                    <div class="flex gap-3 items-center flex-shrink-0 text-xs">
-                        <span class="text-orange-300 bg-orange-900/40 px-2 py-0.5 rounded border border-orange-700/50">${i.type}</span>
-                        <span class="font-bold ${i.inv === 0 ? 'text-red-400 bg-red-900/40' : 'text-orange-400 bg-orange-900/40'} px-2 py-0.5 rounded border ${i.inv===0?'border-red-700':'border-orange-700/50'}">Quedan: ${i.inv}</span>
-                    </div>
-                </div>
-            `).join('');
-            lowStockPanel.classList.remove('hidden');
-        } else {
-            lowStockPanel.classList.add('hidden');
-        }
 
         lucide.createIcons();
     };
@@ -4193,7 +4196,8 @@
             const newItem = {
                 id: `${type === 'products' ? 'prod' : 'nexus'}_${Date.now()}`,
                 name: "Nuevo Item",
-                inventory: 0, unlimited: false, imageUrls: [], description: ''
+                inventory: 0, unlimited: false, imageUrls: [], description: '',
+                isHidden: false, badge: ''
             };
             if(type === 'products') {
                 newItem.price = 0; newItem.cost = 0; newItem.code = ''; newItem.requiresPlayerInfo = false;
@@ -4225,6 +4229,8 @@
         const codesRaw = document.getElementById(`prod-codes-${prodId}`).value.trim();
         const sold = parseInt(document.getElementById(`prod-sold-${prodId}`).value) || 0;
         const reqInfo = document.getElementById(`prod-req-info-${prodId}`).checked;
+        const isHidden = document.getElementById(`prod-hidden-${prodId}`).checked;
+        const badge = document.getElementById(`prod-badge-${prodId}`).value;
         
         let codes = [];
         // Solo procesamos los códigos si NO es una recarga directa
@@ -4246,6 +4252,8 @@
             prod.imageUrls = imgs;
             prod.totalSold = Math.max(0, sold); 
             prod.requiresPlayerInfo = reqInfo;
+            prod.isHidden = isHidden;
+            prod.badge = badge;
             
             if (reqInfo) {
                 // PRIORIDAD ABSOLUTA A LA RECARGA:
@@ -4298,6 +4306,8 @@
         const url = document.getElementById(`nexus-url-${itemId}`).value.trim();
         const codesRaw = document.getElementById(`nexus-codes-${itemId}`).value.trim();
         const redeemed = parseInt(document.getElementById(`nexus-redeemed-${itemId}`).value) || 0;
+        const isHidden = document.getElementById(`nexus-hidden-${itemId}`).checked;
+        const badge = document.getElementById(`nexus-badge-${itemId}`).value;
         let codes = codesRaw ? codesRaw.split('\n').map(c => c.trim()).filter(c => c) : [];
 
         codes = await window.autoFulfillPendingOrders(itemId, codes);
@@ -4316,6 +4326,8 @@
             item.redemptionUrl = url;
             item.availableCodes = codes;
             item.totalRedeemed = Math.max(0, redeemed); // Guarda el nuevo valor manual
+            item.isHidden = isHidden;
+            item.badge = badge;
 
             if (codes.length > 0 || codesRaw.length > 0) {
                 item.inventory = codes.length;
