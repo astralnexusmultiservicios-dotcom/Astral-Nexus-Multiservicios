@@ -3413,11 +3413,11 @@
                     transactionType = 'RECOMPENSA_DIARIA';
                 } else if (finalReward === 0) {
                     title = "📦 Cofre Vacío";
-                    message = `¡Vaya! Parece que alguien ya vació este cofre. No ganaste ni perdiste puntos esta vez.`;
+                    message = `¡Vaya suerte! Tu cofre personal estaba lleno de polvo hoy. No ganaste ni perdiste puntos esta vez.`;
                     transactionType = 'RECOMPENSA_DIARIA_VACIA';
                 } else {
                     title = "☠️ ¡Cofre Trampa!";
-                    message = `¡Oh no! El cofre tenía una trampa y has perdido <strong>${Math.abs(finalReward).toFixed(2)} Puntos Nexus</strong>. ¡Más suerte para la próxima!`;
+                    message = `¡Oh no! Tu cofre tenía una trampa mágica y has perdido <strong>${Math.abs(finalReward).toFixed(2)} Puntos Nexus</strong>. ¡Más suerte mañana!`;
                     transactionType = 'RECOMPENSA_DIARIA_TRAMPA';
                 }
                 
