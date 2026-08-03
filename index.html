@@ -2769,11 +2769,20 @@
                     </button>` : ''}
 
                     <h4 class="font-semibold text-yellow-300 pt-2 border-t border-gray-600 mt-4">Permisos</h4>
-                    <div id="history-for-${user.id}" class="space-y-2 max-h-48 overflow-y-auto bg-gray-900 p-2 rounded-lg">
-                        <p class="text-gray-500 text-center">Cargando historial...</p>
+                    <div class="flex items-center justify-between bg-gray-800 p-3 rounded-lg border border-gray-700 shadow-inner">
+                        <span class="text-sm text-gray-300 flex items-center gap-2"><i data-lucide="shield" class="w-4 h-4 text-yellow-500"></i> Es Administrador</span>
+                        <label class="relative inline-flex items-center cursor-pointer" title="${user.id === currentUserId ? 'No puedes quitarte tus propios permisos' : 'Otorgar/Revocar acceso de Admin'}">
+                          <input type="checkbox" class="sr-only peer" ${user.isAdmin ? 'checked' : ''} onchange="window.toggleAdminStatus('${user.id}', this.checked)" ${user.id === currentUserId ? 'disabled' : ''}>
+                          <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500 ${user.id === currentUserId ? 'opacity-50 cursor-not-allowed' : ''}"></div>
+                        </label>
                     </div>
 
-                    <h4 class="font-semibold text-orange-400 pt-2 border-t border-gray-600">Zona de Peligro</h4>
+                    <h4 class="font-semibold text-blue-300 pt-2 border-t border-gray-600 mt-4">Historial de Transacciones</h4>
+                    <div id="history-for-${user.id}" class="space-y-2 max-h-48 overflow-y-auto bg-gray-900 p-2 rounded-lg border border-gray-700">
+                        <p class="text-gray-500 text-center text-xs">Cargando historial...</p>
+                    </div>
+
+                    <h4 class="font-semibold text-orange-400 pt-2 border-t border-gray-600 mt-4">Zona de Peligro</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <button onclick="window.resetUserFunds('${user.id}')" class="w-full p-2 bg-yellow-800 hover:bg-yellow-900 rounded-lg font-bold text-xs">💰 Resetear Saldos</button>
                         <button onclick="window.deleteUserHistory('${user.id}')" class="w-full p-2 bg-orange-800 hover:bg-orange-900 rounded-lg font-bold text-xs">📜 Borrar Historial</button>
@@ -5469,8 +5478,21 @@
     };
 
     window.toggleAdminStatus = async (userId, newStatus) => {
-        if(userId === currentUserId) { window.showModal("Error", "No puedes cambiar tus propios permisos"); return; }
-        await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(userId)), { isAdmin: newStatus });
+        if(userId === currentUserId) { 
+            window.showModal("Error", "No puedes cambiar tus propios permisos."); 
+            window.renderUserList(); // Refrescar para devolver el switch a su estado original
+            return; 
+        }
+        try {
+            await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(userId)), { isAdmin: newStatus });
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = newStatus ? "Permisos de Administrador otorgados." : "Permisos de Administrador revocados.";
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        } catch(e) { 
+            window.showModal("Error", "No se pudieron cambiar los permisos: " + e.message); 
+            window.renderUserList();
+        }
     };
 
     window.resetUserFunds = (userId) => {
@@ -6842,12 +6864,14 @@
             else if (item.type === 'RECOMPENSA_DIARIA_VACIA') { detail = `Cofre Diario: Vacío (0 Pts)`; color = 'text-gray-400'; }
             else if (item.type === 'RECOMPENSA_DIARIA_TRAMPA') { detail = `Cofre Diario Trampa: ${item.amount.toFixed(2)} Pts`; color = 'text-red-500 font-bold'; }
             else if (item.type === 'TRANSFERENCIA_ENVIADA') { 
-                const amtDesc = item.currencyType === 'nexus' ? formatNexus(item.totalDeducted) : formatCS(item.totalDeducted);
+                const isNexus = item.currencyType === 'nexus' || !item.currencyType;
+                const amtDesc = isNexus ? formatNexus(item.totalDeducted) : formatCS(item.totalDeducted);
                 detail = `Envío a ${item.recipientEmail}: -${amtDesc}`; 
                 color = 'text-indigo-400'; 
             }
             else if (item.type === 'TRANSFERENCIA_RECIBIDA') { 
-                const amtDesc = item.currencyType === 'nexus' ? formatNexus(item.amount) : formatCS(item.amount);
+                const isNexus = item.currencyType === 'nexus' || !item.currencyType;
+                const amtDesc = isNexus ? formatNexus(item.amount) : formatCS(item.amount);
                 detail = `Recibo de ${item.senderEmail}: +${amtDesc}`; 
                 color = 'text-emerald-400 font-bold'; 
             }
@@ -7112,7 +7136,7 @@
                 </div>`;
             } else if (item.type === 'TRANSFERENCIA_ENVIADA') {
                 borderColor = 'border-indigo-900/50';
-                const isNexus = item.currencyType === 'nexus';
+                const isNexus = item.currencyType === 'nexus' || !item.currencyType;
                 const currencyName = isNexus ? 'Puntos Nexus' : 'Saldo';
                 contentHTML = `
                 <div class="flex items-center gap-2 mb-2">
@@ -7121,12 +7145,12 @@
                 <p class="text-gray-300 text-sm mb-2">Enviaste ${currencyName} a <span class="font-bold text-white">${item.recipientEmail}</span></p>
                 <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm">
                     <div class="flex justify-between items-center"><span class="text-gray-400">Monto Enviado:</span><span class="text-white font-bold">${isNexus ? formatNexus(item.amount) : formatCS(item.amount)}</span></div>
-                    <div class="flex justify-between items-center"><span class="text-gray-400">Comisión Sistema:</span><span class="text-red-400 font-bold">- ${isNexus ? formatNexus(item.fee) : formatCS(item.fee)}</span></div>
-                    <div class="flex justify-between items-center pt-1 mt-1 border-t border-gray-700"><span class="text-gray-400">Total Descontado:</span><span class="text-red-500 font-bold">- ${isNexus ? formatNexus(item.totalDeducted) : formatCS(item.totalDeducted)}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400">Comisión Sistema:</span><span class="text-red-400 font-bold">- ${isNexus ? formatNexus(item.fee || 0) : formatCS(item.fee || 0)}</span></div>
+                    <div class="flex justify-between items-center pt-1 mt-1 border-t border-gray-700"><span class="text-gray-400">Total Descontado:</span><span class="text-red-500 font-bold">- ${isNexus ? formatNexus(item.totalDeducted || item.amount) : formatCS(item.totalDeducted || item.amount)}</span></div>
                 </div>`;
             } else if (item.type === 'TRANSFERENCIA_RECIBIDA') {
                 borderColor = 'border-emerald-900/50';
-                const isNexus = item.currencyType === 'nexus';
+                const isNexus = item.currencyType === 'nexus' || !item.currencyType;
                 const currencyName = isNexus ? 'Puntos Nexus' : 'Saldo';
                 contentHTML = `
                 <div class="flex items-center gap-2 mb-2">
@@ -7416,6 +7440,44 @@
             financialHTML = `
                 <div class="border-t border-black pt-2 mt-2">
                     <div class="flex justify-between text-green-700 font-bold text-sm"><span>Entrada Devuelta:</span><span>+${amtStr}</span></div>
+                </div>
+            `;
+        } else if (item.type === 'TRANSFERENCIA_ENVIADA') {
+            const isNexus = item.currencyType === 'nexus' || !item.currencyType;
+            const currencyName = isNexus ? 'Puntos Nexus' : 'Saldo';
+            const amtStr = isNexus ? formatNexus(item.amount) : formatCS(item.amount);
+            const feeStr = isNexus ? formatNexus(item.fee || 0) : formatCS(item.fee || 0);
+            const totalStr = isNexus ? formatNexus(item.totalDeducted || item.amount) : formatCS(item.totalDeducted || item.amount);
+            
+            itemsContainer.innerHTML = `
+                <div class="mb-4">
+                    <p class="text-sm font-bold text-gray-800 uppercase border-b border-gray-300 pb-1 mb-2"><i data-lucide="send" class="w-4 h-4 inline-block mb-1"></i> Envío P2P a Usuario</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Destinatario:</strong> ${item.recipientEmail}</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Tipo de Moneda:</strong> ${currencyName}</p>
+                </div>
+            `;
+            financialHTML = `
+                <div class="border-t border-black pt-2 mt-2 text-sm">
+                    <div class="flex justify-between text-gray-700"><span>Monto Enviado:</span><span>${amtStr}</span></div>
+                    <div class="flex justify-between text-gray-700"><span>Comisión Sistema:</span><span>${feeStr}</span></div>
+                    <div class="flex justify-between text-red-700 font-bold mt-1 pt-1 border-t border-gray-300"><span>Total Descontado:</span><span>-${totalStr}</span></div>
+                </div>
+            `;
+        } else if (item.type === 'TRANSFERENCIA_RECIBIDA') {
+            const isNexus = item.currencyType === 'nexus' || !item.currencyType;
+            const currencyName = isNexus ? 'Puntos Nexus' : 'Saldo';
+            const amtStr = isNexus ? formatNexus(item.amount) : formatCS(item.amount);
+            
+            itemsContainer.innerHTML = `
+                <div class="mb-4">
+                    <p class="text-sm font-bold text-gray-800 uppercase border-b border-gray-300 pb-1 mb-2"><i data-lucide="download" class="w-4 h-4 inline-block mb-1"></i> Recepción P2P de Usuario</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Remitente:</strong> ${item.senderEmail}</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Tipo de Moneda:</strong> ${currencyName}</p>
+                </div>
+            `;
+            financialHTML = `
+                <div class="border-t border-black pt-2 mt-2 text-sm">
+                    <div class="flex justify-between text-green-700 font-bold"><span>Total Recibido:</span><span>+${amtStr}</span></div>
                 </div>
             `;
         } else {
