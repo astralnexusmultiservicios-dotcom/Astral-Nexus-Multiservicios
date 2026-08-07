@@ -685,6 +685,30 @@
                         </button>
                     </div>
 
+                    <!-- NUEVA SECCIÓN: Canje de Código Promocional -->
+                    <div id="promo-code-container" class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-900/50 p-6 mb-8 relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 pointer-events-none transition duration-500 group-hover:bg-pink-500/20"></div>
+                        
+                        <h3 class="text-xl font-bold text-pink-400 mb-2 flex items-center gap-2 relative z-10">
+                            <i data-lucide="gift" class="w-6 h-6 text-pink-500"></i> Canjear Código de Regalo
+                        </h3>
+                        <p class="text-sm text-slate-400 mb-4 relative z-10 max-w-xl">
+                            ¿Tienes un código promocional? Ingrésalo aquí para recibir tu Saldo o Puntos Nexus al instante.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row items-stretch gap-3 relative z-10">
+                            <div class="relative flex-grow">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="key" class="w-4 h-4 text-pink-400"></i>
+                                </div>
+                                <input type="text" id="client-promo-code-input" placeholder="Ej: NX-A1B2C3D4" class="w-full pl-10 p-3 rounded-xl bg-slate-950 text-white border border-slate-700 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 focus:outline-none transition uppercase font-mono tracking-widest h-full">
+                            </div>
+                            <button onclick="window.redeemPromoCode()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold rounded-xl transition shadow-lg shadow-pink-900/40 transform active:scale-95 flex items-center justify-center gap-2 flex-shrink-0">
+                                Canjear
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- NUEVA SECCIÓN: Solicitud de Saldo por WhatsApp -->
                     <div class="bg-slate-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-900/50 p-6 mb-8 relative overflow-hidden">
                         <!-- Efecto visual sutil -->
@@ -784,6 +808,7 @@
                 <button onclick="window.changeAdminTab('orders')" id="tab-admin-orders" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="list-todo" class="w-4 h-4"></i> Pedidos</button>
                 <button onclick="window.changeAdminTab('recharges')" id="tab-admin-recharges" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Recargas</button>
                 <button onclick="window.changeAdminTab('payments')" id="tab-admin-payments" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="landmark" class="w-4 h-4"></i> Métodos Pago</button>
+                <button onclick="window.changeAdminTab('promocodes')" id="tab-admin-promocodes" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="ticket" class="w-4 h-4"></i> Códigos Regalo</button>
                 <button onclick="window.changeAdminTab('config')" id="tab-admin-config" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Configuración</button>
             </div>
             <div id="admin-content">
@@ -1337,6 +1362,48 @@
                          <!-- Los métodos de pago se renderizarán aquí -->
                      </div>
                 </div>
+
+                <!-- Pestaña 9: Códigos Promocionales -->
+                <div id="content-admin-promocodes" class="hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-pink-400 flex items-center gap-2"><i data-lucide="ticket" class="w-6 h-6"></i> Generador de Códigos de Regalo</h3>
+                            <p class="text-gray-400 text-sm mt-1">Crea códigos de un solo uso para regalar saldo o puntos a tus clientes de manera fácil.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-6 rounded-xl border border-pink-900/50 shadow-lg mb-8 relative">
+                        <input type="hidden" id="edit-promo-id" value="">
+                        <button id="cancel-edit-promo-btn" onclick="window.cancelEditPromo()" class="hidden absolute top-4 right-4 text-gray-400 hover:text-white transition" title="Cancelar edición"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        <h4 id="promo-form-title" class="font-bold text-pink-300 mb-4 hidden">Editando Código: <span id="promo-form-code-display" class="text-white font-mono bg-black/50 px-2 py-1 rounded"></span></h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                            <div>
+                                <label id="lbl-promo-cs" class="text-xs text-gray-400 font-bold uppercase mb-1 block">Saldo a Regalar (Moneda Base)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i></div>
+                                    <input type="number" id="new-promo-cs" placeholder="0" class="w-full pl-10 p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-pink-500 outline-none" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Puntos Nexus a Regalar</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="star" class="w-4 h-4 text-yellow-400"></i></div>
+                                    <input type="number" id="new-promo-nexus" placeholder="0" class="w-full pl-10 p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-pink-500 outline-none" min="0" step="0.01">
+                                </div>
+                            </div>
+                            <button id="btn-save-promo" onclick="window.savePromoCode()" class="w-full py-3 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-lg shadow-lg shadow-pink-900/30 transition flex items-center justify-center gap-2 active:scale-95">
+                                <i data-lucide="zap" class="w-5 h-5"></i> Generar Código Único
+                            </button>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-white mb-4">Historial de Códigos</h4>
+                    <div id="admin-promocodes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- Lista de códigos renderizada aquí -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
@@ -1806,6 +1873,7 @@
         RAFFLE_ENTRIES: `artifacts/${appId}/public/data/raffle_entries`,
         PAYMENT_METHODS: `artifacts/${appId}/public/data/payment_methods`, // Nueva colección
         CURRENCIES: `artifacts/${appId}/public/data/currencies`, // Nueva colección para divisas
+        PROMO_CODES: `artifacts/${appId}/public/data/promo_codes`, // Nueva colección Códigos
     };
 
     let app, db, auth, functions; // Declaramos functions aquí
@@ -1826,6 +1894,7 @@
     let filteredReportData = [];
     let paymentMethodsData = []; // Datos de métodos de pago
     let currenciesData = []; // Datos de divisas
+    let promoCodesData = []; // Datos de códigos promocionales
     window.currentSelectedCurrency = 'base'; // Divisa seleccionada por defecto
     let confirmCallback = null;
     let unsubscribes = [];
@@ -2142,7 +2211,7 @@
     };
 
     window.changeAdminTab = (tabName) => {
-        ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments'].forEach(tab => {
+        ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments', 'promocodes'].forEach(tab => {
             const btn = document.getElementById(`tab-admin-${tab}`);
             const content = document.getElementById(`content-admin-${tab}`);
             if (btn && content) {
@@ -2163,6 +2232,7 @@
         if(tabName === 'recharges') window.renderAdminRechargesHistory();
         if(tabName === 'payments') window.renderAdminPaymentMethods();
         if(tabName === 'config' && window.renderAdminCurrencies) window.renderAdminCurrencies();
+        if(tabName === 'promocodes') window.renderAdminPromoCodes();
     };
 
     window.toggleMaintenanceState = async (isEnabled) => {
@@ -6060,10 +6130,20 @@
                  transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
                     type: 'CANJE', userId: pastRedemptionClient.id, costNexus: item.nexusCost,
                     item: item.name, timestamp: ts,
-                    costCS: item.cost || 0 // Guardar el costo monetario real para reportes
+                    costCS: item.cost || 0, // Guardar el costo monetario real para reportes
+                    items: {
+                        [itemId]: { id: itemId, name: item.name, quantity: 1, originalProductId: itemId }
+                    }
                 });
              });
              window.showModal("Éxito", "Canje pasado registrado.");
+             
+             // Limpiar formulario tras éxito
+             document.getElementById('past-redemption-user-id').value = '';
+             document.getElementById('past-redemption-client-name').textContent = '';
+             document.getElementById('past-redemption-datetime').value = '';
+             document.getElementById('past-redemption-item-select').value = '';
+             pastRedemptionClient = null;
          } catch(e) { window.showModal("Error", e.message); }
     };
 
@@ -6846,7 +6926,7 @@
         container.innerHTML = userHistory.map(item => {
             const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleDateString('es-NI') : 'N/A';
             let detail = '', color = 'text-green-300';
-            if (item.status === 'anulada') { detail = `(Anulada) Fondos/Puntos Revertidos`; color = 'text-gray-500 line-through'; }
+            if (item.status === 'anulada') { detail = `(Anulada) Operación Revertida`; color = 'text-gray-500 line-through'; }
             else if (item.type === 'COMPRA') { detail = `Compra de ${formatCS(item.totalCS)}`; color = 'text-red-300'; }
             else if (item.type === 'CANJE') { detail = `Canjeó "${item.item}"`; color = 'text-yellow-300'; }
             else if (item.type === 'SORTEO_GANADO') { 
@@ -6874,6 +6954,12 @@
                 const amtDesc = isNexus ? formatNexus(item.amount) : formatCS(item.amount);
                 detail = `Recibo de ${item.senderEmail}: +${amtDesc}`; 
                 color = 'text-emerald-400 font-bold'; 
+            }
+            else if (item.type === 'CANJE_CODIGO_REGALO') { 
+                detail = `Código Promocional: ${item.codeStr}`; 
+                if (item.fundsAdded > 0) detail += ` (+${formatCS(item.fundsAdded)})`;
+                if (item.nexusAdded > 0) detail += ` (+${formatNexus(item.nexusAdded)})`;
+                color = 'text-pink-400 font-bold'; 
             }
             else { detail = item.type; }
             
@@ -7152,13 +7238,28 @@
                 borderColor = 'border-emerald-900/50';
                 const isNexus = item.currencyType === 'nexus' || !item.currencyType;
                 const currencyName = isNexus ? 'Puntos Nexus' : 'Saldo';
+                const amtStr = isNexus ? formatNexus(item.amount) : formatCS(item.amount);
                 contentHTML = `
                 <div class="flex items-center gap-2 mb-2">
                     <span class="bg-emerald-900/40 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold border border-emerald-700/50 flex items-center gap-1"><i data-lucide="download" class="w-3 h-3"></i> RECEPCIÓN P2P</span>
                 </div>
                 <p class="text-gray-300 text-sm mb-2">Recibiste ${currencyName} de <span class="font-bold text-white">${item.senderEmail}</span></p>
                 <div class="bg-black/40 p-2 rounded-lg border border-gray-700/50 flex justify-between items-center text-sm">
-                    <span class="text-gray-400">Monto Recibido:</span><span class="text-emerald-400 font-bold text-lg">+ ${isNexus ? formatNexus(item.amount) : formatCS(item.amount)}</span>
+                    <span class="text-gray-400">Monto Recibido:</span><span class="text-emerald-400 font-bold text-lg">+ ${amtStr}</span>
+                </div>`;
+            } else if (item.type === 'CANJE_CODIGO_REGALO') {
+                borderColor = 'border-pink-900/50';
+                let earningsHTML = '';
+                if (item.fundsAdded > 0) earningsHTML += `<div class="flex justify-between items-center"><span class="text-gray-400">Saldo Recibido:</span><span class="text-emerald-400 font-bold">+ ${formatCS(item.fundsAdded)}</span></div>`;
+                if (item.nexusAdded > 0) earningsHTML += `<div class="flex justify-between items-center"><span class="text-gray-400">Puntos Nexus Recibidos:</span><span class="text-yellow-400 font-bold">+ ${formatNexus(item.nexusAdded)}</span></div>`;
+
+                contentHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-pink-900/40 text-pink-400 px-2 py-1 rounded text-[10px] font-bold border border-pink-700/50 flex items-center gap-1"><i data-lucide="gift" class="w-3 h-3"></i> CÓDIGO DE REGALO</span>
+                </div>
+                <p class="text-gray-300 text-sm mb-2">Canjeaste el código <span class="font-bold text-white font-mono bg-gray-800 px-1 rounded border border-gray-700">${item.codeStr || 'N/A'}</span></p>
+                <div class="bg-black/40 p-3 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm shadow-inner">
+                    ${earningsHTML}
                 </div>`;
             } else {
                 let desc = item.type;
@@ -7256,7 +7357,7 @@
             deleteBtn.style.display = 'block';
             deleteBtn.onclick = () => window.deleteTransactionHistory(item.id);
 
-            if (!isVoid && (item.type === 'COMPRA' || item.type === 'CANJE')) {
+            if (!isVoid && (item.type === 'COMPRA' || item.type === 'CANJE' || item.type === 'CANJE_CODIGO_REGALO')) {
                 voidBtn.classList.remove('hidden');
                 voidBtn.onclick = () => window.voidTransaction(item.id);
             } else {
@@ -7480,6 +7581,18 @@
                     <div class="flex justify-between text-green-700 font-bold"><span>Total Recibido:</span><span>+${amtStr}</span></div>
                 </div>
             `;
+        } else if (item.type === 'CANJE_CODIGO_REGALO') {
+            itemsContainer.innerHTML = `
+                <div class="mb-4">
+                    <p class="text-sm font-bold text-gray-800 uppercase border-b border-gray-300 pb-1 mb-2"><i data-lucide="gift" class="w-4 h-4 inline-block mb-1"></i> Código Promocional</p>
+                    <p class="text-xs text-gray-800 mt-1"><strong>Código Usado:</strong> <span class="font-mono bg-gray-200 px-1 rounded">${item.codeStr}</span></p>
+                </div>
+            `;
+            let fHtml = '<div class="border-t border-black pt-2 mt-2 font-bold text-sm">';
+            if (item.fundsAdded > 0) fHtml += `<div class="flex justify-between text-green-700"><span>Saldo Acreditado:</span><span>+${formatCS(item.fundsAdded)}</span></div>`;
+            if (item.nexusAdded > 0) fHtml += `<div class="flex justify-between text-yellow-600 mt-1"><span>Puntos Nexus:</span><span>+${formatNexus(item.nexusAdded)}</span></div>`;
+            fHtml += '</div>';
+            financialHTML = fHtml;
         } else {
              let adjustmentDesc = item.adjustmentType === 'add' ? 'Añadido' : 'Descontado';
              let text = item.type;
@@ -7585,7 +7698,7 @@
     };
 
     window.voidTransaction = (transactionId) => {
-        window.showConfirmModal("ANULAR TRANSACCIÓN", "Esto revertirá los fondos/deuda y marcará la venta como anulada. ¿Continuar?", async () => {
+        window.showConfirmModal("ANULAR TRANSACCIÓN", "Esto revertirá los fondos/deuda/puntos y marcará la operación como anulada. ¿Continuar?", async () => {
              const tRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, transactionId);
              
              try {
@@ -7614,8 +7727,8 @@
                      let catalogData = catalogDoc.exists() ? catalogDoc.data() : null;
                      let catalogUpdated = false;
 
-                     if (catalogData && tData.items) {
-                         if (tData.type === 'COMPRA') {
+                     if (catalogData) {
+                         if (tData.type === 'COMPRA' && tData.items) {
                              Object.values(tData.items).forEach(cartItem => {
                                  if (cartItem.itemStatus === 'rejected') return; // Ya fue procesado
                                  
@@ -7636,16 +7749,25 @@
                                  }
                              });
                          } else if (tData.type === 'CANJE') {
-                             Object.values(tData.items).forEach(cartItem => {
+                             // Extraer los items, si es un canje viejo puede que solo tenga el nombre
+                             let itemsToProcess = tData.items ? Object.values(tData.items) : [];
+                             if (itemsToProcess.length === 0 && tData.item) {
+                                 itemsToProcess.push({ name: tData.item, quantity: 1 });
+                             }
+
+                             itemsToProcess.forEach(cartItem => {
                                  const originalProductId = cartItem.originalProductId || cartItem.id;
+                                 
                                  for (const mainCat of catalogData.nexusRedemptions) {
                                      if (mainCat.subcategories) {
                                          for (const subCat of mainCat.subcategories) {
-                                             const nexusItem = subCat.items.find(i => i.id === originalProductId);
+                                             const nexusItem = subCat.items.find(i => 
+                                                originalProductId ? i.id === originalProductId : i.name === cartItem.name
+                                             );
                                              if (nexusItem) {
-                                                 nexusItem.totalRedeemed = Math.max(0, (nexusItem.totalRedeemed || 0) - cartItem.quantity);
+                                                 nexusItem.totalRedeemed = Math.max(0, (nexusItem.totalRedeemed || 0) - (cartItem.quantity || 1));
                                                  if (!nexusItem.unlimited && nexusItem.availableCodes === undefined) {
-                                                     nexusItem.inventory = (nexusItem.inventory || 0) + cartItem.quantity;
+                                                     nexusItem.inventory = (nexusItem.inventory || 0) + (cartItem.quantity || 1);
                                                  }
                                                  catalogUpdated = true;
                                              }
@@ -7673,14 +7795,40 @@
                          }
                      } else if (tData.type === 'CANJE') {
                          newNexus += tData.costNexus;
+                     } else if (tData.type === 'CANJE_CODIGO_REGALO') {
+                         newFunds -= (tData.fundsAdded || 0);
+                         newNexus -= (tData.nexusAdded || 0);
+
+                         // Si la reversión del dinero deja su cuenta en negativo, lo pasamos a deuda
+                         if (newFunds < 0) {
+                             newDebt += Math.abs(newFunds);
+                             newFunds = 0;
+                         }
+                         if (newNexus < 0) {
+                             newNexus = 0; // Puntos nexus se limitan a 0
+                         }
+
+                         // Reactivar el código para que pueda volver a usarse si fue un error
+                         if (tData.codeStr) {
+                             const codeRef = doc(db, COLLECTIONS.PROMO_CODES, tData.codeStr);
+                             const codeDoc = await transaction.get(codeRef);
+                             if (codeDoc.exists()) {
+                                 transaction.update(codeRef, {
+                                     status: 'active',
+                                     usedById: null,
+                                     usedByEmail: null,
+                                     usedAt: null,
+                                     updatedAt: serverTimestamp()
+                                 });
+                             }
+                         }
                      }
                      
                      transaction.update(userRef, { fundsCS: newFunds, debtCS: newDebt, nexusPoints: newNexus });
                      transaction.update(tRef, { status: 'anulada', voidedAt: serverTimestamp() });
                  });
-                 window.showModal("Anulada", "La transacción ha sido anulada, los saldos ajustados y el inventario restituido.");
-                 document.getElementById('transaction-detail-modal').classList.add('hidden');
-                 document.getElementById('transaction-detail-modal').classList.remove('flex');
+                 window.showModal("Anulada", "La transacción ha sido anulada, los saldos/puntos ajustados y el inventario/código restituido.");
+                 document.getElementById('transaction-detail-modal').style.display = 'none';
              } catch (e) {
                  window.showModal("Error", e.message || e);
              }
@@ -7688,10 +7836,9 @@
     };
 
     window.deleteTransactionHistory = (id) => {
-         window.showConfirmModal("Borrar Registro", "Esto eliminará el registro del historial PERO NO revertirá el dinero ni la deuda. Use 'Anular' para eso. ¿Borrar solo el registro visual?", async () => {
+         window.showConfirmModal("Borrar Registro", "Esto eliminará el registro del historial PERO NO revertirá el dinero, la deuda ni los Puntos Nexus. Use 'Anular' para una corrección financiera completa. ¿Borrar solo el registro visual?", async () => {
              await deleteDoc(doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, id));
-             document.getElementById('transaction-detail-modal').classList.add('hidden');
-             document.getElementById('transaction-detail-modal').classList.remove('flex');
+             document.getElementById('transaction-detail-modal').style.display = 'none';
          });
     };
 
@@ -8202,8 +8349,320 @@
             }
         }, err => handleFirestoreError(err, "Admin: Métodos de Pago"));
         
-        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub, paymentsUnsub);
+        const promoCodesUnsub = onSnapshot(query(collection(db, COLLECTIONS.PROMO_CODES)), (snapshot) => {
+            promoCodesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            promoCodesData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            if (!document.getElementById('content-admin-promocodes').classList.contains('hidden')) {
+                window.renderAdminPromoCodes();
+            }
+        }, err => handleFirestoreError(err, "Admin: Códigos Regalo"));
+
+        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub, paymentsUnsub, promoCodesUnsub);
     };
+
+    // --- LÓGICA DE CÓDIGOS DE REGALO ---
+    window.updatePromoCodeLabels = () => {
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$' };
+        const lbl = document.getElementById('lbl-promo-cs');
+        if (lbl) lbl.textContent = `Saldo a Regalar (${currency.symbol})`;
+    };
+
+    window.cancelEditPromo = () => {
+        document.getElementById('edit-promo-id').value = '';
+        document.getElementById('new-promo-cs').value = '';
+        document.getElementById('new-promo-nexus').value = '';
+        document.getElementById('promo-form-title').classList.add('hidden');
+        document.getElementById('cancel-edit-promo-btn').classList.add('hidden');
+        
+        const btn = document.getElementById('btn-save-promo');
+        btn.innerHTML = `<i data-lucide="zap" class="w-5 h-5"></i> Generar Código Único`;
+        btn.classList.remove('bg-blue-600', 'hover:bg-blue-500', 'shadow-blue-900/30');
+        btn.classList.add('bg-pink-600', 'hover:bg-pink-500', 'shadow-pink-900/30');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.editPromoCode = (codeId) => {
+        const codeData = promoCodesData.find(c => c.id === codeId);
+        if(!codeData) return;
+        
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        
+        document.getElementById('edit-promo-id').value = codeData.id;
+        document.getElementById('promo-form-code-display').textContent = codeData.code;
+        
+        // Mostrar valores en la divisa seleccionada visualmente
+        const displayFunds = (codeData.fundsCS || 0) / currency.rate;
+        document.getElementById('new-promo-cs').value = displayFunds ? displayFunds.toFixed(2) : '';
+        document.getElementById('new-promo-nexus').value = codeData.nexusPoints || '';
+        
+        document.getElementById('promo-form-title').classList.remove('hidden');
+        document.getElementById('cancel-edit-promo-btn').classList.remove('hidden');
+        
+        const btn = document.getElementById('btn-save-promo');
+        btn.innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> Guardar Cambios`;
+        btn.classList.remove('bg-pink-600', 'hover:bg-pink-500', 'shadow-pink-900/30');
+        btn.classList.add('bg-blue-600', 'hover:bg-blue-500', 'shadow-blue-900/30');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+        
+        document.getElementById('edit-promo-id').scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+
+    window.savePromoCode = async () => {
+        const editId = document.getElementById('edit-promo-id').value;
+        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
+        
+        const visualCsAmount = parseFloat(document.getElementById('new-promo-cs').value) || 0;
+        const nexusAmount = parseFloat(document.getElementById('new-promo-nexus').value) || 0;
+
+        if (visualCsAmount <= 0 && nexusAmount <= 0) {
+            window.showModal("Error", "Debes ingresar una cantidad válida de Saldo o Puntos Nexus.");
+            return;
+        }
+
+        // Convertir la entrada visual a Moneda Base
+        const baseCsAmount = visualCsAmount * currency.rate;
+
+        try {
+            if (editId) {
+                // Actualizar código existente
+                await updateDoc(doc(db, COLLECTIONS.PROMO_CODES, editId), {
+                    fundsCS: baseCsAmount,
+                    nexusPoints: nexusAmount,
+                    updatedAt: serverTimestamp()
+                });
+                window.showModal("¡Actualizado!", "Los montos del código se han actualizado correctamente.");
+                window.cancelEditPromo();
+            } else {
+                // Generar nuevo código (NX-XXXX-XXXX)
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                let codeStr = 'NX-';
+                for(let i=0; i<4; i++) codeStr += chars.charAt(Math.floor(Math.random() * chars.length));
+                codeStr += '-';
+                for(let i=0; i<4; i++) codeStr += chars.charAt(Math.floor(Math.random() * chars.length));
+
+                await setDoc(doc(db, COLLECTIONS.PROMO_CODES, codeStr), {
+                    code: codeStr,
+                    fundsCS: baseCsAmount,
+                    nexusPoints: nexusAmount,
+                    status: 'active',
+                    createdAt: serverTimestamp()
+                });
+
+                document.getElementById('new-promo-cs').value = '';
+                document.getElementById('new-promo-nexus').value = '';
+                
+                window.showModal("Código Generado", `Se ha creado el código exitosamente:<br><br><div class="text-center bg-gray-900 p-4 rounded-lg border border-pink-500 font-mono text-2xl font-black text-pink-400 tracking-widest mt-2 select-all">${codeStr}</div>`);
+            }
+        } catch(e) {
+            window.showModal("Error", "No se pudo guardar el código: " + e.message);
+        }
+    };
+
+    window.renderAdminPromoCodes = () => {
+        window.updatePromoCodeLabels(); // Asegura etiqueta con símbolo de moneda
+        const container = document.getElementById('admin-promocodes-list');
+        if (!container) return;
+
+        if (!promoCodesData || promoCodesData.length === 0) {
+            container.innerHTML = '<div class="col-span-full p-6 text-center text-gray-500 bg-gray-800/30 rounded-xl border border-dashed border-gray-600">Aún no has generado ningún código de regalo.</div>';
+            return;
+        }
+
+        container.innerHTML = promoCodesData.map(c => {
+            const isActive = c.status === 'active';
+            const dateStr = c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleString('es-NI') : '';
+            const usedDateStr = c.usedAt ? new Date(c.usedAt.seconds * 1000).toLocaleString('es-NI') : '';
+            
+            const badge = isActive 
+                ? `<span class="bg-green-900/40 text-green-400 px-2 py-0.5 rounded text-[10px] font-bold border border-green-700/50">DISPONIBLE</span>`
+                : `<span class="bg-red-900/40 text-red-400 px-2 py-0.5 rounded text-[10px] font-bold border border-red-700/50">CANJEADO</span>`;
+
+            return `
+            <div class="bg-gray-800 p-4 rounded-xl border ${isActive ? 'border-pink-500/30 shadow-lg' : 'border-gray-700 opacity-80'} flex flex-col justify-between transition-all">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        ${badge}
+                        <span class="text-[10px] text-gray-500">${dateStr}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <p class="font-mono font-black text-lg text-white tracking-wider select-all">${c.code}</p>
+                        ${isActive ? `<button onclick="window.copyText('${c.code}')" class="text-gray-400 hover:text-white transition"><i data-lucide="copy" class="w-4 h-4"></i></button>` : ''}
+                    </div>
+                    <div class="flex gap-4 text-sm mb-3">
+                        ${c.fundsCS > 0 ? `<div class="flex flex-col"><span class="text-[10px] text-gray-400 uppercase font-bold">Saldo</span><span class="text-emerald-400 font-bold">+${formatCS(c.fundsCS)}</span></div>` : ''}
+                        ${c.nexusPoints > 0 ? `<div class="flex flex-col"><span class="text-[10px] text-gray-400 uppercase font-bold">Nexus</span><span class="text-yellow-400 font-bold">+${formatNexus(c.nexusPoints)}</span></div>` : ''}
+                    </div>
+                </div>
+                ${!isActive ? `
+                <div class="bg-black/30 p-2 rounded border border-gray-700/50 mt-2 mb-2 shadow-inner">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-0.5">Canjeado por:</p>
+                    <p class="text-xs text-white truncate"><i data-lucide="user" class="w-3 h-3 inline text-gray-400"></i> ${c.usedByEmail || c.usedById}</p>
+                    <p class="text-[9px] text-gray-500 mt-1">${usedDateStr}</p>
+                </div>
+                <div class="flex justify-end gap-2 border-t border-gray-700 pt-3">
+                    <button onclick="window.voidRedeemedPromoCode('${c.id}')" class="text-xs text-yellow-500 hover:text-yellow-400 font-bold transition flex items-center gap-1 bg-yellow-900/20 px-2 py-1.5 rounded-lg border border-yellow-700/30 shadow-sm" title="Revertir el saldo al usuario y reactivar el código"><i data-lucide="rotate-ccw" class="w-3 h-3"></i> Anular Canje</button>
+                    <button onclick="window.deletePromoCode('${c.id}')" class="text-xs text-red-500 hover:text-red-400 font-bold transition flex items-center gap-1 bg-red-900/20 px-2 py-1.5 rounded-lg border border-red-700/30 shadow-sm" title="Eliminar este código definitivamente"><i data-lucide="trash-2" class="w-3 h-3"></i> Borrar</button>
+                </div>
+                ` : `
+                <div class="mt-2 flex justify-end gap-3 pt-2">
+                    <button onclick="window.editPromoCode('${c.id}')" class="text-xs text-blue-400 hover:text-blue-300 font-bold transition flex items-center gap-1 px-2 py-1"><i data-lucide="edit-2" class="w-3 h-3"></i> Editar</button>
+                    <button onclick="window.deletePromoCode('${c.id}')" class="text-xs text-red-400 hover:text-red-300 font-bold transition flex items-center gap-1 px-2 py-1"><i data-lucide="trash-2" class="w-3 h-3"></i> Eliminar</button>
+                </div>
+                `}
+            </div>
+            `;
+        }).join('');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.deletePromoCode = (id) => {
+        window.showConfirmModal("Eliminar Código", "¿Estás seguro? Esta acción lo borrará permanentemente del sistema.<br><br><span class='text-yellow-400 text-xs font-bold'>NOTA: Si el código ya fue canjeado, eliminarlo NO le quitará el saldo al cliente. Para revertir los fondos, utiliza primero el botón 'Anular Canje'.</span>", async () => {
+            await deleteDoc(doc(db, COLLECTIONS.PROMO_CODES, id));
+        });
+    };
+
+    window.voidRedeemedPromoCode = async (codeId) => {
+        const codeData = promoCodesData.find(c => c.id === codeId);
+        if (!codeData || codeData.status !== 'redeemed') return;
+        
+        window.showConfirmModal("Anular Canje de Código", `¿Estás seguro de anular el canje de este código?<br><br>Se descontarán los fondos y puntos entregados al usuario que lo reclamó, y el código volverá a estar <strong>DISPONIBLE</strong>.`, async () => {
+            try {
+                // Recuperar los recibos primero (sin requerir índices complejos de base de datos)
+                let txRefsToVoid = [];
+                if (codeData.usedById) {
+                    const historyQuery = query(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION), where("userId", "==", codeData.usedById));
+                    const historySnaps = await getDocs(historyQuery);
+                    historySnaps.forEach(snap => {
+                        const d = snap.data();
+                        if (d.type === 'CANJE_CODIGO_REGALO' && d.codeStr === codeId && d.status !== 'anulada') {
+                            txRefsToVoid.push(snap.ref);
+                        }
+                    });
+                }
+
+                await runTransaction(db, async (t) => {
+                    const codeRef = doc(db, COLLECTIONS.PROMO_CODES, codeId);
+                    const codeDoc = await t.get(codeRef);
+                    if (!codeDoc.exists()) throw new Error("El código no existe en la base de datos.");
+                    
+                    const currentData = codeDoc.data();
+                    const userId = currentData.usedById;
+                    
+                    if (userId) {
+                        const userRef = doc(db, COLLECTIONS.USER_PROFILE(userId));
+                        const userDoc = await t.get(userRef);
+                        
+                        if (userDoc.exists()) {
+                            let currentFunds = userDoc.data().fundsCS || 0;
+                            let currentNexus = userDoc.data().nexusPoints || 0;
+                            let currentDebt = userDoc.data().debtCS || 0;
+
+                            currentFunds -= (currentData.fundsCS || 0);
+                            currentNexus -= (currentData.nexusPoints || 0);
+
+                            // Si se queda en negativo, se convierte en deuda
+                            if (currentFunds < 0) {
+                                currentDebt += Math.abs(currentFunds);
+                                currentFunds = 0;
+                            }
+                            if (currentNexus < 0) currentNexus = 0;
+
+                            t.update(userRef, {
+                                fundsCS: currentFunds,
+                                debtCS: currentDebt,
+                                nexusPoints: currentNexus
+                            });
+                        }
+                    }
+
+                    // Anular la transacción visual en el historial del cliente (si existe)
+                    txRefsToVoid.forEach(ref => {
+                        t.update(ref, { status: 'anulada', voidedAt: serverTimestamp() });
+                    });
+
+                    // Reactivar el código
+                    t.update(codeRef, {
+                        status: 'active',
+                        usedById: null,
+                        usedByEmail: null,
+                        usedAt: null,
+                        updatedAt: serverTimestamp()
+                    });
+                });
+                
+                window.showModal("¡Canje Anulado!", "El saldo entregado fue revertido de la cuenta del cliente y el código ha vuelto a quedar activo. Si quieres deshacerte de él por completo, presiona 'Borrar'.");
+            } catch (e) {
+                window.showModal("Error", "No se pudo anular la operación: " + e.message);
+            }
+        });
+    };
+
+    window.redeemPromoCode = async () => {
+        if (!currentUserId) return;
+        const inputEl = document.getElementById('client-promo-code-input');
+        const code = inputEl.value.trim().toUpperCase();
+
+        if (!code) {
+            window.showModal("Aviso", "Por favor ingresa un código.");
+            return;
+        }
+
+        try {
+            await runTransaction(db, async (t) => {
+                const codeRef = doc(db, COLLECTIONS.PROMO_CODES, code);
+                const codeDoc = await t.get(codeRef);
+
+                if (!codeDoc.exists()) {
+                    throw new Error("El código ingresado no existe o es inválido.");
+                }
+
+                const codeData = codeDoc.data();
+                if (codeData.status !== 'active') {
+                    throw new Error("Este código ya ha sido canjeado o expiró.");
+                }
+
+                const userRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                const userDoc = await t.get(userRef);
+                if (!userDoc.exists()) throw new Error("Usuario no encontrado.");
+
+                const currentFunds = userDoc.data().fundsCS || 0;
+                const currentNexus = userDoc.data().nexusPoints || 0;
+
+                const addedFunds = codeData.fundsCS || 0;
+                const addedNexus = codeData.nexusPoints || 0;
+
+                // 1. Invalidar el código y marcar quién lo usó
+                t.update(codeRef, {
+                    status: 'redeemed',
+                    usedById: currentUserId,
+                    usedByEmail: currentUserProfile.email || '',
+                    usedAt: serverTimestamp()
+                });
+
+                // 2. Acreditar fondos al usuario
+                t.update(userRef, {
+                    fundsCS: currentFunds + addedFunds,
+                    nexusPoints: currentNexus + addedNexus
+                });
+
+                // 3. Crear registro en el historial
+                t.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                    type: 'CANJE_CODIGO_REGALO',
+                    userId: currentUserId,
+                    codeStr: code,
+                    fundsAdded: addedFunds,
+                    nexusAdded: addedNexus,
+                    timestamp: serverTimestamp()
+                });
+            });
+
+            inputEl.value = '';
+            window.showModal("¡Código Canjeado Exitosamente!", "Los fondos o puntos han sido acreditados a tu billetera al instante.");
+        } catch (e) {
+            window.showModal("Error al canjear", e.message);
+        }
+    };
+    // --- FIN LÓGICA DE CÓDIGOS DE REGALO ---
 
     // --- NUEVA FUNCIÓN: Renderizar Historial de Recargas ---
     window.renderAdminRechargesHistory = () => {
@@ -8595,6 +9054,9 @@
                  if (window.renderAdminOrders) window.renderAdminOrders();
                  if (window.renderAdminRechargesHistory) window.renderAdminRechargesHistory();
 
+                 // Actualizar etiquetas de códigos promocionales
+                 if (window.updatePromoCodeLabels) window.updatePromoCodeLabels();
+                 
                  // Prevención: Ocultar Modales (Facturas) abiertos para evitar que retengan cifras viejas
                  const txModal = document.getElementById('transaction-detail-modal');
                  if (txModal) txModal.style.display = 'none';
