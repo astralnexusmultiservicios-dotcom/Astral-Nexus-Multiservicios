@@ -19,7 +19,7 @@
             position: relative;
         }
         
-        /* EFECTO NUEVO: Cascada Espacial ENERGÉTICA */
+        /* EFECTO NUEVO: Red Neuronal Cuántica (Quantum Neural Grid) */
         body::before {
             content: "";
             position: fixed;
@@ -31,23 +31,27 @@
             pointer-events: none;
             background-color: #020617;
             background-image: 
-                radial-gradient(circle at 15% 25%, rgba(0, 242, 254, 0.25) 0%, transparent 50%), /* Nebulosa Cyan más intensa */
-                radial-gradient(circle at 85% 75%, rgba(240, 147, 251, 0.25) 0%, transparent 50%), /* Nebulosa Magenta vibrante */
-                radial-gradient(circle at 50% 10%, rgba(255, 215, 0, 0.15) 0%, transparent 40%), /* Destello Dorado */
-                url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='%2300f2fe' opacity='0.8'/%3E%3Ccircle cx='70' cy='40' r='1.2' fill='%23f093fb' opacity='0.9'/%3E%3Ccircle cx='100' cy='90' r='1' fill='%23ffffff' opacity='1'/%3E%3Ccircle cx='30' cy='100' r='2' fill='%23ffffff' opacity='0.4'/%3E%3Ccircle cx='130' cy='20' r='1.5' fill='%23ffd700' opacity='0.7'/%3E%3C/svg%3E"), /* Estrellas capa 1 (más densas y brillantes) */
-                url("data:image/svg+xml,%3Csvg width='300' height='300' viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='80' r='1.5' fill='%23ffffff' opacity='0.8'/%3E%3Ccircle cx='190' cy='160' r='3' fill='%2300f2fe' opacity='0.5'/%3E%3Ccircle cx='120' cy='220' r='2' fill='%23f093fb' opacity='0.6'/%3E%3Ccircle cx='250' cy='50' r='2.5' fill='%23ffffff' opacity='0.7'/%3E%3C/svg%3E"); /* Estrellas capa 2 */
-            background-size: 100% 100%, 100% 100%, 100% 100%, 150px 150px, 300px 300px;
-            /* Velocidad reducida a 10s para darle mucha más energía y fluidez */
-            animation: cosmicEnergy 10s linear infinite; 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 242, 254, 0.2) 0%, transparent 60%), /* Brillo superior izquierdo */
+                radial-gradient(ellipse at 80% 80%, rgba(240, 147, 251, 0.15) 0%, transparent 60%), /* Brillo inferior derecho */
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), /* Núcleo central */
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='rgba(0, 242, 254, 0.4)'/%3E%3Ccircle cx='90' cy='40' r='2' fill='rgba(240, 147, 251, 0.3)'/%3E%3Ccircle cx='40' cy='80' r='1' fill='rgba(255, 255, 255, 0.2)'/%3E%3Cpath d='M10 10 L90 40 L40 80 Z' stroke='rgba(255,255,255,0.03)' stroke-width='0.5' fill='none'/%3E%3C/svg%3E"), /* Constelaciones / Nodos */
+                url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='2.5' fill='rgba(59, 130, 246, 0.15)'/%3E%3Ccircle cx='150' cy='150' r='1.5' fill='rgba(255, 255, 255, 0.1)'/%3E%3C/svg%3E"); /* Partículas lentas de fondo */
+            background-size: 100% 100%, 100% 100%, 100% 100%, 100px 100px, 200px 200px;
+            animation: quantumFlow 20s linear infinite; 
         }
 
-        @keyframes cosmicEnergy {
-            from {
+        @keyframes quantumFlow {
+            0% {
                 background-position: 0% 0%, 0% 0%, 0% 0%, 0px 0px, 0px 0px;
+                filter: hue-rotate(0deg) brightness(1);
             }
-            to {
-                /* Las nebulosas estáticas, estrellas cayendo mucho más rápido */
-                background-position: 0% 0%, 0% 0%, 0% 0%, 0px 300px, 0px 600px;
+            50% {
+                filter: hue-rotate(20deg) brightness(1.1);
+            }
+            100% {
+                /* Movimiento lateral y vertical suave con rotación de color */
+                background-position: 0% 0%, 0% 0%, 0% 0%, 100px -100px, -200px 200px;
+                filter: hue-rotate(0deg) brightness(1);
             }
         }
 
@@ -736,34 +740,6 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <!-- Vista de Canjes Nexus -->
-                     <div id="nexus-redemption-container">
-                        <div id="nexus-main-category-selection-view" class="fade-in">
-                            <h3 class="text-xl font-semibold mb-4 text-yellow-400">Canjear - Categorías Principales</h3>
-                            <div id="nexus-main-category-buttons" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <!-- Botones de categorías principales de canje -->
-                            </div>
-                        </div>
-                        <div id="nexus-sub-category-selection-view" class="hidden fade-in">
-                            <button onclick="window.showMainCategorySelectionView('nexus')" class="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm flex items-center gap-2">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a Principales
-                            </button>
-                            <h3 id="nexus-sub-category-title" class="text-xl font-semibold mb-4 text-purple-400">Subcategorías de Canje</h3>
-                            <div id="nexus-sub-category-buttons" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <!-- Botones de subcategorías de canje -->
-                            </div>
-                        </div>
-                        <div id="nexus-item-list-view" class="hidden fade-in">
-                            <button onclick="window.goBackToSubCategories('nexus')" class="mb-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm flex items-center gap-2">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a Subcategorías
-                            </button>
-                            <h3 id="nexus-item-list-title" class="text-xl font-semibold mb-4 text-yellow-400"></h3>
-                            <div id="nexus-item-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                <!-- Items de canje de la categoría -->
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- Contenido de Sorteos (AHORA DINÁMICO) -->
@@ -853,24 +829,6 @@
                      </div>
 
                      <div id="admin-product-list" class="space-y-6"></div>
-                    
-                    <!-- Gestión de Canjes por Puntos Nexus -->
-                    <div class="mt-8 border-t border-gray-700 pt-6">
-                         <h3 class="text-2xl font-semibold text-yellow-400 mb-4">🎁 Gestión de Canjes Nexus (3 Niveles)</h3>
-                         
-                         <div class="p-4 bg-yellow-900/30 rounded-lg border border-yellow-700 mb-6">
-                            <h4 class="font-bold text-yellow-300 mb-2">➕ Añadir Categoría Principal Nexus</h4>
-                            <div class="flex gap-2">
-                                <input type="text" id="new-nexus-main-category-name" placeholder="Nombre (ej: Skins)" class="flex-grow p-2 rounded-lg bg-gray-700 text-sm">
-                                <button onclick="window.addNewMainCategory('nexus')" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-bold text-sm">Crear</button>
-                            </div>
-                            <textarea id="new-nexus-main-category-image" placeholder="URL de Imagen (Opcional)" class="w-full p-2 rounded-lg bg-gray-700 mt-2 h-10 text-xs"></textarea>
-                         </div>
-
-                        <div id="admin-nexus-redemption-list" class="space-y-6">
-                            <!-- Los items de canje se renderizarán aquí -->
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Pestaña 3: Gestión de Sorteos -->
@@ -953,13 +911,8 @@
                     <!-- Sección de Registro Pasado -->
                     <div class="bg-[#161b22] p-6 rounded-xl shadow-xl border border-yellow-700 mt-8">
                          <h4 class="text-xl font-semibold text-yellow-300 mb-4">🗓️ Registrar Transacción Pasada</h4>
-                         <!-- Pestañas para Compra o Canje -->
-                         <div class="flex border-b border-gray-700 mb-4">
-                            <button id="tab-past-purchase" class="px-4 py-2 text-sm bg-gray-800 rounded-t-lg border-b-2 border-yellow-400" onclick="window.togglePastRegistrationView('purchase')">Compra Monetaria</button>
-                            <button id="tab-past-redemption" class="px-4 py-2 text-sm" onclick="window.togglePastRegistrationView('redemption')">Canje Nexus</button>
-                         </div>
 
-                         <!-- Formulario de Compra Pasada -->
+                         <!-- Formulario Unificado -->
                          <div id="past-purchase-form">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="md:col-span-2 space-y-4">
@@ -971,16 +924,28 @@
                                         <div id="past-purchase-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
                                     </div>
                                     <p id="past-purchase-client-name" class="text-center font-bold h-6"></p>
-                                    <div>
-                                        <label for="past-purchase-datetime" class="text-xs text-gray-400">Fecha y Hora de la Venta</label>
-                                        <input type="datetime-local" id="past-purchase-datetime" oninput="window.updatePastPurchaseSummary()" class="w-full p-2 rounded-lg bg-gray-700">
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="past-purchase-datetime" class="text-xs text-gray-400">Fecha y Hora</label>
+                                            <input type="datetime-local" id="past-purchase-datetime" oninput="window.updatePastPurchaseSummary()" class="w-full p-2 rounded-lg bg-gray-700 outline-none focus:border-yellow-500 border border-gray-600">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-400">Método de Pago</label>
+                                            <select id="past-purchase-payment-method" onchange="window.updatePastPurchaseSummary()" class="w-full p-2 rounded-lg bg-gray-700 font-bold text-white outline-none border border-gray-600 focus:border-yellow-500">
+                                                <option value="fiat">Dinero (Efectivo/Saldo)</option>
+                                                <option value="nexus">Puntos Nexus</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div id="past-purchase-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg"></div>
+                                    
+                                    <div id="past-purchase-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg border border-gray-700"></div>
                                 </div>
-                                <div class="space-y-4 bg-gray-800 p-4 rounded-lg">
-                                    <h5 class="font-bold text-lg">Resumen de Venta Pasada</h5>
-                                    <div id="past-purchase-cart-summary" class="text-sm space-y-1 max-h-48 overflow-y-auto"></div>
-                                    <div class="border-t border-gray-600 pt-2 text-sm space-y-1">
+                                <div class="space-y-4 bg-gray-800 p-4 rounded-lg flex flex-col border border-gray-700 shadow-inner">
+                                    <h5 class="font-bold text-lg border-b border-gray-700 pb-2">Resumen de Venta Pasada</h5>
+                                    <div id="past-purchase-cart-summary" class="text-sm space-y-1 max-h-48 overflow-y-auto flex-grow pr-1 custom-scrollbar"></div>
+                                    
+                                    <div id="past-purchase-fiat-details" class="border-t border-gray-600 pt-2 text-sm space-y-1">
                                         <p class="flex justify-between">Subtotal: <span id="past-purchase-subtotal">0.00</span></p>
                                         <div class="flex items-center gap-2 justify-between">
                                             <label class="text-xs">Desc.</label>
@@ -995,37 +960,20 @@
                                         <p class="flex justify-between text-red-300">Descuento Aplicado: <span id="past-purchase-discount-applied">0.00</span></p>
                                         <p class="flex justify-between font-bold text-blue-300">Base Imponible: <span id="past-purchase-tax-base">0.00</span></p>
                                         <p class="flex justify-between">IVA (<span id="past-purchase-iva-rate">0</span>%): <span id="past-purchase-iva-amount">0.00</span></p>
+                                        <div class="space-y-2 mt-2 pt-2 border-t border-gray-700">
+                                            <label for="past-purchase-amount-paid" class="text-xs text-gray-400">Monto Pagado en ese momento</label>
+                                            <input type="number" id="past-purchase-amount-paid" oninput="window.updatePastPurchaseSummary()" placeholder="Ej: 200" class="w-full p-2 rounded-lg bg-gray-700 outline-none focus:border-yellow-500 border border-gray-600">
+                                            <p class="font-bold flex justify-between text-xs">Cambio Entregado: <span id="past-purchase-change-display" class="text-yellow-400">0.00</span></p>
+                                            <p class="font-bold flex justify-between text-xs">Deuda Generada: <span id="past-purchase-debt-display" class="text-red-400">0.00</span></p>
+                                        </div>
                                     </div>
-                                    <div class="border-t border-gray-600 pt-2"><p class="text-xl font-bold flex justify-between">Total: <span id="past-purchase-total" class="text-green-400">0.00</span></p></div>
-                                    <div class="space-y-2"><label for="past-purchase-amount-paid" class="text-xs">Monto Pagado en ese momento</label><input type="number" id="past-purchase-amount-paid" oninput="window.updatePastPurchaseSummary()" placeholder="Ej: 200" class="w-full p-2 rounded-lg bg-gray-700">
-                                        <p class="font-bold flex justify-between">Cambio Entregado: <span id="past-purchase-change-display" class="text-yellow-400">0.00</span></p>
-                                        <p class="font-bold flex justify-between">Deuda Generada: <span id="past-purchase-debt-display" class="text-red-400">0.00</span></p>
+                                    
+                                    <div class="border-t border-gray-600 pt-2 mt-2">
+                                        <p class="text-xl font-bold flex justify-between">Total: <span id="past-purchase-total" class="text-green-400">0.00</span></p>
                                     </div>
-                                    <button id="past-purchase-finalize-btn" onclick="window.finalizePastPurchase()" class="w-full p-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-bold" disabled>Registrar Compra Pasada</button>
+                                    <button id="past-purchase-finalize-btn" onclick="window.finalizePastPurchase()" class="w-full p-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-bold shadow-lg shadow-yellow-900/30 transition mt-2 active:scale-95" disabled>Registrar Compra Pasada</button>
                                 </div>
                             </div>
-                         </div>
-                         <!-- Formulario de Canje Pasado -->
-                         <div id="past-redemption-form" class="hidden">
-                             <div class="space-y-4 max-w-lg mx-auto">
-                                 <div class="relative">
-                                     <div class="flex gap-2 items-center">
-                                        <input type="text" id="past-redemption-user-id" onkeyup="window.findPastRedemptionClient()" placeholder="Nombre, ID, Correo o Tel" class="flex-grow p-2 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none" autocomplete="off">
-                                        <button onclick="window.findPastRedemptionClient()" class="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition">Buscar</button>
-                                    </div>
-                                    <div id="past-redemption-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
-                                </div>
-                                <p id="past-redemption-client-name" class="text-center font-bold h-6"></p>
-                                <div>
-                                    <label for="past-redemption-datetime" class="text-xs text-gray-400">Fecha y Hora del Canje</label>
-                                    <input type="datetime-local" id="past-redemption-datetime" class="w-full p-2 rounded-lg bg-gray-700">
-                                </div>
-                                <div>
-                                    <label for="past-redemption-item-select" class="text-xs text-gray-400">Item de Canje</label>
-                                    <select id="past-redemption-item-select" class="w-full p-2 rounded-lg bg-gray-700"></select>
-                                </div>
-                                <button id="past-redemption-finalize-btn" onclick="window.finalizePastNexusRedemption()" class="w-full p-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-bold">Registrar Canje Pasado</button>
-                             </div>
                          </div>
                     </div>
                     
@@ -1054,7 +1002,7 @@
                                 <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">IVA Recaudado</p><p class="text-2xl font-bold text-cyan-400" id="report-total-iva">0.00</p></div>
                                 <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Ventas Totales</p><p class="text-2xl font-bold text-green-400" id="report-total-sales">0.00</p></div>
                                 <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Ganancia Estimada</p><p class="text-2xl font-bold text-cyan-400" id="report-total-profit">0.00</p></div>
-                                <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Costo por Canjes</p><p class="text-2xl font-bold text-orange-400" id="report-redemption-cost">0.00</p></div>
+                                <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Costo Compras Pts</p><p class="text-2xl font-bold text-orange-400" id="report-redemption-cost">0.00</p></div>
                                 <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Deuda Generada</p><p class="text-2xl font-bold text-red-400" id="report-total-debt">0.00</p></div>
                                 <div class="p-4 bg-gray-800 rounded-xl"><p class="text-sm text-gray-400">Deuda Pagada</p><p class="text-2xl font-bold text-yellow-400" id="report-debt-paid">0.00</p></div>
                                 <div class="p-4 bg-gray-800 rounded-xl border border-blue-500/30"><p class="text-sm text-gray-400">Nº Transacciones</p><p class="text-2xl font-bold text-purple-400" id="report-transaction-count">0</p></div>
@@ -1607,7 +1555,7 @@
             
             <div class="flex justify-end gap-3 mt-6">
                 <button onclick="window.closePlayerInfoModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold">Cancelar</button>
-                <button onclick="window.confirmPlayerInfoAddToCart()" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg font-bold shadow-lg shadow-yellow-900/30">Añadir al Carrito</button>
+                <button id="btn-confirm-player-info" onclick="window.confirmPlayerInfoAddToCart()" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg font-bold shadow-lg shadow-yellow-900/30">Añadir al Carrito</button>
             </div>
         </div>
     </div>
@@ -1887,7 +1835,6 @@
     let posClient = null; 
     let pastPurchaseCart = {};
     let pastPurchaseClient = null;
-    let pastRedemptionClient = null;
     let allUsersData = [];
     let purchaseHistoryData = [];
     let allRafflesData = [];
@@ -1949,23 +1896,6 @@
                     }
                 ]
             }
-        ],
-        nexusRedemptions: [
-             { 
-                key: 'coleccionables', 
-                title: '💎 Coleccionables', 
-                imageUrls: ['https://placehold.co/400x300/FBC02D/000000?text=Coleccionables'],
-                subcategories: [
-                    {
-                        key: 'llaveros',
-                        title: 'Llaveros',
-                        imageUrls: ['https://placehold.co/400x300/FBC02D/000000?text=Llaveros'],
-                        items: [
-                            { name: "Llavero Exclusivo", nexusCost: 50, cost: 20, id: 'R01', inventory: 100, unlimited: false, imageUrls: ['https://placehold.co/400x300/FBC02D/000000?text=Llavero'] }
-                        ]
-                    }
-                ]
-             }
         ]
     };
 
@@ -2073,18 +2003,7 @@
         }
         return null;
     };
-     const getNexusItemDetails = (itemId) => {
-        if (!productsCatalog.nexusRedemptions) return null;
-        for (const mainCat of productsCatalog.nexusRedemptions) {
-            if(mainCat.subcategories) {
-                for (const subCat of mainCat.subcategories) {
-                    const item = subCat.items.find(i => i.id === itemId);
-                    if (item) return item;
-                }
-            }
-        }
-        return null;
-    };
+    
     const showView = (viewId) => {
         ['loader', 'client-login-view', 'client-register-view', 'client-view', 'admin-dashboard-view', 'maintenance-view'].forEach(id => {
             const el = document.getElementById(id);
@@ -2204,8 +2123,6 @@
              window.renderMainCategories('shop'); 
         }
         if(tabName === 'billetera') {
-             currentShopPath = { type: 'nexus', mainKey: null, subKey: null };
-             window.renderMainCategories('nexus');
              window.renderClientPaymentMethods(); // Renderizar métodos de pago al entrar a billetera
         }
     };
@@ -2881,12 +2798,12 @@
     };
     
     window.renderMainCategories = (type) => {
-        const isShop = type === 'shop';
-        const container = document.getElementById(isShop ? 'shop-main-category-buttons' : 'nexus-main-category-buttons');
-        const sourceData = isShop ? productsCatalog.catalog : productsCatalog.nexusRedemptions;
-        const mainView = isShop ? 'main-category-selection-view' : 'nexus-main-category-selection-view';
-        const subView = isShop ? 'sub-category-selection-view' : 'nexus-sub-category-selection-view';
-        const productView = isShop ? 'product-list-view' : 'nexus-item-list-view';
+        if (type !== 'shop') return;
+        const container = document.getElementById('shop-main-category-buttons');
+        const sourceData = productsCatalog.catalog;
+        const mainView = 'main-category-selection-view';
+        const subView = 'sub-category-selection-view';
+        const productView = 'product-list-view';
 
         document.getElementById(mainView).classList.remove('hidden');
         document.getElementById(subView).classList.add('hidden');
@@ -2897,7 +2814,7 @@
             const mainImageUrl = (Array.isArray(category.imageUrls) && category.imageUrls.length > 0) ? category.imageUrls[0] : (category.imageUrl || `https://placehold.co/400x300/161b22/e6edf3?text=${encodeURIComponent(category.title)}`);
             return `
             <div class="neon-card-wrapper rounded-2xl w-full">
-                <button onclick="window.renderSubCategories('${type}', '${category.key}')" class="w-full bg-slate-800 rounded-2xl overflow-hidden text-left group border border-slate-700/50 relative z-10 block h-full">
+                <button onclick="window.renderSubCategories('shop', '${category.key}')" class="w-full bg-slate-800 rounded-2xl overflow-hidden text-left group border border-slate-700/50 relative z-10 block h-full">
                     <div class="neon-img-box h-32 bg-slate-900/50 flex items-center justify-center p-4 relative">
                          <img src="${mainImageUrl}" alt="${category.title}" class="max-w-full max-h-full object-contain transition duration-500 group-hover:scale-110 drop-shadow-xl relative z-10" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/e6edf3?text=Error';">
                     </div>
@@ -2908,23 +2825,23 @@
     };
 
     window.showMainCategorySelectionView = (type) => {
-        currentShopPath = { type: type, mainKey: null, subKey: null };
-        window.renderMainCategories(type);
+        currentShopPath = { type: 'shop', mainKey: null, subKey: null };
+        window.renderMainCategories('shop');
     };
 
     window.renderSubCategories = (type, mainCategoryKey) => {
-        const isShop = type === 'shop';
-        currentShopPath = { type: type, mainKey: mainCategoryKey, subKey: null };
+        if (type !== 'shop') return;
+        currentShopPath = { type: 'shop', mainKey: mainCategoryKey, subKey: null };
         
-        const sourceData = isShop ? productsCatalog.catalog : productsCatalog.nexusRedemptions;
+        const sourceData = productsCatalog.catalog;
         const mainCategory = sourceData.find(c => c.key === mainCategoryKey);
         if(!mainCategory) return;
 
-        const mainView = isShop ? 'main-category-selection-view' : 'nexus-main-category-selection-view';
-        const subView = isShop ? 'sub-category-selection-view' : 'nexus-sub-category-selection-view';
-        const productView = isShop ? 'product-list-view' : 'nexus-item-list-view'; 
-        const container = document.getElementById(isShop ? 'shop-sub-category-buttons' : 'nexus-sub-category-buttons');
-        const titleEl = document.getElementById(isShop ? 'sub-category-title' : 'nexus-sub-category-title');
+        const mainView = 'main-category-selection-view';
+        const subView = 'sub-category-selection-view';
+        const productView = 'product-list-view'; 
+        const container = document.getElementById('shop-sub-category-buttons');
+        const titleEl = document.getElementById('sub-category-title');
 
         document.getElementById(mainView).classList.add('hidden');
         document.getElementById(subView).classList.remove('hidden');
@@ -2941,7 +2858,7 @@
             const subImageUrl = (Array.isArray(subCat.imageUrls) && subCat.imageUrls.length > 0) ? subCat.imageUrls[0] : (subCat.imageUrl || `https://placehold.co/400x300/161b22/e6edf3?text=${encodeURIComponent(subCat.title)}`);
             return `
             <div class="neon-card-wrapper rounded-lg w-full">
-                <button onclick="window.showProducts('${type}', '${mainCategoryKey}', '${subCat.key}')" class="w-full bg-gray-800 rounded-lg overflow-hidden text-left group border border-purple-900/30 relative z-10 block h-full">
+                <button onclick="window.showProducts('shop', '${mainCategoryKey}', '${subCat.key}')" class="w-full bg-gray-800 rounded-lg overflow-hidden text-left group border border-purple-900/30 relative z-10 block h-full">
                     <div class="neon-img-box h-28 bg-black flex items-center justify-center p-2 relative">
                          <img src="${subImageUrl}" alt="${subCat.title}" class="max-w-full max-h-full object-contain transition duration-300 group-hover:scale-105 relative z-10" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/e6edf3?text=Error';">
                     </div>
@@ -2954,25 +2871,25 @@
 
     window.goBackToSubCategories = (type) => {
         if(currentShopPath.mainKey) {
-            window.renderSubCategories(type, currentShopPath.mainKey);
+            window.renderSubCategories('shop', currentShopPath.mainKey);
         } else {
-            window.renderMainCategories(type);
+            window.renderMainCategories('shop');
         }
     };
 
     window.showProducts = (type, mainKey, subKey) => {
-        const isShop = type === 'shop';
-        currentShopPath = { type: type, mainKey: mainKey, subKey: subKey };
+        if (type !== 'shop') return;
+        currentShopPath = { type: 'shop', mainKey: mainKey, subKey: subKey };
 
-        const subView = isShop ? 'sub-category-selection-view' : 'nexus-sub-category-selection-view';
-        const productView = isShop ? 'product-list-view' : 'nexus-item-list-view';
-        const titleEl = document.getElementById(isShop ? 'product-list-title' : 'nexus-item-list-title');
-        const containerEl = document.getElementById(isShop ? 'product-list-container' : 'nexus-item-list-container');
+        const subView = 'sub-category-selection-view';
+        const productView = 'product-list-view';
+        const titleEl = document.getElementById('product-list-title');
+        const containerEl = document.getElementById('product-list-container');
         
         document.getElementById(subView).classList.add('hidden');
         document.getElementById(productView).classList.remove('hidden');
         
-        const sourceData = isShop ? productsCatalog.catalog : productsCatalog.nexusRedemptions;
+        const sourceData = productsCatalog.catalog;
         const mainCat = sourceData.find(c => c.key === mainKey);
         const subCat = mainCat ? mainCat.subcategories.find(s => s.key === subKey) : null;
 
@@ -2981,8 +2898,8 @@
         titleEl.textContent = `${mainCat.title} > ${subCat.title}`;
         containerEl.innerHTML = '';
 
-        const allItems = isShop ? subCat.products : subCat.items;
-        const items = (allItems || []).filter(item => !item.isHidden); // NUEVO: Filtrar productos ocultos
+        const allItems = subCat.products;
+        const items = (allItems || []).filter(item => !item.isHidden);
 
         if(!items || items.length === 0) {
              containerEl.innerHTML = '<p class="col-span-3 text-center text-gray-500">No hay productos en esta categoría.</p>';
@@ -2994,115 +2911,74 @@
             const mainImageUrl = (Array.isArray(item.imageUrls) && item.imageUrls.length > 0) ? item.imageUrls[0] : (item.imageUrl || `https://placehold.co/400x300/161b22/e6edf3?text=${encodeURIComponent(item.name)}`);
             const safeImagesJson = imagesJson.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-            if (isShop) {
-                const product = item;
+            const product = item;
+            
+            // Calcula la cantidad total considerando si hay múltiples IDs de recarga para este producto
+            const quantity = Object.values(shoppingCart)
+                .filter(cartItem => (cartItem.originalProductId || cartItem.id) === product.id)
+                .reduce((sum, cartItem) => sum + cartItem.quantity, 0);
                 
-                // Calcula la cantidad total considerando si hay múltiples IDs de recarga para este producto
-                const quantity = Object.values(shoppingCart)
-                    .filter(cartItem => (cartItem.originalProductId || cartItem.id) === product.id)
-                    .reduce((sum, cartItem) => sum + cartItem.quantity, 0);
-                    
-                const isDigital = product.availableCodes !== undefined;
-                const isOutOfStock = !product.unlimited && product.inventory <= 0 && !isDigital && !product.requiresPlayerInfo;
-                const isPreorder = !product.unlimited && product.inventory <= 0 && isDigital && !product.requiresPlayerInfo;
-                
-                const stockDisplay = product.unlimited ? '<span class="text-xs text-green-400 bg-green-900/20 px-2 py-0.5 rounded-full">Sin Límite</span>' : 
-                                    (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes comprar ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
-                                    (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-slate-400">Disponibles: ${product.inventory}</span>`));
-                const descText = product.description ? `<p class="text-xs text-slate-400 mt-1 line-clamp-2" title="${product.description.replace(/"/g, '&quot;')}">${product.description}</p>` : '';
-                const totalSoldDisplay = `<p class="text-[10px] text-blue-400 font-bold mt-2 uppercase flex items-center gap-1 bg-blue-900/20 w-fit px-2 py-0.5 rounded border border-blue-500/20"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Vendidos: ${product.totalSold || 0}</p>`;
-                
-                // Si requiere info de jugador, deshabilitamos el input manual para evitar ambigüedades en cantidades múltiples
-                const qtyInputHTML = product.requiresPlayerInfo 
-                    ? `<input type="number" value="${quantity}" disabled class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield] opacity-50 cursor-not-allowed" title="Edita cantidades específicas en el panel de Mi Carrito">`
-                    : `<input type="number" min="0" onchange="window.setCartQuantity('${product.id}', this.value)" value="${quantity}" class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield]" ${isOutOfStock ? 'disabled' : ''}>`;
+            const isDigital = product.availableCodes !== undefined;
+            const isOutOfStock = !product.unlimited && product.inventory <= 0 && !isDigital && !product.requiresPlayerInfo;
+            const isPreorder = !product.unlimited && product.inventory <= 0 && isDigital && !product.requiresPlayerInfo;
+            
+            const stockDisplay = product.unlimited ? '<span class="text-xs text-green-400 bg-green-900/20 px-2 py-0.5 rounded-full">Sin Límite</span>' : 
+                                (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes comprar ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
+                                (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-slate-400">Disponibles: ${product.inventory}</span>`));
+            const descText = product.description ? `<p class="text-xs text-slate-400 mt-1 line-clamp-2" title="${product.description.replace(/"/g, '&quot;')}">${product.description}</p>` : '';
+            const totalSoldDisplay = `<p class="text-[10px] text-blue-400 font-bold mt-2 uppercase flex items-center gap-1 bg-blue-900/20 w-fit px-2 py-0.5 rounded border border-blue-500/20"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Vendidos: ${product.totalSold || 0}</p>`;
+            
+            const qtyInputHTML = product.requiresPlayerInfo 
+                ? `<input type="number" value="${quantity}" disabled class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield] opacity-50 cursor-not-allowed" title="Edita cantidades específicas en el panel de Mi Carrito">`
+                : `<input type="number" min="0" onchange="window.setCartQuantity('${product.id}', this.value)" value="${quantity}" class="w-12 bg-transparent text-center font-bold text-white focus:outline-none [appearance:textfield]" ${isOutOfStock ? 'disabled' : ''}>`;
 
-                const badgeHTML = product.badge ? `
-                    <div class="absolute top-2 left-2 z-20 px-2 py-1 text-[10px] font-black text-white uppercase tracking-widest rounded-md shadow-lg ${
-                        product.badge === 'OFERTA' ? 'bg-gradient-to-r from-red-600 to-orange-500 animate-pulse shadow-red-500/50' :
-                        product.badge === 'NUEVO' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-cyan-500/50' :
-                        'bg-gradient-to-r from-yellow-500 to-orange-400 shadow-yellow-500/50'
-                    }">
-                        ${product.badge === 'OFERTA' ? '🔥 ' : product.badge === 'NUEVO' ? '✨ ' : '⚡ '}${product.badge}
-                    </div>
-                ` : '';
+            const badgeHTML = product.badge ? `
+                <div class="absolute top-2 left-2 z-20 px-2 py-1 text-[10px] font-black text-white uppercase tracking-widest rounded-md shadow-lg ${
+                    product.badge === 'OFERTA' ? 'bg-gradient-to-r from-red-600 to-orange-500 animate-pulse shadow-red-500/50' :
+                    product.badge === 'NUEVO' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-cyan-500/50' :
+                    'bg-gradient-to-r from-yellow-500 to-orange-400 shadow-yellow-500/50'
+                }">
+                    ${product.badge === 'OFERTA' ? '🔥 ' : product.badge === 'NUEVO' ? '✨ ' : '⚡ '}${product.badge}
+                </div>
+            ` : '';
 
-                containerEl.innerHTML += `
-                    <div class="neon-card-wrapper rounded-2xl ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
-                        <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl flex flex-col justify-between overflow-hidden relative z-10 h-full">
-                            <div class="neon-img-box h-44 bg-slate-900/50 flex items-center justify-center p-4 cursor-pointer relative" onclick="window.showImageViewer('${safeImagesJson}')">
-                                 ${badgeHTML}
-                                 <img src="${mainImageUrl}" alt="${product.name}" class="max-w-full max-h-full object-contain drop-shadow-xl hover:scale-105 transition duration-300 relative z-10" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/e6edf3?text=Error';">
-                            </div>
-                            <div class="p-4 flex-grow flex flex-col relative z-10">
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start gap-2">
-                                        <p class="font-semibold text-white leading-tight">${product.name}</p>
-                                        ${stockDisplay}
-                                    </div>
-                                    ${descText}
-                                    ${totalSoldDisplay}
-                                    <div class="mt-4 mb-2 flex items-center">
-                                        <p class="text-3xl font-extrabold price-highlight-cs">${formatCS(product.price)}</p>
-                                    </div>
-                                    <p class="text-[10px] text-slate-500 font-mono">+ IVA</p>
-                                </div>
-                                <div class="flex items-center justify-between mt-4 bg-slate-900/50 p-1 rounded-xl border border-slate-700/50 shadow-inner">
-                                    <button onclick="window.preUpdateCart('${product.id}', -1)" class="w-8 h-8 flex items-center justify-center bg-red-600/80 hover:bg-red-500 text-white rounded-lg transition shadow-lg" ${quantity === 0 || isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>-</button>
-                                    ${qtyInputHTML}
-                                    <button onclick="window.preUpdateCart('${product.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg transition shadow-lg hover:shadow-blue-500/50" ${isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>+</button>
-                                </div>
-                            </div>
+            const nexusPurchaseBtn = product.priceNexus > 0 ? `
+                <div class="mt-2 pt-2 border-t border-slate-700/50">
+                    <button onclick="window.initNexusProductPurchase('${product.id}')" class="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-500 hover:to-orange-400 text-white text-xs font-bold rounded-lg shadow-lg flex items-center justify-center gap-1 transition active:scale-95" ${isOutOfStock ? 'disabled class="opacity-50 cursor-not-allowed w-full py-1.5 bg-gray-600 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1"' : ''}>
+                        <i data-lucide="star" class="w-3 h-3"></i> Comprar por ${formatNexus(product.priceNexus)}
+                    </button>
+                </div>
+            ` : '';
+
+            containerEl.innerHTML += `
+                <div class="neon-card-wrapper rounded-2xl ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
+                    <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl flex flex-col justify-between overflow-hidden relative z-10 h-full">
+                        <div class="neon-img-box h-44 bg-slate-900/50 flex items-center justify-center p-4 cursor-pointer relative" onclick="window.showImageViewer('${safeImagesJson}')">
+                             ${badgeHTML}
+                             <img src="${mainImageUrl}" alt="${product.name}" class="max-w-full max-h-full object-contain drop-shadow-xl hover:scale-105 transition duration-300 relative z-10" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/e6edf3?text=Error';">
                         </div>
-                    </div>`;
-            } else { 
-                 const canAfford = currentUserFunds.nexus >= item.nexusCost;
-                const isDigital = item.availableCodes !== undefined;
-                const isOutOfStock = !item.unlimited && item.inventory <= 0 && !isDigital;
-                const isPreorder = !item.unlimited && item.inventory <= 0 && isDigital;
-                
-                const stockDisplay = item.unlimited ? '<span class="text-xs text-green-400">Sin Límite</span>' : 
-                                     (isPreorder ? '<span class="text-xs text-yellow-400 font-bold bg-yellow-900/20 px-2 py-0.5 rounded-full" title="Puedes canjear ahora y recibirás el código apenas se renueve">PRE-ORDEN</span>' : 
-                                     (isOutOfStock ? '<span class="text-xs text-red-500 font-bold bg-red-900/20 px-2 py-0.5 rounded-full">AGOTADO</span>' : `<span class="text-xs text-gray-400">Disponibles: ${item.inventory}</span>`));
-                const descText = item.description ? `<p class="text-xs text-gray-400 mt-1 line-clamp-2" title="${item.description.replace(/"/g, '&quot;')}">${item.description}</p>` : '';
-                const totalRedeemedDisplay = `<p class="text-[10px] text-yellow-400 font-bold mt-2 uppercase flex items-center gap-1 bg-yellow-900/20 w-fit px-2 py-0.5 rounded border border-yellow-500/20"><i data-lucide="award" class="w-3 h-3"></i> Canjeados: ${item.totalRedeemed || 0}</p>`;
-
-                const btnDisabled = !canAfford || isOutOfStock;
-
-                const badgeHTML = item.badge ? `
-                    <div class="absolute top-2 left-2 z-20 px-2 py-1 text-[10px] font-black text-white uppercase tracking-widest rounded-md shadow-lg ${
-                        item.badge === 'OFERTA' ? 'bg-gradient-to-r from-red-600 to-orange-500 animate-pulse shadow-red-500/50' :
-                        item.badge === 'NUEVO' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-cyan-500/50' :
-                        'bg-gradient-to-r from-yellow-500 to-orange-400 shadow-yellow-500/50'
-                    }">
-                        ${item.badge === 'OFERTA' ? '🔥 ' : item.badge === 'NUEVO' ? '✨ ' : '⚡ '}${item.badge}
-                    </div>
-                ` : '';
-
-                containerEl.innerHTML += `
-                    <div class="neon-card-wrapper rounded-lg ${isOutOfStock || !canAfford ? 'opacity-60 grayscale' : ''}">
-                        <div class="bg-gray-800/90 rounded-lg flex flex-col justify-between overflow-hidden border border-yellow-800/50 relative z-10 h-full">
-                            <div class="neon-img-box h-40 bg-black/50 flex items-center justify-center p-2 cursor-pointer relative" onclick="window.showImageViewer('${safeImagesJson}')">
-                                 ${badgeHTML}
-                                 <img src="${mainImageUrl}" alt="${item.name}" class="max-w-full max-h-full object-contain relative z-10 drop-shadow-xl hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/161b22/FBC02D?text=Error';">
-                            </div>
-                            <div class="p-4 flex-grow flex flex-col relative z-10">
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start">
-                                        <p class="font-semibold text-white">${item.name}</p>
-                                        ${stockDisplay}
-                                    </div>
-                                    ${descText}
-                                    ${totalRedeemedDisplay}
-                                    <div class="mt-4 mb-1 flex items-center">
-                                        <p class="text-3xl font-extrabold price-highlight-nexus">${formatNexus(item.nexusCost)}</p>
-                                    </div>
+                        <div class="p-4 flex-grow flex flex-col relative z-10">
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start gap-2">
+                                    <p class="font-semibold text-white leading-tight">${product.name}</p>
+                                    ${stockDisplay}
                                 </div>
-                                <button onclick="window.processRedemption('${item.id}')" class="w-full mt-3 p-2 rounded-lg font-bold text-sm transition ${!btnDisabled ? 'bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-500 hover:to-orange-400 text-white shadow-[0_0_15px_rgba(250,204,21,0.4)]' : 'bg-gray-600 cursor-not-allowed'}" ${btnDisabled ? 'disabled' : ''}>Canjear</button>
+                                ${descText}
+                                ${totalSoldDisplay}
+                                <div class="mt-4 mb-2 flex items-center">
+                                    <p class="text-3xl font-extrabold price-highlight-cs">${formatCS(product.price)}</p>
+                                </div>
+                                <p class="text-[10px] text-slate-500 font-mono">+ IVA</p>
                             </div>
+                            <div class="flex items-center justify-between mt-4 bg-slate-900/50 p-1 rounded-xl border border-slate-700/50 shadow-inner">
+                                <button onclick="window.preUpdateCart('${product.id}', -1)" class="w-8 h-8 flex items-center justify-center bg-red-600/80 hover:bg-red-500 text-white rounded-lg transition shadow-lg" ${quantity === 0 || isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>-</button>
+                                ${qtyInputHTML}
+                                <button onclick="window.preUpdateCart('${product.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg transition shadow-lg hover:shadow-blue-500/50" ${isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>+</button>
+                            </div>
+                            ${nexusPurchaseBtn}
                         </div>
-                    </div>`;
-            }
+                    </div>
+                </div>`;
         });
         lucide.createIcons();
     };
@@ -3163,9 +3039,6 @@
             purchaseButton.disabled = false; purchaseButton.classList.remove('opacity-50', 'cursor-not-allowed'); lucide.createIcons();
         }
         totalDisplayBottomBar.textContent = formatCS(totalCost);
-    };
-    window.renderRedemptionList = () => {
-        window.renderMainCategories('nexus');
     };
 
     // --- NUEVO: Buscador Inteligente para Clientes ---
@@ -3248,6 +3121,14 @@
                     ${product.badge}
                 </div>` : '';
 
+            const nexusPurchaseBtn = product.priceNexus > 0 ? `
+                <div class="mt-2 pt-2 border-t border-slate-700/50">
+                    <button onclick="window.initNexusProductPurchase('${product.id}')" class="w-full py-1.5 bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-500 hover:to-orange-400 text-white text-xs font-bold rounded-lg shadow-lg flex items-center justify-center gap-1 transition active:scale-95" ${isOutOfStock ? 'disabled class="opacity-50 cursor-not-allowed w-full py-1.5 bg-gray-600 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1"' : ''}>
+                        <i data-lucide="star" class="w-3 h-3"></i> Comprar por ${formatNexus(product.priceNexus)}
+                    </button>
+                </div>
+            ` : '';
+
             html += `
                 <div class="neon-card-wrapper rounded-2xl ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
                     <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl flex flex-col justify-between overflow-hidden relative z-10 h-full">
@@ -3272,6 +3153,7 @@
                                 ${qtyInputHTML}
                                 <button onclick="window.preUpdateCart('${product.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg transition shadow-lg hover:shadow-blue-500/50" ${isOutOfStock ? 'disabled class="opacity-50 w-8 h-8 flex items-center justify-center bg-slate-700 rounded-lg"' : ''}>+</button>
                             </div>
+                            ${nexusPurchaseBtn}
                         </div>
                     </div>
                 </div>`;
@@ -3288,11 +3170,11 @@
         if(backBtn) backBtn.classList.remove('hidden');
         
         if (currentShopPath.mainKey && currentShopPath.subKey) {
-            window.showProducts(currentShopPath.type, currentShopPath.mainKey, currentShopPath.subKey);
+            window.showProducts('shop', currentShopPath.mainKey, currentShopPath.subKey);
         } else if (currentShopPath.mainKey) {
-            window.renderSubCategories(currentShopPath.type, currentShopPath.mainKey);
+            window.renderSubCategories('shop', currentShopPath.mainKey);
         } else {
-            window.renderMainCategories(currentShopPath.type);
+            window.renderMainCategories('shop');
         }
     };
 
@@ -3364,7 +3246,6 @@
             }
         }
 
-        window.renderRedemptionList();
         window.updateDailyRewardUI();
         window.updateP2PVisibility();
     };
@@ -3965,6 +3846,12 @@
             document.getElementById('player-info-name').value = '';
             document.getElementById('save-player-info-cb').checked = false;
             
+            const confirmBtn = document.getElementById('btn-confirm-player-info');
+            if (confirmBtn) {
+                confirmBtn.onclick = () => window.confirmPlayerInfoAddToCart();
+                confirmBtn.textContent = 'Añadir al Carrito';
+            }
+
             document.getElementById('player-info-modal').classList.remove('hidden');
             document.getElementById('player-info-modal').classList.add('flex');
             lucide.createIcons();
@@ -4042,6 +3929,192 @@
         document.getElementById('player-info-modal').classList.add('hidden');
         document.getElementById('player-info-modal').classList.remove('flex');
         window.pendingCartAction = null;
+        window.pendingNexusPurchase = null;
+    };
+
+    window.pendingNexusPurchase = null;
+
+    window.initNexusProductPurchase = (productId) => {
+        const product = getProductDetails(productId);
+        if (!product) return;
+        
+        if (product.requiresPlayerInfo) {
+            window.pendingNexusPurchase = productId;
+            
+            const selectorContainer = document.getElementById('saved-players-selector-container');
+            const selector = document.getElementById('saved-players-select');
+            
+            if (currentUserProfile && currentUserProfile.savedPlayerIds && currentUserProfile.savedPlayerIds.length > 0) {
+                selectorContainer.classList.remove('hidden');
+                selector.innerHTML = '<option value="">-- Nueva Cuenta (Escribir abajo) --</option>' + 
+                    currentUserProfile.savedPlayerIds.map((p, index) => `<option value="${index}">${p.playerName} (ID: ${p.playerId})</option>`).join('');
+                selector.value = "";
+            } else {
+                selectorContainer.classList.add('hidden');
+            }
+
+            document.getElementById('player-info-id').value = '';
+            document.getElementById('player-info-name').value = '';
+            document.getElementById('save-player-info-cb').checked = false;
+            
+            const confirmBtn = document.getElementById('btn-confirm-player-info');
+            if (confirmBtn) {
+                confirmBtn.onclick = () => window.confirmPlayerInfoNexusPurchase();
+                confirmBtn.innerHTML = '<i data-lucide="star" class="w-4 h-4 mr-1 inline-block"></i> Comprar con Nexus';
+            }
+
+            document.getElementById('player-info-modal').classList.remove('hidden');
+            document.getElementById('player-info-modal').classList.add('flex');
+            lucide.createIcons();
+        } else {
+            window.confirmNexusProductPurchase(productId, null);
+        }
+    };
+
+    window.confirmPlayerInfoNexusPurchase = async () => {
+        const pId = document.getElementById('player-info-id').value.trim();
+        const pName = document.getElementById('player-info-name').value.trim();
+        const saveCb = document.getElementById('save-player-info-cb').checked;
+        
+        if (!pId || !pName) {
+            window.showModal("Datos Incompletos", "Debes ingresar el ID y el Nombre de usuario para esta recarga.");
+            return;
+        }
+
+        if (saveCb && currentUserProfile) {
+            let savedIds = currentUserProfile.savedPlayerIds || [];
+            const exists = savedIds.find(p => p.playerId === pId);
+            if (!exists) {
+                savedIds.push({ playerId: pId, playerName: pName });
+                try {
+                    await updateDoc(doc(db, COLLECTIONS.USER_PROFILE(currentUserId)), {
+                        savedPlayerIds: savedIds
+                    });
+                } catch (e) {
+                    console.error("Error guardando ID del jugador:", e);
+                }
+            }
+        }
+        
+        const productId = window.pendingNexusPurchase;
+        window.closePlayerInfoModal();
+        window.confirmNexusProductPurchase(productId, { id: pId, name: pName });
+    };
+
+    window.confirmNexusProductPurchase = (productId, playerInfo) => {
+        const product = getProductDetails(productId);
+        if (!product || !product.priceNexus) return;
+
+        if (currentUserFunds.nexus < product.priceNexus) {
+            window.showModal("Puntos Insuficientes", `Necesitas ${formatNexus(product.priceNexus)} para comprar este producto.`);
+            return;
+        }
+
+        window.showConfirmModal("Confirmar Compra con Nexus", `¿Estás seguro de comprar <strong>${product.name}</strong> por <strong>${formatNexus(product.priceNexus)}</strong>?`, async () => {
+            try {
+                const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
+                const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+
+                let pendingCodesLocal = 0;
+                let assignedCode = "";
+                let redemptionUrl = "";
+
+                await runTransaction(db, async (transaction) => {
+                    const userDoc = await transaction.get(userProfileRef);
+                    const catalogDoc = await transaction.get(productCatalogRef);
+                    if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
+                    
+                    if ((userDoc.data().nexusPoints || 0) < product.priceNexus) throw new Error("insufficient");
+                    
+                    const newCatalogData = catalogDoc.data();
+                    let productFound = false;
+                    
+                    for (const mainCat of newCatalogData.catalog) {
+                        if(mainCat.subcategories) {
+                            for(const subCat of mainCat.subcategories) {
+                                const p = subCat.products.find(x => x.id === productId);
+                                if (p) {
+                                    if (p.availableCodes !== undefined && !p.requiresPlayerInfo) {
+                                        if (p.availableCodes.length > 0) {
+                                            assignedCode = p.availableCodes.splice(0, 1).join(', ');
+                                        } else {
+                                            pendingCodesLocal = 1;
+                                        }
+                                        p.inventory = p.availableCodes.length;
+                                        redemptionUrl = p.redemptionUrl || "";
+                                    } else if (!p.unlimited && !p.requiresPlayerInfo) {
+                                        if (p.inventory < 1) throw new Error(`agotado`);
+                                        p.inventory -= 1;
+                                    }
+                                    p.totalSold = (p.totalSold || 0) + 1;
+                                    productFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if(productFound) break;
+                    }
+
+                    if (!productFound) throw new Error("no_encontrado");
+
+                    transaction.update(userProfileRef, { nexusPoints: (userDoc.data().nexusPoints || 0) - product.priceNexus });
+                    transaction.set(productCatalogRef, newCatalogData);
+                    
+                    const safePId = playerInfo ? playerInfo.id.replace(/[^a-zA-Z0-9]/g, '_') : '';
+                    const cartKey = playerInfo ? `${productId}___${safePId}` : productId;
+
+                    const historyItem = {
+                        id: productId,
+                        name: product.name,
+                        quantity: 1,
+                        price: 0, 
+                        cost: product.cost || 0,
+                        priceNexus: product.priceNexus,
+                        originalProductId: productId,
+                        pendingCodes: pendingCodesLocal,
+                        assignedCode: assignedCode,
+                        redemptionUrl: redemptionUrl,
+                        requiresPlayerInfo: product.requiresPlayerInfo,
+                        playerInfo: playerInfo,
+                        itemStatus: product.requiresPlayerInfo ? 'pending' : 'completed'
+                    };
+
+                    transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), { 
+                        type: 'COMPRA', 
+                        userId: currentUserId, 
+                        subtotalCS: 0, 
+                        ivaPercentage: 0, 
+                        ivaAmountCS: 0, 
+                        totalCS: 0, 
+                        amountPaidCS: 0, 
+                        nexusEarned: 0,
+                        costNexus: product.priceNexus, 
+                        items: {
+                            [cartKey]: historyItem
+                        }, 
+                        timestamp: serverTimestamp(),
+                        paymentMethod: 'PUNTOS_NEXUS' 
+                    });
+                });
+                
+                const successMsgLocal = pendingCodesLocal > 0 
+                    ? `Has comprado **"${product.name}"** por ${formatNexus(product.priceNexus)}.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Este item está en PRE-ORDEN.</span>`
+                    : `Has comprado **"${product.name}"** por ${formatNexus(product.priceNexus)}. Revisa tu historial.`;
+                
+                window.showModal("¡Compra Exitosa!", successMsgLocal);
+
+            } catch (fallbackError) {
+                if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
+                    window.showModal("Acceso Denegado por Seguridad", "Tus reglas de Firebase bloquean esta acción.");
+                } else if (fallbackError.message === 'insufficient') {
+                    window.showModal("Error", "No tienes suficientes puntos Nexus.");
+                } else if (fallbackError.message === 'agotado') {
+                    window.showModal("Error", "Este producto se ha agotado.");
+                } else {
+                    window.showModal("Error", fallbackError.message);
+                }
+            }
+        });
     };
 
     // --- NUEVAS FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE IDs GUARDADOS ---
@@ -4420,125 +4493,6 @@
         }
     };
 
-    window.processRedemption = async (itemId) => {
-        if (!currentUserId) return;
-        const item = getNexusItemDetails(itemId);
-        if (!item) return;
-
-        if (currentUserFunds.nexus < item.nexusCost) {
-            window.showModal("Puntos Insuficientes", `Necesitas ${formatNexus(item.nexusCost)} para canjear este item.`);
-            return;
-        }
-
-        window.showConfirmModal("Confirmar Canje", `¿Estás seguro de canjear <strong>${item.name}</strong> por <strong>${formatNexus(item.nexusCost)}</strong>?`, async () => {
-            try {
-                const processSecureRedemption = httpsCallable(functions, 'processSecureRedemption');
-                await processSecureRedemption({ itemId });
-                
-                const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
-                try {
-                    await runTransaction(db, async (t) => {
-                        const catDoc = await t.get(productCatalogRef);
-                        if (catDoc.exists()) {
-                            const catData = catDoc.data();
-                            let updated = false;
-                            for (const mainCat of catData.nexusRedemptions) {
-                                if (mainCat.subcategories) {
-                                    for (const subCat of mainCat.subcategories) {
-                                        const i = subCat.items.find(x => x.id === itemId);
-                                        if (i) {
-                                            i.totalRedeemed = (i.totalRedeemed || 0) + 1;
-                                            updated = true;
-                                        }
-                                    }
-                                }
-                            }
-                            if (updated) t.set(productCatalogRef, catData);
-                        }
-                    });
-                } catch(e) { console.warn("No se actualizó totalRedeemed localmente", e); }
-
-                window.showModal("¡Canje Exitoso!", `Has canjeado ${item.name} correctamente. Revisa tu historial.`);
-            } catch (error) {
-                console.warn("Cloud Function 'processSecureRedemption' falló. Intentando fallback local...", error);
-                
-                try {
-                    const userProfileRef = doc(db, COLLECTIONS.USER_PROFILE(currentUserId));
-                    const productCatalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
-
-                    let pendingCodesLocal = 0;
-                    await runTransaction(db, async (transaction) => {
-                        const userDoc = await transaction.get(userProfileRef);
-                        const catalogDoc = await transaction.get(productCatalogRef);
-                        if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
-                        
-                        if ((userDoc.data().nexusPoints || 0) < item.nexusCost) throw new Error("insufficient");
-                        
-                        const newCatalogData = catalogDoc.data();
-                        let itemFoundAndInStock = false;
-                        let assignedCode = "";
-                        let redemptionUrl = "";
-                        
-                        for (const mainCat of newCatalogData.nexusRedemptions) {
-                            if(mainCat.subcategories) {
-                                for(const subCat of mainCat.subcategories) {
-                                    const catItem = subCat.items.find(i => i.id === itemId);
-                                    if (catItem) {
-                                        redemptionUrl = catItem.redemptionUrl || "";
-                                        if (catItem.availableCodes !== undefined) {
-                                            if (catItem.availableCodes.length > 0) {
-                                                assignedCode = catItem.availableCodes.splice(0, 1).join(', ');
-                                            } else {
-                                                pendingCodesLocal = 1;
-                                            }
-                                            catItem.inventory = catItem.availableCodes.length;
-                                        } else if (!catItem.unlimited) {
-                                            if (catItem.inventory < 1) throw new Error(`agotado`);
-                                            catItem.inventory -= 1;
-                                        }
-                                        catItem.totalRedeemed = (catItem.totalRedeemed || 0) + 1;
-                                        itemFoundAndInStock = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if(itemFoundAndInStock) break;
-                        }
-
-                        if (!itemFoundAndInStock) throw new Error("no_encontrado");
-
-                        transaction.update(userProfileRef, { nexusPoints: (userDoc.data().nexusPoints || 0) - item.nexusCost });
-                        transaction.set(productCatalogRef, newCatalogData);
-                        transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), { 
-                            type: 'CANJE', userId: currentUserId, costNexus: item.nexusCost, costCS: item.cost || 0,
-                            item: item.name, timestamp: serverTimestamp(),
-                            assignedCode, pendingCodes: pendingCodesLocal, redemptionUrl,
-                            items: {
-                                [itemId]: { id: itemId, name: item.name, quantity: 1, pendingCodes: pendingCodesLocal, assignedCode, redemptionUrl }
-                            }
-                        });
-                    });
-                    
-                    const successMsgLocal = pendingCodesLocal > 0 
-                        ? `Has canjeado **"${item.name}"** por ${formatNexus(item.nexusCost)}.<br><br><span class="text-yellow-400 font-bold">¡Aviso! Este item está en PRE-ORDEN.</span>`
-                        : `Has canjeado **"${item.name}"** por ${formatNexus(item.nexusCost)}. Revisa tu historial.`;
-                    
-                    window.showModal("¡Canje Exitoso!", successMsgLocal);
-                } catch (fallbackError) {
-                    if (fallbackError.code === 'permission-denied' || (fallbackError.message && fallbackError.message.includes('permissions'))) {
-                        window.showModal("Acceso Denegado por Seguridad", "Tus reglas de Firebase bloquean esta acción porque no has desplegado las funciones en la nube. Configura tu backend.");
-                    } else if (fallbackError.message === 'insufficient') {
-                        window.showModal("Error", "No tienes suficientes puntos Nexus.");
-                    } else if (fallbackError.message === 'agotado') {
-                        window.showModal("Error", "Este ítem se ha agotado.");
-                    } else {
-                        window.showModal("Error", fallbackError.message);
-                    }
-                }
-            }
-        });
-    };
-
     window.enterRaffle = async (raffleId) => {
         if (!currentUserId) return;
         
@@ -4637,16 +4591,15 @@
 
     window.renderAdminProductManagement = () => {
         const productContainer = document.getElementById('admin-product-list');
-        const nexusContainer = document.getElementById('admin-nexus-redemption-list');
-        if (!productContainer || !nexusContainer || !productsCatalog) return;
+        if (!productContainer || !productsCatalog) return;
         
         // Obtener moneda y tasa actual para mostrar los precios convertidos
         const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
 
-        const renderCategoryBlock = (type, catalogList) => {
+        const renderCategoryBlock = (catalogList) => {
             const htmlContent = catalogList.map(mainCat => {
                 const mainImageUrlsText = Array.isArray(mainCat.imageUrls) ? mainCat.imageUrls.join('\n') : (mainCat.imageUrl || '');
-                const colorClass = type === 'products' ? 'blue' : 'yellow';
+                const colorClass = 'blue';
                 
                 return `
                 <div class="p-4 bg-gray-800 rounded-lg border border-gray-600 mb-4">
@@ -4655,9 +4608,9 @@
                         <div class="flex-grow flex items-center gap-2">
                             <span class="text-xs font-bold uppercase text-${colorClass}-400">Principal</span>
                             <input type="text" id="main-cat-title-${mainCat.key}" value="${mainCat.title}" class="text-lg font-bold bg-gray-700 p-1 rounded w-full" />
-                            <button onclick="window.updateMainCategory('${type}', '${mainCat.key}')" class="p-1 bg-green-600 rounded-md text-white flex-shrink-0" title="Guardar Cambios Principal"><i data-lucide="save" class="w-4 h-4"></i></button>
+                            <button onclick="window.updateMainCategory('products', '${mainCat.key}')" class="p-1 bg-green-600 rounded-md text-white flex-shrink-0" title="Guardar Cambios Principal"><i data-lucide="save" class="w-4 h-4"></i></button>
                         </div>
-                        <button onclick="window.deleteMainCategory('${type}', '${mainCat.key}')" class="px-2 py-1 bg-red-900 hover:bg-red-800 text-white rounded-lg text-xs font-bold flex-shrink-0">Eliminar</button>
+                        <button onclick="window.deleteMainCategory('products', '${mainCat.key}')" class="px-2 py-1 bg-red-900 hover:bg-red-800 text-white rounded-lg text-xs font-bold flex-shrink-0">Eliminar</button>
                     </div>
                     <textarea id="main-cat-image-${mainCat.key}" placeholder="URL Imagen Principal" class="w-full p-1 rounded bg-gray-700 text-xs mb-3 h-10">${mainImageUrlsText}</textarea>
                     
@@ -4671,158 +4624,99 @@
                                     <div class="flex-grow flex items-center gap-2">
                                         <span class="text-xs font-bold uppercase text-purple-400">Sub</span>
                                         <input type="text" id="sub-cat-title-${mainCat.key}-${subCat.key}" value="${subCat.title}" class="font-semibold bg-gray-700 p-1 rounded w-full text-sm" />
-                                        <button onclick="window.updateSubCategory('${type}', '${mainCat.key}', '${subCat.key}')" class="p-1 bg-blue-600 rounded-md text-white flex-shrink-0" title="Guardar Sub"><i data-lucide="save" class="w-3 h-3"></i></button>
+                                        <button onclick="window.updateSubCategory('products', '${mainCat.key}', '${subCat.key}')" class="p-1 bg-blue-600 rounded-md text-white flex-shrink-0" title="Guardar Sub"><i data-lucide="save" class="w-3 h-3"></i></button>
                                     </div>
-                                    <button onclick="window.deleteSubCategory('${type}', '${mainCat.key}', '${subCat.key}')" class="px-2 py-1 bg-red-800 hover:bg-red-700 text-white rounded text-xs">Borrar Sub</button>
+                                    <button onclick="window.deleteSubCategory('products', '${mainCat.key}', '${subCat.key}')" class="px-2 py-1 bg-red-800 hover:bg-red-700 text-white rounded text-xs">Borrar Sub</button>
                                 </div>
                                 <textarea id="sub-cat-image-${mainCat.key}-${subCat.key}" placeholder="URL Imagen Subcategoría" class="w-full p-1 rounded bg-gray-700 text-xs mb-3 h-10">${subImageUrlsText}</textarea>
 
                                 <!-- Nivel 3: Productos/Items -->
                                 <div class="space-y-2">
-                                    ${(type === 'products' ? subCat.products : subCat.items).map(item => {
+                                    ${(subCat.products || []).map(item => {
                                         const pImage = Array.isArray(item.imageUrls) ? item.imageUrls.join('\n') : (item.imageUrl || '');
-                                        if (type === 'products') {
-                                            // Convertir precios a la moneda seleccionada para mostrarlos
-                                            const displayPrice = ((item.price || 0) / currency.rate).toFixed(2);
-                                            const displayCost = ((item.cost || 0) / currency.rate).toFixed(2);
-                                            const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
+                                        
+                                        // Convertir precios a la moneda seleccionada para mostrarlos
+                                        const displayPrice = ((item.price || 0) / currency.rate).toFixed(2);
+                                        const displayCost = ((item.cost || 0) / currency.rate).toFixed(2);
+                                        const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
 
-                                            return `
-                                            <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
-                                                <div class="md:col-span-2">
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Nombre</label>
-                                                    <input type="text" id="prod-name-${item.id}" value="${item.name}" class="w-full p-1 rounded bg-gray-700" placeholder="Nombre"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Precio Venta (${currency.symbol})</label>
-                                                    <input type="number" step="0.01" id="prod-price-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayPrice}" class="w-full p-1 rounded bg-gray-700 text-green-300 font-bold" placeholder="Precio"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Unit. (${currency.symbol})</label>
-                                                    <input type="number" step="0.01" id="prod-cost-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayCost}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Stock</label>
-                                                    <input type="number" id="prod-inv-${item.id}" value="${item.inventory}" class="w-full p-1 rounded bg-gray-700" placeholder="Stock"/>
-                                                </div>
-                                                <div class="flex gap-1 h-full pt-4">
-                                                    <button onclick="window.updateDeepProduct('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-green-700 p-1 rounded text-white flex-grow hover:bg-green-600" title="Guardar">💾</button>
-                                                    <button onclick="window.deleteDeepProduct('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-red-700 p-1 rounded text-white hover:bg-red-600" title="Eliminar">X</button>
-                                                </div>
-                                                <div class="md:col-span-6 flex justify-between items-center">
-                                                     <div class="flex-grow mr-2">
-                                                         <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
-                                                         <textarea id="prod-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción detallada del producto">${item.description || ''}</textarea>
+                                        return `
+                                        <div class="grid grid-cols-1 md:grid-cols-7 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
+                                            <div class="md:col-span-2">
+                                                <label class="text-[10px] text-gray-400 block mb-1">Nombre</label>
+                                                <input type="text" id="prod-name-${item.id}" value="${item.name}" class="w-full p-1 rounded bg-gray-700" placeholder="Nombre"/>
+                                            </div>
+                                            <div>
+                                                <label class="text-[10px] text-gray-400 block mb-1">Precio Venta (${currency.symbol})</label>
+                                                <input type="number" step="0.01" id="prod-price-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayPrice}" class="w-full p-1 rounded bg-gray-700 text-green-300 font-bold" placeholder="Precio"/>
+                                            </div>
+                                            <div>
+                                                <label class="text-[10px] text-yellow-400 block mb-1" title="Si es mayor a 0, permite comprar con Nexus">Precio Nexus</label>
+                                                <input type="number" step="0.01" id="prod-price-nexus-${item.id}" value="${item.priceNexus || ''}" class="w-full p-1 rounded bg-gray-700 text-yellow-300 font-bold" placeholder="Pts (Opcional)"/>
+                                            </div>
+                                            <div>
+                                                <label class="text-[10px] text-gray-400 block mb-1">Costo Unit. (${currency.symbol})</label>
+                                                <input type="number" step="0.01" id="prod-cost-${item.id}" oninput="window.calculateProfit('${item.id}')" value="${displayCost}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
+                                            </div>
+                                            <div>
+                                                <label class="text-[10px] text-gray-400 block mb-1">Stock</label>
+                                                <input type="number" id="prod-inv-${item.id}" value="${item.inventory}" class="w-full p-1 rounded bg-gray-700" placeholder="Stock"/>
+                                            </div>
+                                            <div class="flex gap-1 h-full pt-4">
+                                                <button onclick="window.updateDeepProduct('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-green-700 p-1 rounded text-white flex-grow hover:bg-green-600" title="Guardar">💾</button>
+                                                <button onclick="window.deleteDeepProduct('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-red-700 p-1 rounded text-white hover:bg-red-600" title="Eliminar">X</button>
+                                            </div>
+                                            <div class="md:col-span-7 flex justify-between items-center mt-2">
+                                                 <div class="flex-grow mr-2">
+                                                     <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
+                                                     <textarea id="prod-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción detallada del producto">${item.description || ''}</textarea>
+                                                 </div>
+                                                 <div class="flex flex-col items-end">
+                                                     <span id="prod-profit-${item.id}" class="text-xs font-bold ${profitDisplay >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${currency.symbol} ${profitDisplay}</span>
+                                                     <div class="flex items-center gap-1 mt-1">
+                                                         <label class="text-[10px] text-gray-400" title="Editar total vendidos manualmente">Vendidos:</label>
+                                                         <input type="number" id="prod-sold-${item.id}" value="${item.totalSold || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-blue-300 font-bold text-right text-[10px] focus:outline-none focus:border-blue-500" min="0">
                                                      </div>
-                                                     <div class="flex flex-col items-end">
-                                                         <span id="prod-profit-${item.id}" class="text-xs font-bold ${profitDisplay >= 0 ? 'text-green-400' : 'text-red-500'} self-center" style="min-width: 80px; text-align:right;">Ganancia: ${currency.symbol} ${profitDisplay}</span>
-                                                         <div class="flex items-center gap-1 mt-1">
-                                                             <label class="text-[10px] text-gray-400" title="Editar total vendidos manualmente">Vendidos:</label>
-                                                             <input type="number" id="prod-sold-${item.id}" value="${item.totalSold || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-blue-300 font-bold text-right text-[10px] focus:outline-none focus:border-blue-500" min="0">
-                                                         </div>
-                                                     </div>
+                                                 </div>
+                                            </div>
+                                            <textarea id="prod-img-${item.id}" class="md:col-span-7 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen (una por línea)">${pImage}</textarea>
+                                            
+                                            <div class="md:col-span-7 mt-2 flex flex-col md:flex-row gap-4 border-t border-gray-700 pt-2">
+                                                <div class="flex-1">
+                                                    <label class="flex items-center gap-2 text-xs text-red-400 font-bold cursor-pointer mb-2">
+                                                        <input type="checkbox" id="prod-hidden-${item.id}" ${item.isHidden ? 'checked' : ''} class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-red-500 focus:ring-red-500">
+                                                        👻 Ocultar de la Tienda (No visible para clientes)
+                                                    </label>
+                                                    <label class="flex items-center gap-2 text-xs text-yellow-400 font-bold cursor-pointer mb-2">
+                                                        <input type="checkbox" id="prod-req-info-${item.id}" ${item.requiresPlayerInfo ? 'checked' : ''} onchange="window.toggleDigitalConfig('${item.id}', this.checked)" class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-yellow-500 focus:ring-yellow-500">
+                                                        Requiere ID de Jugador (Recargas Manuales)
+                                                    </label>
                                                 </div>
-                                                <textarea id="prod-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen (una por línea)">${pImage}</textarea>
-                                                
-                                                <div class="md:col-span-6 mt-2 flex flex-col md:flex-row gap-4 border-t border-gray-700 pt-2">
-                                                    <div class="flex-1">
-                                                        <label class="flex items-center gap-2 text-xs text-red-400 font-bold cursor-pointer mb-2">
-                                                            <input type="checkbox" id="prod-hidden-${item.id}" ${item.isHidden ? 'checked' : ''} class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-red-500 focus:ring-red-500">
-                                                            👻 Ocultar de la Tienda (No visible para clientes)
-                                                        </label>
-                                                        <label class="flex items-center gap-2 text-xs text-yellow-400 font-bold cursor-pointer mb-2">
-                                                            <input type="checkbox" id="prod-req-info-${item.id}" ${item.requiresPlayerInfo ? 'checked' : ''} onchange="window.toggleDigitalConfig('${item.id}', this.checked)" class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-yellow-500 focus:ring-yellow-500">
-                                                            Requiere ID de Jugador (Recargas Manuales)
-                                                        </label>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <label class="text-[10px] text-gray-400 block mb-1 font-bold">🏷️ Etiqueta Promocional</label>
-                                                        <select id="prod-badge-${item.id}" class="w-full p-1.5 rounded bg-gray-900 text-xs text-white border border-gray-600 focus:border-blue-500 outline-none">
-                                                            <option value="" ${!item.badge ? 'selected' : ''}>Ninguna</option>
-                                                            <option value="OFERTA" ${item.badge === 'OFERTA' ? 'selected' : ''}>🔥 OFERTA</option>
-                                                            <option value="NUEVO" ${item.badge === 'NUEVO' ? 'selected' : ''}>✨ NUEVO</option>
-                                                            <option value="HOT" ${item.badge === 'HOT' ? 'selected' : ''}>⚡ HOT</option>
-                                                        </select>
-                                                    </div>
+                                                <div class="flex-1">
+                                                    <label class="text-[10px] text-gray-400 block mb-1 font-bold">🏷️ Etiqueta Promocional</label>
+                                                    <select id="prod-badge-${item.id}" class="w-full p-1.5 rounded bg-gray-900 text-xs text-white border border-gray-600 focus:border-blue-500 outline-none">
+                                                        <option value="" ${!item.badge ? 'selected' : ''}>Ninguna</option>
+                                                        <option value="OFERTA" ${item.badge === 'OFERTA' ? 'selected' : ''}>🔥 OFERTA</option>
+                                                        <option value="NUEVO" ${item.badge === 'NUEVO' ? 'selected' : ''}>✨ NUEVO</option>
+                                                        <option value="HOT" ${item.badge === 'HOT' ? 'selected' : ''}>⚡ HOT</option>
+                                                    </select>
                                                 </div>
-                                                <div class="md:col-span-6 mt-2">
-                                                    <div id="digital-config-container-${item.id}" class="transition-all duration-300 ${item.requiresPlayerInfo ? 'opacity-30 pointer-events-none grayscale' : ''}">
-                                                        <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
-                                                        <input type="text" id="prod-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)" ${item.requiresPlayerInfo ? 'disabled' : ''}/>
-                                                        <textarea id="prod-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente." ${item.requiresPlayerInfo ? 'disabled' : ''}>${(item.availableCodes || []).join('\n')}</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>`;
-                                        } else {
-                                            const displayMoneyCost = ((item.cost || 0) / currency.rate).toFixed(2);
-
-                                            return `
-                                            <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-start bg-gray-800 p-2 rounded text-xs border border-yellow-900">
-                                                <div class="md:col-span-2">
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Nombre Item</label>
-                                                    <input type="text" id="nexus-name-${item.id}" value="${item.name}" class="w-full p-1 rounded bg-gray-700" placeholder="Nombre"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-yellow-400 block mb-1">Puntos Nexus</label>
-                                                    <input type="number" id="nexus-cost-${item.id}" value="${item.nexusCost}" class="w-full p-1 rounded bg-gray-700 text-yellow-300 font-bold" placeholder="Pts"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Costo Real (${currency.symbol})</label>
-                                                    <input type="number" step="0.01" id="nexus-money-cost-${item.id}" value="${displayMoneyCost}" class="w-full p-1 rounded bg-gray-700 text-orange-300" placeholder="Costo"/>
-                                                </div>
-                                                <div>
-                                                    <label class="text-[10px] text-gray-400 block mb-1">Stock</label>
-                                                    <input type="number" id="nexus-inv-${item.id}" value="${item.inventory}" class="w-full p-1 rounded bg-gray-700" placeholder="Stock"/>
-                                                </div>
-                                                <div class="flex gap-1 h-full pt-4">
-                                                    <button onclick="window.updateDeepNexusItem('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-yellow-700 p-1 rounded text-white flex-grow hover:bg-yellow-600">💾</button>
-                                                    <button onclick="window.deleteDeepNexusItem('${mainCat.key}', '${subCat.key}', '${item.id}')" class="bg-red-700 p-1 rounded text-white hover:bg-red-600">X</button>
-                                                </div>
-                                                <div class="md:col-span-6 flex justify-between items-start">
-                                                     <div class="flex-grow mr-2">
-                                                         <label class="text-[10px] text-gray-400 block mb-1">Descripción</label>
-                                                         <textarea id="nexus-desc-${item.id}" class="w-full p-1 bg-gray-700 h-10 rounded text-[10px]" placeholder="Descripción del canje">${item.description || ''}</textarea>
-                                                     </div>
-                                                     <div class="flex flex-col items-end mt-2">
-                                                         <div class="flex items-center gap-1">
-                                                             <label class="text-[10px] text-gray-400" title="Editar total canjeados manualmente">Canjeados:</label>
-                                                             <input type="number" id="nexus-redeemed-${item.id}" value="${item.totalRedeemed || 0}" class="w-16 p-1 rounded bg-gray-600 border border-gray-500 text-yellow-300 font-bold text-right text-[10px] focus:outline-none focus:border-yellow-500" min="0">
-                                                         </div>
-                                                     </div>
-                                                </div>
-                                                <textarea id="nexus-img-${item.id}" class="md:col-span-6 w-full p-1 bg-gray-700 h-8 mt-1 text-[10px]" placeholder="URLs Imagen">${pImage}</textarea>
-                                                
-                                                <div class="md:col-span-6 mt-2 flex flex-col md:flex-row gap-4 border-t border-yellow-900 pt-2">
-                                                    <div class="flex-1">
-                                                        <label class="flex items-center gap-2 text-xs text-red-400 font-bold cursor-pointer mb-2">
-                                                            <input type="checkbox" id="nexus-hidden-${item.id}" ${item.isHidden ? 'checked' : ''} class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-red-500 focus:ring-red-500">
-                                                            👻 Ocultar de la Tienda
-                                                        </label>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <label class="text-[10px] text-gray-400 block mb-1 font-bold">🏷️ Etiqueta Promocional</label>
-                                                        <select id="nexus-badge-${item.id}" class="w-full p-1.5 rounded bg-gray-900 text-xs text-white border border-gray-600 focus:border-yellow-500 outline-none">
-                                                            <option value="" ${!item.badge ? 'selected' : ''}>Ninguna</option>
-                                                            <option value="OFERTA" ${item.badge === 'OFERTA' ? 'selected' : ''}>🔥 OFERTA</option>
-                                                            <option value="NUEVO" ${item.badge === 'NUEVO' ? 'selected' : ''}>✨ NUEVO</option>
-                                                            <option value="HOT" ${item.badge === 'HOT' ? 'selected' : ''}>⚡ HOT</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="md:col-span-6 mt-2">
+                                            </div>
+                                            <div class="md:col-span-7 mt-2">
+                                                <div id="digital-config-container-${item.id}" class="transition-all duration-300 ${item.requiresPlayerInfo ? 'opacity-30 pointer-events-none grayscale' : ''}">
                                                     <label class="text-[10px] text-purple-400 block mb-1">Configuración Digital (Opcional)</label>
-                                                    <input type="text" id="nexus-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)"/>
-                                                    <textarea id="nexus-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente.">${(item.availableCodes || []).join('\n')}</textarea>
+                                                    <input type="text" id="prod-url-${item.id}" value="${item.redemptionUrl || ''}" class="w-full p-1 rounded bg-gray-700 mb-1" placeholder="URL del sitio de canje (https://...)" ${item.requiresPlayerInfo ? 'disabled' : ''}/>
+                                                    <textarea id="prod-codes-${item.id}" class="w-full p-1 bg-gray-700 h-16 rounded text-[10px]" placeholder="Códigos digitales (uno por línea). El stock se ajustará automáticamente." ${item.requiresPlayerInfo ? 'disabled' : ''}>${(item.availableCodes || []).join('\n')}</textarea>
                                                 </div>
-                                            </div>`;
-                                        }
+                                            </div>
+                                        </div>`;
                                     }).join('')}
-                                    <button onclick="window.addNewDeepProduct('${type}', '${mainCat.key}', '${subCat.key}')" class="w-full py-1 text-center text-xs bg-gray-700 hover:bg-gray-600 rounded text-gray-300">+ Añadir ${type==='products'?'Producto':'Item'}</button>
+                                    <button onclick="window.addNewDeepProduct('products', '${mainCat.key}', '${subCat.key}')" class="w-full py-1 text-center text-xs bg-gray-700 hover:bg-gray-600 rounded text-gray-300">+ Añadir Producto</button>
                                 </div>
                             </div>
                             `;
                         }).join('')}
-                        <button onclick="window.addNewSubCategory('${type}', '${mainCat.key}')" class="w-full py-2 bg-purple-900/50 hover:bg-purple-900 text-purple-200 rounded text-sm font-bold border border-purple-700 border-dashed">+ Añadir Subcategoría</button>
+                        <button onclick="window.addNewSubCategory('products', '${mainCat.key}')" class="w-full py-2 bg-purple-900/50 hover:bg-purple-900 text-purple-200 rounded text-sm font-bold border border-purple-700 border-dashed">+ Añadir Subcategoría</button>
                     </div>
                 </div>`;
             }).join('');
@@ -4830,26 +4724,22 @@
             return { html: htmlContent };
         };
 
-        const prodRender = renderCategoryBlock('products', productsCatalog.catalog);
-        const nexusRender = renderCategoryBlock('nexus', productsCatalog.nexusRedemptions);
-        
+        const prodRender = renderCategoryBlock(productsCatalog.catalog);
         productContainer.innerHTML = prodRender.html;
-        nexusContainer.innerHTML = nexusRender.html;
 
         lucide.createIcons();
     };
 
     window.addNewMainCategory = async (type) => {
-        const inputId = type === 'products' ? 'new-main-category-name' : 'new-nexus-main-category-name';
-        const imgId = type === 'products' ? 'new-main-category-image' : 'new-nexus-main-category-image';
+        const inputId = 'new-main-category-name';
+        const imgId = 'new-main-category-image';
         const name = document.getElementById(inputId).value.trim();
         const imageUrls = document.getElementById(imgId).value.split('\n').map(u=>u.trim()).filter(u=>u);
         
         if (!name) return;
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-        const list = type === 'products' ? newCatalog.catalog : newCatalog.nexusRedemptions;
         
-        list.push({
+        newCatalog.catalog.push({
             key: `main-${Date.now()}`,
             title: name,
             imageUrls: imageUrls,
@@ -4864,8 +4754,7 @@
         const newTitle = document.getElementById(`main-cat-title-${key}`).value;
         const newImages = document.getElementById(`main-cat-image-${key}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-        const list = type === 'products' ? newCatalog.catalog : newCatalog.nexusRedemptions;
-        const cat = list.find(c => c.key === key);
+        const cat = newCatalog.catalog.find(c => c.key === key);
         if(cat) { cat.title = newTitle; cat.imageUrls = newImages; }
         await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
         window.showModal("Éxito", "Categoría principal actualizada.");
@@ -4874,22 +4763,20 @@
     window.deleteMainCategory = (type, key) => {
         window.showConfirmModal("Borrar Principal", "¿Borrar esta categoría principal y TODO su contenido?", async () => {
             const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-            if(type === 'products') newCatalog.catalog = newCatalog.catalog.filter(c => c.key !== key);
-            else newCatalog.nexusRedemptions = newCatalog.nexusRedemptions.filter(c => c.key !== key);
+            newCatalog.catalog = newCatalog.catalog.filter(c => c.key !== key);
             await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
         });
     };
 
     window.addNewSubCategory = async (type, mainKey) => {
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-        const list = type === 'products' ? newCatalog.catalog : newCatalog.nexusRedemptions;
-        const mainCat = list.find(c => c.key === mainKey);
+        const mainCat = newCatalog.catalog.find(c => c.key === mainKey);
         if(mainCat) {
             mainCat.subcategories.push({
                 key: `sub-${Date.now()}`,
                 title: "Nueva Subcategoría",
                 imageUrls: [],
-                [type === 'products' ? 'products' : 'items']: []
+                products: []
             });
             await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
         }
@@ -4899,8 +4786,7 @@
         const newTitle = document.getElementById(`sub-cat-title-${mainKey}-${subKey}`).value;
         const newImages = document.getElementById(`sub-cat-image-${mainKey}-${subKey}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
         const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-        const list = type === 'products' ? newCatalog.catalog : newCatalog.nexusRedemptions;
-        const mainCat = list.find(c => c.key === mainKey);
+        const mainCat = newCatalog.catalog.find(c => c.key === mainKey);
         const subCat = mainCat ? mainCat.subcategories.find(s => s.key === subKey) : null;
         if(subCat) { subCat.title = newTitle; subCat.imageUrls = newImages; }
         await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
@@ -4910,8 +4796,7 @@
     window.deleteSubCategory = (type, mainKey, subKey) => {
         window.showConfirmModal("Borrar Subcategoría", "¿Borrar esta subcategoría y sus productos?", async () => {
             const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-            const list = type === 'products' ? newCatalog.catalog : newCatalog.nexusRedemptions;
-            const mainCat = list.find(c => c.key === mainKey);
+            const mainCat = newCatalog.catalog.find(c => c.key === mainKey);
             if(mainCat) {
                 mainCat.subcategories = mainCat.subcategories.filter(s => s.key !== subKey);
                 await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
@@ -4982,18 +4867,12 @@
         
         if(subCat) {
             const newItem = {
-                id: `${type === 'products' ? 'prod' : 'nexus'}_${Date.now()}`,
+                id: `prod_${Date.now()}`,
                 name: "Nuevo Item",
                 inventory: 0, unlimited: false, imageUrls: [], description: '',
-                isHidden: false, badge: ''
+                isHidden: false, badge: '', price: 0, cost: 0, code: '', requiresPlayerInfo: false
             };
-            if(type === 'products') {
-                newItem.price = 0; newItem.cost = 0; newItem.code = ''; newItem.requiresPlayerInfo = false;
-                subCat.products.push(newItem);
-            } else {
-                newItem.nexusCost = 1; newItem.cost = 0;
-                subCat.items.push(newItem);
-            }
+            subCat.products.push(newItem);
             await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
         }
     };
@@ -5005,6 +4884,7 @@
         const name = document.getElementById(`prod-name-${prodId}`).value;
         const inputPrice = parseFloat(document.getElementById(`prod-price-${prodId}`).value) || 0;
         const inputCost = parseFloat(document.getElementById(`prod-cost-${prodId}`).value) || 0; 
+        const priceNexus = parseFloat(document.getElementById(`prod-price-nexus-${prodId}`).value) || 0;
         
         // Convertimos el precio de la divisa visual a la moneda base
         const price = inputPrice * rate;
@@ -5035,6 +4915,7 @@
             prod.name = name; 
             prod.price = price; 
             prod.cost = cost; 
+            prod.priceNexus = priceNexus;
             prod.description = desc; 
             prod.unlimited = false; 
             prod.imageUrls = imgs;
@@ -5072,68 +4953,6 @@
             const subCat = newCatalog.catalog.find(c => c.key === mainKey)?.subcategories.find(s => s.key === subKey);
             if(subCat) {
                 subCat.products = subCat.products.filter(p => p.id !== prodId);
-                await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
-            }
-        });
-    };
-
-    window.updateDeepNexusItem = async (mainKey, subKey, itemId) => {
-        const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
-        const rate = currency.rate;
-
-        const name = document.getElementById(`nexus-name-${itemId}`).value;
-        const cost = parseFloat(document.getElementById(`nexus-cost-${itemId}`).value); 
-        
-        // Convertimos el costo fiat de la divisa visual a la base
-        const inputMoneyCost = parseFloat(document.getElementById(`nexus-money-cost-${itemId}`).value) || 0; 
-        const moneyCost = inputMoneyCost * rate;
-        
-        const inv = parseInt(document.getElementById(`nexus-inv-${itemId}`).value);
-        const desc = document.getElementById(`nexus-desc-${itemId}`).value; 
-        const imgs = document.getElementById(`nexus-img-${itemId}`).value.split('\n').map(u=>u.trim()).filter(u=>u);
-        const url = document.getElementById(`nexus-url-${itemId}`).value.trim();
-        const codesRaw = document.getElementById(`nexus-codes-${itemId}`).value.trim();
-        const redeemed = parseInt(document.getElementById(`nexus-redeemed-${itemId}`).value) || 0;
-        const isHidden = document.getElementById(`nexus-hidden-${itemId}`).checked;
-        const badge = document.getElementById(`nexus-badge-${itemId}`).value;
-        let codes = codesRaw ? codesRaw.split('\n').map(c => c.trim()).filter(c => c) : [];
-
-        codes = await window.autoFulfillPendingOrders(itemId, codes);
-
-        const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-        const subCat = newCatalog.nexusRedemptions.find(c => c.key === mainKey)?.subcategories.find(s => s.key === subKey);
-        const item = subCat?.items.find(i => i.id === itemId);
-        
-        if(item) {
-            item.name = name; 
-            item.nexusCost = cost; 
-            item.cost = moneyCost; 
-            item.description = desc; 
-            item.unlimited = false; 
-            item.imageUrls = imgs;
-            item.redemptionUrl = url;
-            item.availableCodes = codes;
-            item.totalRedeemed = Math.max(0, redeemed); // Guarda el nuevo valor manual
-            item.isHidden = isHidden;
-            item.badge = badge;
-
-            if (codes.length > 0 || codesRaw.length > 0) {
-                item.inventory = codes.length;
-            } else {
-                item.inventory = inv;
-            }
-
-            await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
-            window.showModal("Éxito", "Item de canje actualizado.");
-        }
-    };
-
-    window.deleteDeepNexusItem = (mainKey, subKey, itemId) => {
-        window.showConfirmModal("Borrar Item", "¿Eliminar este item de canje?", async () => {
-            const newCatalog = JSON.parse(JSON.stringify(productsCatalog));
-            const subCat = newCatalog.nexusRedemptions.find(c => c.key === mainKey)?.subcategories.find(s => s.key === subKey);
-            if(subCat) {
-                subCat.items = subCat.items.filter(i => i.id !== itemId);
                 await setDoc(doc(db, COLLECTIONS.PRODUCTS, 'catalog'), newCatalog);
             }
         });
@@ -5395,28 +5214,18 @@
                 mainCat.subcategories.forEach(subCat => {
                     subCat.products.forEach(p => {
                         container.innerHTML += `
-                        <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-yellow-600 transition">
+                        <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-yellow-600 transition border border-gray-600 hover:border-yellow-500">
                             <p class="font-semibold truncate">${p.name}</p>
-                            <p class="text-xs text-gray-300">${formatCS(p.price)}</p>
+                            <p class="text-xs text-gray-300 mt-1 flex justify-between">
+                                <span>${formatCS(p.price)}</span>
+                                ${p.priceNexus > 0 ? `<span class="text-yellow-400" title="Precio Nexus"><i data-lucide="star" class="w-3 h-3 inline"></i> ${formatNexus(p.priceNexus)}</span>` : ''}
+                            </p>
                         </button>`;
                     });
                 });
             }
         });
-        
-        const selectRedemption = document.getElementById('past-redemption-item-select');
-        selectRedemption.innerHTML = '<option value="">-- Seleccione un item --</option>';
-        (productsCatalog.nexusRedemptions || []).forEach(mainCat => {
-            if(mainCat.subcategories) {
-                mainCat.subcategories.forEach(subCat => {
-                    selectRedemption.innerHTML += `<optgroup label="${mainCat.title} > ${subCat.title}">`;
-                    subCat.items.forEach(item => {
-                         selectRedemption.innerHTML += `<option value="${item.id}">${item.name} (${formatNexus(item.nexusCost)})</option>`;
-                    });
-                    selectRedemption.innerHTML += `</optgroup>`;
-                });
-            }
-        });
+        if(typeof lucide !== 'undefined') lucide.createIcons();
     };
 
     window.createNewUser = async () => {
@@ -5895,6 +5704,7 @@
     };
 
     window.updatePastPurchaseSummary = () => {
+        const isNexus = document.getElementById('past-purchase-payment-method').value === 'nexus';
         const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { symbol: adminConfig.currencySymbol || 'C$', rate: 1 };
         const rate = currency.rate;
 
@@ -5906,46 +5716,70 @@
 
         const list = document.getElementById('past-purchase-cart-summary');
         const cartItems = Object.values(pastPurchaseCart);
-        list.innerHTML = cartItems.map(p => `
-            <div class="flex justify-between items-center mb-1 bg-gray-700 p-1 rounded">
-                <span class="flex-grow truncate text-xs">${p.name}</span>
-                <div class="flex items-center gap-1 mx-2">
-                     <button onclick="window.updatePastPurchaseCart('${p.id}', -1)" class="px-1 bg-red-600 rounded text-xs">-</button>
-                     <input type="number" min="1" value="${p.quantity}" onchange="window.setPastPurchaseQuantity('${p.id}', this.value)" class="w-12 bg-gray-600 rounded text-center text-xs text-white">
-                     <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="px-1 bg-blue-600 rounded text-xs">+</button>
-                </div>
-                <span class="w-16 text-right text-xs">${formatCS(p.price*p.quantity)}</span>
-                <button onclick="window.removeFromPastPurchaseCart('${p.id}')" class="ml-1 text-red-400 hover:text-red-300">🗑️</button>
-            </div>`).join('');
         
-        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0); // Base currency
-        
-        const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
-        const discountType = document.getElementById('past-purchase-discount-type').value;
-        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
-        
-        const ivaRate = adminConfig.ivaPercentage || 0;
-        const taxBase = Math.max(0, subtotal - discount);
-        const ivaAmount = taxBase * (ivaRate/100);
-        const total = taxBase + ivaAmount;
-        
-        const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
-        const received = receivedInput * rate; // Convertir visual a base
-        
-        const change = Math.max(0, received - total);
-        const debt = Math.max(0, total - received);
+        let validNexusCart = true;
 
-        document.getElementById('past-purchase-subtotal').textContent = formatCS(subtotal);
-        document.getElementById('past-purchase-discount-applied').textContent = formatCS(discount);
-        document.getElementById('past-purchase-tax-base').textContent = formatCS(taxBase);
-        document.getElementById('past-purchase-iva-rate').textContent = ivaRate;
-        document.getElementById('past-purchase-iva-amount').textContent = formatCS(ivaAmount);
-        document.getElementById('past-purchase-total').textContent = formatCS(total);
-        document.getElementById('past-purchase-change-display').textContent = formatCS(change);
-        document.getElementById('past-purchase-debt-display').textContent = formatCS(debt);
+        list.innerHTML = cartItems.map(p => {
+            if (isNexus && (!p.priceNexus || p.priceNexus <= 0)) validNexusCart = false;
+            const itemPrice = isNexus ? (p.priceNexus || 0) : p.price;
+            
+            return `
+            <div class="flex justify-between items-center mb-2 bg-gray-700 p-2 rounded border border-gray-600">
+                <span class="flex-grow truncate text-xs font-bold text-white">${p.name}</span>
+                <div class="flex items-center gap-1 mx-2">
+                     <button onclick="window.updatePastPurchaseCart('${p.id}', -1)" class="px-2 py-0.5 bg-red-600 rounded text-xs font-bold">-</button>
+                     <input type="number" min="1" value="${p.quantity}" onchange="window.setPastPurchaseQuantity('${p.id}', this.value)" class="w-10 bg-gray-600 rounded text-center text-xs text-white outline-none border border-gray-500">
+                     <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="px-2 py-0.5 bg-blue-600 rounded text-xs font-bold">+</button>
+                </div>
+                <span class="w-20 text-right text-xs font-mono text-${isNexus ? 'yellow' : 'emerald'}-400">${isNexus ? formatNexus(itemPrice*p.quantity) : formatCS(itemPrice*p.quantity)}</span>
+                <button onclick="window.removeFromPastPurchaseCart('${p.id}')" class="ml-2 text-red-400 hover:text-red-300 p-1">🗑️</button>
+            </div>`
+        }).join('');
         
+        const subtotal = cartItems.reduce((s, i) => s + (isNexus ? (i.priceNexus || 0) : i.price) * i.quantity, 0); 
         const dateVal = document.getElementById('past-purchase-datetime').value;
-        document.getElementById('past-purchase-finalize-btn').disabled = (cartItems.length === 0 || !pastPurchaseClient || !dateVal);
+
+        if (isNexus) {
+            document.getElementById('past-purchase-fiat-details').classList.add('hidden');
+            document.getElementById('past-purchase-total').textContent = formatNexus(subtotal);
+            document.getElementById('past-purchase-total').className = "text-yellow-400";
+            
+            const btn = document.getElementById('past-purchase-finalize-btn');
+            btn.disabled = (cartItems.length === 0 || !pastPurchaseClient || !dateVal || !validNexusCart);
+            
+            if (!validNexusCart && cartItems.length > 0) {
+                list.innerHTML += `<p class="text-red-400 text-xs text-center mt-2 font-bold p-2 bg-red-900/20 border border-red-500/30 rounded">⚠️ Algunos productos en el carrito no tienen un Precio Nexus asignado y no pueden comprarse con puntos.</p>`;
+            }
+        } else {
+            document.getElementById('past-purchase-fiat-details').classList.remove('hidden');
+            document.getElementById('past-purchase-total').className = "text-green-400";
+            
+            const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
+            const discountType = document.getElementById('past-purchase-discount-type').value;
+            const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
+            
+            const ivaRate = adminConfig.ivaPercentage || 0;
+            const taxBase = Math.max(0, subtotal - discount);
+            const ivaAmount = taxBase * (ivaRate/100);
+            const total = taxBase + ivaAmount;
+            
+            const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+            const received = receivedInput * rate; 
+            
+            const change = Math.max(0, received - total);
+            const debt = Math.max(0, total - received);
+
+            document.getElementById('past-purchase-subtotal').textContent = formatCS(subtotal);
+            document.getElementById('past-purchase-discount-applied').textContent = formatCS(discount);
+            document.getElementById('past-purchase-tax-base').textContent = formatCS(taxBase);
+            document.getElementById('past-purchase-iva-rate').textContent = ivaRate;
+            document.getElementById('past-purchase-iva-amount').textContent = formatCS(ivaAmount);
+            document.getElementById('past-purchase-total').textContent = formatCS(total);
+            document.getElementById('past-purchase-change-display').textContent = formatCS(change);
+            document.getElementById('past-purchase-debt-display').textContent = formatCS(debt);
+            
+            document.getElementById('past-purchase-finalize-btn').disabled = (cartItems.length === 0 || !pastPurchaseClient || !dateVal);
+        }
     };
 
     window.finalizePastPurchase = async () => {
@@ -5954,36 +5788,25 @@
         const customDate = new Date(dateVal);
         const ts = Timestamp.fromDate(customDate);
 
+        const isNexus = document.getElementById('past-purchase-payment-method').value === 'nexus';
         const currency = currenciesData.find(c => c.id === window.currentSelectedCurrency) || { rate: 1 };
         const rate = currency.rate;
 
         const cartItems = Object.values(pastPurchaseCart);
-        const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
         
-        const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
-        const discountType = document.getElementById('past-purchase-discount-type').value;
-        const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
-        
-        const ivaRate = adminConfig.ivaPercentage || 0;
-        const taxBase = Math.max(0, subtotal - discount);
-        const ivaAmount = taxBase * (ivaRate/100);
-        const total = taxBase + ivaAmount;
-        
-        const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
-        const received = receivedInput * rate; // Base currency
-        
-        const debt = Math.max(0, total - received);
-        const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
-
         try {
             await runTransaction(db, async (transaction) => {
                  const userRef = doc(db, COLLECTIONS.USER_PROFILE(pastPurchaseClient.id));
                  const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
                  const userDoc = await transaction.get(userRef);
                  const catalogDoc = await transaction.get(catalogRef);
+                 
+                 if (!userDoc.exists()) throw new Error("Usuario no existe");
+
                  const currentDebt = userDoc.data().debtCS || 0;
                  const currentNexus = userDoc.data().nexusPoints || 0;
                  
+                 // Update Catalog stats
                  let catalogData = null;
                  if (catalogDoc.exists()) {
                      catalogData = catalogDoc.data();
@@ -6007,144 +5830,106 @@
                      }
                  }
 
-                 transaction.update(userRef, { 
-                    debtCS: currentDebt + debt,
-                    nexusPoints: currentNexus + nexusEarned
-                });
+                 // Generate History Items mapping
+                 const historyItems = {};
+                 cartItems.forEach(item => {
+                     historyItems[item.id] = {
+                         ...item,
+                         originalProductId: item.id,
+                         itemStatus: 'completed', // Assume completed since it's past
+                         completedAt: ts
+                     };
+                 });
 
-                 transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
-                    type: 'COMPRA', userId: pastPurchaseClient.id, items: pastPurchaseCart,
-                    subtotalCS: subtotal, discountCS: discount, ivaAmountCS: ivaAmount, totalCS: total,
-                    amountPaidCS: received, isDebt: debt > 0, remainingDebtCS: debt, nexusEarned,
-                    timestamp: ts,
-                    paymentMethod: 'EFECTIVO/DEUDA'
-                });
+                 if (isNexus) {
+                     // --- NEXUS FLOW ---
+                     const totalNexus = cartItems.reduce((s, i) => s + (i.priceNexus || 0) * i.quantity, 0);
+
+                     transaction.update(userRef, { 
+                        nexusPoints: currentNexus - totalNexus
+                     });
+
+                     transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: 'COMPRA', userId: pastPurchaseClient.id, items: historyItems,
+                        subtotalCS: 0, ivaPercentage: 0, ivaAmountCS: 0, totalCS: 0, amountPaidCS: 0, 
+                        costNexus: totalNexus, nexusEarned: 0, isDebt: false, remainingDebtCS: 0,
+                        timestamp: ts, paymentMethod: 'PUNTOS_NEXUS'
+                     });
+
+                     // Format invoice for Nexus
+                     document.getElementById('invoice-items').innerHTML = cartItems.map(i => 
+                        `<tr><td>${i.quantity}</td><td>${i.code||'-'}</td><td>${i.name}</td><td class="text-right">${formatNexus(i.priceNexus)}</td><td class="text-right">${formatNexus(i.priceNexus * i.quantity)}</td></tr>`
+                     ).join('');
+                     document.getElementById('invoice-subtotal').textContent = "-";
+                     document.getElementById('invoice-discount').textContent = "-";
+                     document.getElementById('invoice-tax-base').textContent = "-";
+                     document.getElementById('invoice-iva-rate').textContent = "-";
+                     document.getElementById('invoice-iva-amount').textContent = "-";
+                     document.getElementById('invoice-total').textContent = formatNexus(totalNexus);
+                     document.getElementById('invoice-received').textContent = formatNexus(totalNexus);
+                     document.getElementById('invoice-debt').textContent = "0";
+                     document.getElementById('invoice-change').textContent = "0";
+
+                 } else {
+                     // --- FIAT FLOW ---
+                     const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
+                     const discountInput = parseFloat(document.getElementById('past-purchase-discount').value) || 0;
+                     const discountType = document.getElementById('past-purchase-discount-type').value;
+                     const discount = discountType === 'amount' ? (discountInput * rate) : subtotal * (discountInput/100);
+                     
+                     const ivaRate = adminConfig.ivaPercentage || 0;
+                     const taxBase = Math.max(0, subtotal - discount);
+                     const ivaAmount = taxBase * (ivaRate/100);
+                     const total = taxBase + ivaAmount;
+                     
+                     const receivedInput = parseFloat(document.getElementById('past-purchase-amount-paid').value) || 0;
+                     const received = receivedInput * rate; 
+                     
+                     const debt = Math.max(0, total - received);
+                     const nexusEarned = adminConfig.nexusEnabled ? parseFloat((taxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
+
+                     transaction.update(userRef, { 
+                        debtCS: currentDebt + debt,
+                        nexusPoints: currentNexus + nexusEarned
+                     });
+
+                     transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
+                        type: 'COMPRA', userId: pastPurchaseClient.id, items: historyItems,
+                        subtotalCS: subtotal, discountCS: discount, ivaAmountCS: ivaAmount, totalCS: total,
+                        amountPaidCS: received, isDebt: debt > 0, remainingDebtCS: debt, nexusEarned,
+                        timestamp: ts, paymentMethod: 'EFECTIVO/DEUDA'
+                     });
+
+                     // Format invoice for FIAT
+                     document.getElementById('invoice-items').innerHTML = cartItems.map(i => 
+                        `<tr><td>${i.quantity}</td><td>${i.code||'-'}</td><td>${i.name}</td><td class="text-right">${formatCS(i.price)}</td><td class="text-right">${formatCS(i.price*i.quantity)}</td></tr>`
+                     ).join('');
+                     document.getElementById('invoice-subtotal').textContent = formatCS(subtotal);
+                     document.getElementById('invoice-discount').textContent = formatCS(discount);
+                     document.getElementById('invoice-tax-base').textContent = formatCS(taxBase);
+                     document.getElementById('invoice-iva-rate').textContent = ivaRate;
+                     document.getElementById('invoice-iva-amount').textContent = formatCS(ivaAmount);
+                     document.getElementById('invoice-total').textContent = formatCS(total);
+                     document.getElementById('invoice-received').textContent = formatCS(received);
+                     document.getElementById('invoice-debt').textContent = formatCS(debt);
+                     document.getElementById('invoice-change').textContent = formatCS(Math.max(0, received - total));
+                 }
             });
 
-             // Generar Factura para Pasada
+            // Generar Factura (Ambos flujos)
             document.getElementById('invoice-date').textContent = customDate.toLocaleString();
             document.getElementById('invoice-client-name').textContent = pastPurchaseClient.name;
             document.getElementById('invoice-client-id').textContent = pastPurchaseClient.id;
-            document.getElementById('invoice-items').innerHTML = cartItems.map(i => 
-                `<tr><td>${i.quantity}</td><td>${i.code||'-'}</td><td>${i.name}</td><td class="text-right">${formatCS(i.price)}</td><td class="text-right">${formatCS(i.price * (1 + ivaRate/100))}</td><td class="text-right">${formatCS(i.price*i.quantity)}</td></tr>`
-            ).join('');
-            document.getElementById('invoice-subtotal').textContent = formatCS(subtotal);
-            document.getElementById('invoice-discount').textContent = formatCS(discount);
-            document.getElementById('invoice-tax-base').textContent = formatCS(taxBase);
-            document.getElementById('invoice-iva-rate').textContent = ivaRate;
-            document.getElementById('invoice-iva-amount').textContent = formatCS(ivaAmount);
-            document.getElementById('invoice-total').textContent = formatCS(total);
-            document.getElementById('invoice-received').textContent = formatCS(received);
-            document.getElementById('invoice-debt').textContent = formatCS(debt);
-            document.getElementById('invoice-change').textContent = formatCS(Math.max(0, received - total));
             document.getElementById('invoice-modal').classList.remove('hidden');
 
-            // Reset
+            // Reset Form
             pastPurchaseCart = {}; pastPurchaseClient = null;
             document.getElementById('past-purchase-user-id').value = '';
             document.getElementById('past-purchase-client-name').textContent = '';
+            document.getElementById('past-purchase-datetime').value = '';
             window.updatePastPurchaseSummary();
+
         } catch(e) { window.showModal("Error", e.message); }
-    };
-
-    // BÚSQUEDA CANJE PASADO
-    window.findPastRedemptionClient = () => {
-        const term = document.getElementById('past-redemption-user-id').value.trim().toLowerCase();
-        const resultsBox = document.getElementById('past-redemption-search-results');
-        
-        if(!term) {
-            resultsBox.classList.add('hidden');
-            resultsBox.classList.remove('flex');
-            return;
-        }
-        
-        const matches = allUsersData.filter(u => 
-            (u.email && u.email.toLowerCase().includes(term)) ||
-            (u.id && u.id.toLowerCase().includes(term)) ||
-            (u.contact && u.contact.toLowerCase().includes(term)) ||
-            (u.name && u.name.toLowerCase().includes(term))
-        ).slice(0, 10);
-        
-        if(matches.length > 0) {
-            resultsBox.innerHTML = matches.map(u => `
-                <button onclick="window.selectPastRedemptionClient('${u.id}')" class="p-3 text-left hover:bg-gray-700 transition w-full">
-                    <span class="font-bold text-white block text-sm">${u.name}</span>
-                    <span class="text-xs text-gray-400 block mt-0.5">ID: ${u.id} <br> Contacto/Email: ${u.contact || u.email || 'N/A'}</span>
-                </button>
-            `).join('');
-        } else {
-            resultsBox.innerHTML = '<p class="p-3 text-xs text-red-400 text-center">No se encontraron clientes.</p>';
-        }
-        resultsBox.classList.remove('hidden');
-        resultsBox.classList.add('flex');
-    };
-
-    window.selectPastRedemptionClient = (id) => {
-        const snap = allUsersData.find(u => u.id === id);
-        if(snap) {
-            pastRedemptionClient = { ...snap };
-            const nameEl = document.getElementById('past-redemption-client-name');
-            nameEl.textContent = pastRedemptionClient.name;
-            nameEl.className = "text-center font-bold h-6 text-xl text-cyan-400";
-            document.getElementById('past-redemption-search-results').classList.add('hidden');
-            document.getElementById('past-redemption-user-id').value = pastRedemptionClient.name;
-        }
-    };
-
-    window.finalizePastNexusRedemption = async () => {
-         const itemId = document.getElementById('past-redemption-item-select').value;
-         const dateVal = document.getElementById('past-redemption-datetime').value;
-         if(!pastRedemptionClient || !itemId || !dateVal) return;
-         
-         const item = getNexusItemDetails(itemId);
-         const ts = Timestamp.fromDate(new Date(dateVal));
-
-         try {
-             await runTransaction(db, async (transaction) => {
-                 const userRef = doc(db, COLLECTIONS.USER_PROFILE(pastRedemptionClient.id));
-                 const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
-                 const userDoc = await transaction.get(userRef);
-                 const catalogDoc = await transaction.get(catalogRef);
-                 const currentNexus = userDoc.data().nexusPoints || 0;
-                 
-                 if (catalogDoc.exists()) {
-                     const catalogData = catalogDoc.data();
-                     let catalogUpdated = false;
-                     for (const mainCat of catalogData.nexusRedemptions) {
-                         if(mainCat.subcategories) {
-                             for(const subCat of mainCat.subcategories) {
-                                 const catItem = subCat.items.find(i => i.id === itemId);
-                                 if (catItem) {
-                                     catItem.totalRedeemed = (catItem.totalRedeemed || 0) + 1;
-                                     catalogUpdated = true;
-                                 }
-                             }
-                         }
-                     }
-                     if (catalogUpdated) {
-                         transaction.set(catalogRef, catalogData);
-                     }
-                 }
-
-                 transaction.update(userRef, { nexusPoints: currentNexus - item.nexusCost });
-                 transaction.set(doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION)), {
-                    type: 'CANJE', userId: pastRedemptionClient.id, costNexus: item.nexusCost,
-                    item: item.name, timestamp: ts,
-                    costCS: item.cost || 0, // Guardar el costo monetario real para reportes
-                    items: {
-                        [itemId]: { id: itemId, name: item.name, quantity: 1, originalProductId: itemId }
-                    }
-                });
-             });
-             window.showModal("Éxito", "Canje pasado registrado.");
-             
-             // Limpiar formulario tras éxito
-             document.getElementById('past-redemption-user-id').value = '';
-             document.getElementById('past-redemption-client-name').textContent = '';
-             document.getElementById('past-redemption-datetime').value = '';
-             document.getElementById('past-redemption-item-select').value = '';
-             pastRedemptionClient = null;
-         } catch(e) { window.showModal("Error", e.message); }
     };
 
     // --- REPORT FUNCTIONS ---
@@ -6227,26 +6012,37 @@
             validTransactionsCount++;
             
             if(t.type === 'COMPRA') {
-                purchasesCount++;
-                totalSales += t.totalCS || 0;
-                subtotal += t.subtotalCS || 0;
-                iva += t.ivaAmountCS || 0;
+                const isNexusPurchase = t.paymentMethod === 'PUNTOS_NEXUS';
+                
+                if (!isNexusPurchase) {
+                    purchasesCount++;
+                    totalSales += t.totalCS || 0;
+                    subtotal += t.subtotalCS || 0;
+                    iva += t.ivaAmountCS || 0;
+                }
                 
                 if(t.items) {
                      Object.values(t.items).forEach(i => {
                          const cost = i.cost || 0;
                          const quantity = i.quantity || 0;
                          const price = i.price || 0;
-                         totalProfit += (price - cost) * quantity;
-
-                         if(!productSalesMap[i.id]) {
-                             productSalesMap[i.id] = { name: i.name, quantity: 0, revenue: 0 };
+                         
+                         if (isNexusPurchase) {
+                             totalRedemptionCost += (cost * quantity);
+                         } else {
+                             totalProfit += (price - cost) * quantity;
+                             
+                             if(!productSalesMap[i.id]) {
+                                 productSalesMap[i.id] = { name: i.name, quantity: 0, revenue: 0 };
+                             }
+                             productSalesMap[i.id].quantity += quantity;
+                             productSalesMap[i.id].revenue += (price * quantity);
                          }
-                         productSalesMap[i.id].quantity += quantity;
-                         productSalesMap[i.id].revenue += (price * quantity);
                      });
                 } else {
-                    totalProfit += (t.subtotalCS || 0) * 0.3; 
+                    if (!isNexusPurchase) {
+                        totalProfit += (t.subtotalCS || 0) * 0.3; 
+                    }
                 }
                 
                 if(t.isDebt) {
@@ -6254,7 +6050,9 @@
                     debtorMap[t.userId] = (debtorMap[t.userId] || 0) + (t.remainingDebtCS || 0);
                 }
                 
-                spenderMap[t.userId] = (spenderMap[t.userId] || 0) + (t.subtotalCS || 0);
+                if (!isNexusPurchase) {
+                    spenderMap[t.userId] = (spenderMap[t.userId] || 0) + (t.subtotalCS || 0);
+                }
             }
             if(t.type === 'CANJE') totalRedemptionCost += t.costCS || 0; 
             if(t.type === 'DEBT_PAYMENT') totalDebtPaid += t.amount || 0;
@@ -6927,7 +6725,13 @@
             const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleDateString('es-NI') : 'N/A';
             let detail = '', color = 'text-green-300';
             if (item.status === 'anulada') { detail = `(Anulada) Operación Revertida`; color = 'text-gray-500 line-through'; }
-            else if (item.type === 'COMPRA') { detail = `Compra de ${formatCS(item.totalCS)}`; color = 'text-red-300'; }
+            else if (item.type === 'COMPRA') { 
+                if (item.paymentMethod === 'PUNTOS_NEXUS') {
+                    detail = `Compra con ${formatNexus(item.costNexus)}`; color = 'text-yellow-300';
+                } else {
+                    detail = `Compra de ${formatCS(item.totalCS)}`; color = 'text-red-300'; 
+                }
+            }
             else if (item.type === 'CANJE') { detail = `Canjeó "${item.item}"`; color = 'text-yellow-300'; }
             else if (item.type === 'SORTEO_GANADO') { 
                 const wonWhat = item.amountWon > 0 ? (item.isNexus ? formatNexus(item.amountWon) : formatCS(item.amountWon)) : (item.prizeDesc || 'Premio');
@@ -6998,8 +6802,14 @@
 
             if (item.type === 'COMPRA') {
                 borderColor = 'border-blue-900';
+                const isNexusPurchase = item.paymentMethod === 'PUNTOS_NEXUS';
+                
                 if(item.items) {
                     contentHTML = Object.values(item.items).map(p => {
+                        const unitPriceDisplay = isNexusPurchase ? formatNexus(p.priceNexus || item.costNexus) : formatCS(p.price);
+                        const netTotalDisplay = isNexusPurchase ? formatNexus((p.priceNexus || item.costNexus) * p.quantity) : formatCS(p.price * p.quantity);
+                        const textColorClass = isNexusPurchase ? 'text-yellow-400' : 'text-emerald-400';
+
                         let codeHtml = '';
                         if (p.assignedCode) {
                             const codeList = p.assignedCode.split(', ');
@@ -7088,13 +6898,13 @@
                             <div class="flex justify-between items-start mb-1">
                                 <span class="font-bold text-white text-base">${p.name}</span>
                                 <div class="text-right">
-                                    <span class="text-emerald-400 font-bold text-sm block">${formatCS(p.price * p.quantity)}</span>
+                                    <span class="${textColorClass} font-bold text-sm block">${netTotalDisplay}</span>
                                     <span class="text-[10px] text-gray-400 font-mono">Total Neto</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 text-xs text-gray-400 mb-1">
                                 <span class="bg-gray-800 px-2 py-0.5 rounded border border-gray-700">Cant: <strong class="text-white">${p.quantity}</strong></span>
-                                <span class="bg-gray-800 px-2 py-0.5 rounded border border-gray-700">P. Unitario: <strong class="text-white">${formatCS(p.price)}</strong></span>
+                                <span class="bg-gray-800 px-2 py-0.5 rounded border border-gray-700">P. Unitario: <strong class="text-white">${unitPriceDisplay}</strong></span>
                             </div>
                             ${codeHtml}
                             ${pendingHtml}
@@ -7380,8 +7190,13 @@
         }
 
         if (item.type === 'COMPRA') {
+            const isNexusPurchase = item.paymentMethod === 'PUNTOS_NEXUS';
+            
             if(item.items) {
                  Object.values(item.items).forEach(p => {
+                     const unitPriceDisplay = isNexusPurchase ? formatNexus(p.priceNexus || item.costNexus) : formatCS(p.price);
+                     const netTotalDisplay = isNexusPurchase ? formatNexus((p.priceNexus || item.costNexus) * p.quantity) : formatCS(p.price * p.quantity);
+
                      let codeHtml = '';
                      if (p.assignedCode) {
                          const codeList = p.assignedCode.split(', ');
@@ -7419,11 +7234,11 @@
                         </div>
                         <div class="flex justify-between items-end text-xs text-gray-600">
                             <div>
-                                <span class="block">${p.quantity} unid. x ${formatCS(p.price)}</span>
+                                <span class="block">${p.quantity} unid. x ${unitPriceDisplay}</span>
                                 <span class="text-[10px] text-gray-400 uppercase tracking-wider">Precio Unitario</span>
                             </div>
                             <div class="text-right">
-                                <span class="block font-bold text-sm text-gray-900">${formatCS(p.price * p.quantity)}</span>
+                                <span class="block font-bold text-sm text-gray-900">${netTotalDisplay}</span>
                                 <span class="text-[10px] text-gray-400 uppercase tracking-wider">Total Neto</span>
                             </div>
                         </div>
@@ -7434,19 +7249,28 @@
                  if(typeof lucide !== 'undefined') lucide.createIcons();
             } else { itemsContainer.innerHTML = '<p class="text-center italic">- Detalles no disponibles -</p>'; }
 
-            financialHTML = `
-                <div class="border-t border-black pt-2 mt-2">
-                    <div class="flex justify-between"><span>Subtotal:</span><span>${formatCS(item.subtotalCS)}</span></div>
-                    ${item.discountCS > 0 ? `<div class="flex justify-between text-gray-600"><span>Desc:</span><span>-${formatCS(item.discountCS)}</span></div>` : ''}
-                    <div class="flex justify-between"><span>IVA:</span><span>${formatCS(item.ivaAmountCS)}</span></div>
-                    <div class="flex justify-between font-bold text-sm mt-1"><span>TOTAL:</span><span>${formatCS(item.totalCS)}</span></div>
-                </div>
-                <div class="mt-2 pt-1 border-t border-dashed border-gray-400">
-                    <div class="flex justify-between"><span>Pago (${item.paymentMethod || 'N/A'}):</span><span>${formatCS(item.amountPaidCS)}</span></div>
-                    ${item.isDebt ? `<div class="flex justify-between font-bold"><span>Deuda Pendiente (Ref):</span><span>${formatCS(item.remainingDebtCS)}</span></div>` : ''}
-                    ${!item.isDebt && item.amountPaidCS > item.totalCS ? `<div class="flex justify-between"><span>Cambio:</span><span>${formatCS(item.amountPaidCS - item.totalCS)}</span></div>` : ''}
-                </div>
-            `;
+            if (isNexusPurchase) {
+                financialHTML = `
+                    <div class="border-t border-black pt-2 mt-2">
+                        <div class="flex justify-between font-bold text-sm mt-1"><span>TOTAL PAGADO:</span><span class="text-yellow-600">${formatNexus(item.costNexus)}</span></div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1"><span>Método:</span><span>PUNTOS NEXUS</span></div>
+                    </div>
+                `;
+            } else {
+                financialHTML = `
+                    <div class="border-t border-black pt-2 mt-2">
+                        <div class="flex justify-between"><span>Subtotal:</span><span>${formatCS(item.subtotalCS)}</span></div>
+                        ${item.discountCS > 0 ? `<div class="flex justify-between text-gray-600"><span>Desc:</span><span>-${formatCS(item.discountCS)}</span></div>` : ''}
+                        <div class="flex justify-between"><span>IVA:</span><span>${formatCS(item.ivaAmountCS)}</span></div>
+                        <div class="flex justify-between font-bold text-sm mt-1"><span>TOTAL:</span><span>${formatCS(item.totalCS)}</span></div>
+                    </div>
+                    <div class="mt-2 pt-1 border-t border-dashed border-gray-400">
+                        <div class="flex justify-between"><span>Pago (${item.paymentMethod || 'N/A'}):</span><span>${formatCS(item.amountPaidCS)}</span></div>
+                        ${item.isDebt ? `<div class="flex justify-between font-bold"><span>Deuda Pendiente (Ref):</span><span>${formatCS(item.remainingDebtCS)}</span></div>` : ''}
+                        ${!item.isDebt && item.amountPaidCS > item.totalCS ? `<div class="flex justify-between"><span>Cambio:</span><span>${formatCS(item.amountPaidCS - item.totalCS)}</span></div>` : ''}
+                    </div>
+                `;
+            }
         } else if (item.type === 'CANJE') {
             let codeHtml = '';
             if (item.assignedCode) {
