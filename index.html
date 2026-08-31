@@ -819,6 +819,17 @@
                      <h3 class="text-2xl font-bold text-red-400 mb-4">🛒 Gestión de Catálogo (3 Niveles)</h3>
                      <p class="text-sm text-gray-400 mb-4">Estructura: Categoría Principal > Subcategoría > Productos</p>
                      
+                     <!-- NUEVO: Buscador Inteligente Admin -->
+                     <div class="relative mb-6 z-20">
+                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                             <i data-lucide="search" class="w-5 h-5 text-blue-400"></i>
+                         </div>
+                         <input type="text" id="admin-product-search" onkeyup="window.searchAdminProducts()" placeholder="Buscar producto por nombre para editar rápidamente..." class="w-full pl-12 p-4 rounded-xl bg-gray-800 border border-gray-600 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition outline-none shadow-lg">
+                         <div id="admin-product-search-results" class="hidden absolute top-full left-0 w-full mt-2 bg-gray-800 rounded-xl shadow-2xl border border-gray-600 max-h-64 overflow-y-auto z-50 flex-col custom-scrollbar">
+                             <!-- Resultados de búsqueda se inyectan aquí -->
+                         </div>
+                     </div>
+
                      <div class="p-4 bg-blue-900/30 rounded-lg border border-blue-700 mb-6">
                         <h4 class="font-bold text-blue-300 mb-2">➕ Añadir Categoría Principal</h4>
                         <div class="flex gap-2">
@@ -868,7 +879,16 @@
                                     <div id="pos-search-results" class="hidden absolute top-full left-0 w-full mt-1 bg-gray-800 rounded-lg shadow-2xl border border-gray-600 z-50 max-h-48 overflow-y-auto flex-col divide-y divide-gray-700"></div>
                                 </div>
                                 <p id="pos-client-name" class="text-center font-bold h-6"></p>
-                                <div id="pos-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg">
+                                
+                                <!-- NUEVO: Buscador de productos POS -->
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="search" class="w-4 h-4 text-blue-400"></i>
+                                    </div>
+                                    <input type="text" id="pos-product-search" onkeyup="window.filterPosProducts()" placeholder="Buscar producto para agregar..." class="w-full pl-9 p-2 rounded-lg bg-gray-800 border border-gray-600 focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm transition shadow-inner">
+                                </div>
+
+                                <div id="pos-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg mt-2">
                                     <!-- Lista de productos para el POS -->
                                 </div>
                             </div>
@@ -939,7 +959,15 @@
                                         </div>
                                     </div>
                                     
-                                    <div id="past-purchase-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg border border-gray-700"></div>
+                                    <!-- NUEVO: Buscador de productos Transacción Pasada -->
+                                    <div class="relative mt-2">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i data-lucide="search" class="w-4 h-4 text-yellow-400"></i>
+                                        </div>
+                                        <input type="text" id="past-purchase-product-search" onkeyup="window.filterPastProducts()" placeholder="Buscar producto para agregar..." class="w-full pl-9 p-2 rounded-lg bg-gray-800 border border-gray-600 focus:ring-1 focus:ring-yellow-500 focus:outline-none text-sm transition shadow-inner">
+                                    </div>
+
+                                    <div id="past-purchase-product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto bg-gray-900 p-2 rounded-lg border border-gray-700 mt-2"></div>
                                 </div>
                                 <div class="space-y-4 bg-gray-800 p-4 rounded-lg flex flex-col border border-gray-700 shadow-inner">
                                     <h5 class="font-bold text-lg border-b border-gray-700 pb-2">Resumen de Venta Pasada</h5>
@@ -4641,7 +4669,7 @@
                                         const profitDisplay = (parseFloat(displayPrice) - parseFloat(displayCost)).toFixed(2);
 
                                         return `
-                                        <div class="grid grid-cols-1 md:grid-cols-7 gap-2 items-start bg-gray-800 p-2 rounded text-xs">
+                                        <div id="admin-prod-card-${item.id}" class="grid grid-cols-1 md:grid-cols-7 gap-2 items-start bg-gray-800 p-2 rounded text-xs transition-all duration-500">
                                             <div class="md:col-span-2">
                                                 <label class="text-[10px] text-gray-400 block mb-1">Nombre</label>
                                                 <input type="text" id="prod-name-${item.id}" value="${item.name}" class="w-full p-1 rounded bg-gray-700" placeholder="Nombre"/>
@@ -4958,6 +4986,75 @@
         });
     };
 
+    window.searchAdminProducts = () => {
+        const term = document.getElementById('admin-product-search').value.toLowerCase().trim();
+        const resultsBox = document.getElementById('admin-product-search-results');
+        
+        if(!term) {
+            resultsBox.classList.add('hidden');
+            resultsBox.classList.remove('flex');
+            return;
+        }
+        
+        let matches = [];
+        if (productsCatalog && productsCatalog.catalog) {
+            productsCatalog.catalog.forEach(mainCat => {
+                if(mainCat.subcategories) {
+                    mainCat.subcategories.forEach(subCat => {
+                        subCat.products.forEach(p => {
+                            if (p.name.toLowerCase().includes(term) || (p.description && p.description.toLowerCase().includes(term))) {
+                                matches.push({ product: p, mainCat: mainCat.title, subCat: subCat.title });
+                            }
+                        });
+                    });
+                }
+            });
+        }
+        
+        if(matches.length > 0) {
+            resultsBox.innerHTML = matches.slice(0, 15).map(m => `
+                <button onclick="window.scrollToAdminProduct('${m.product.id}')" class="w-full text-left p-4 hover:bg-gray-700 transition border-b border-gray-700 last:border-0 flex justify-between items-center group">
+                    <div>
+                        <span class="block font-bold text-white text-sm group-hover:text-blue-400 transition">${m.product.name}</span>
+                        <span class="block text-xs text-gray-400 mt-1"><i data-lucide="folder" class="w-3 h-3 inline"></i> ${m.mainCat} > <span class="text-gray-300">${m.subCat}</span></span>
+                    </div>
+                    <span class="text-xs bg-blue-900/50 text-blue-300 px-3 py-2 rounded-lg border border-blue-700/50 flex items-center gap-1 group-hover:bg-blue-600 group-hover:text-white transition shadow-sm"><i data-lucide="edit-2" class="w-3 h-3"></i> Editar Rápidamente</span>
+                </button>
+            `).join('');
+        } else {
+            resultsBox.innerHTML = '<div class="p-8 text-center text-red-400 text-sm flex flex-col items-center"><i data-lucide="search-x" class="w-10 h-10 mb-2 opacity-50"></i> No se encontraron productos con ese nombre.</div>';
+        }
+        resultsBox.classList.remove('hidden');
+        resultsBox.classList.add('flex');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.scrollToAdminProduct = (productId) => {
+        document.getElementById('admin-product-search-results').classList.add('hidden');
+        document.getElementById('admin-product-search-results').classList.remove('flex');
+        
+        const card = document.getElementById(`admin-prod-card-${productId}`);
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Efecto visual de resaltado temporal
+            card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-900/40', 'scale-[1.01]', 'shadow-2xl', 'shadow-blue-500/30', 'z-10', 'relative');
+            
+            setTimeout(() => {
+                card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-900/40', 'scale-[1.01]', 'shadow-2xl', 'shadow-blue-500/30', 'z-10', 'relative');
+            }, 2500);
+            
+            // Enfocar automáticamente el input del nombre
+            const nameInput = document.getElementById(`prod-name-${productId}`);
+            if (nameInput) {
+                setTimeout(() => {
+                    nameInput.focus();
+                    nameInput.select();
+                }, 500);
+            }
+        }
+    };
+
     window.renderAdminOrders = () => {
         const container = document.getElementById('admin-pending-orders-list');
         if(!container) return;
@@ -5186,46 +5283,73 @@
         }
     };
 
-    window.renderPosProductList = () => {
+    window.renderPosProductList = (searchTerm = '') => {
         const container = document.getElementById('pos-product-list');
         if (!container || !productsCatalog.catalog) return;
         container.innerHTML = '';
+        
+        const term = searchTerm.toLowerCase().trim();
+
         productsCatalog.catalog.forEach(mainCat => {
             if(mainCat.subcategories) {
                 mainCat.subcategories.forEach(subCat => {
                     subCat.products.forEach(p => {
+                        // Filtro inteligente
+                        if (term && !p.name.toLowerCase().includes(term) && !(p.description && p.description.toLowerCase().includes(term))) {
+                            return;
+                        }
+
                         const isOutOfStock = !p.unlimited && p.inventory <= 0;
                         container.innerHTML += `
-                        <button onclick="window.updatePosCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-blue-600 transition ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : ''}" ${isOutOfStock ? 'disabled' : ''}>
-                            <p class="font-semibold truncate">${p.name}</p>
-                            <p class="text-xs text-gray-300">${formatCS(p.price)}</p>
+                        <button onclick="window.updatePosCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-blue-600 transition flex flex-col justify-between h-full border border-transparent hover:border-blue-400 ${isOutOfStock ? 'opacity-40 cursor-not-allowed' : ''}" ${isOutOfStock ? 'disabled' : ''}>
+                            <p class="font-semibold line-clamp-2">${p.name}</p>
+                            <p class="text-xs text-green-300 font-bold mt-1">${formatCS(p.price)}</p>
                         </button>`;
                     });
                 });
             }
         });
     };
-    window.renderPastPurchaseProductList = () => {
+
+    window.filterPosProducts = () => {
+        const term = document.getElementById('pos-product-search').value;
+        window.renderPosProductList(term);
+    };
+
+    window.renderPastPurchaseProductList = (searchTerm = '') => {
         const container = document.getElementById('past-purchase-product-list');
         if (!container || !productsCatalog.catalog) return;
         container.innerHTML = '';
+        
+        const term = searchTerm.toLowerCase().trim();
+
         productsCatalog.catalog.forEach(mainCat => {
             if(mainCat.subcategories) {
                 mainCat.subcategories.forEach(subCat => {
                     subCat.products.forEach(p => {
+                        // Filtro inteligente
+                        if (term && !p.name.toLowerCase().includes(term) && !(p.description && p.description.toLowerCase().includes(term))) {
+                            return;
+                        }
+
                         container.innerHTML += `
-                        <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-yellow-600 transition border border-gray-600 hover:border-yellow-500">
-                            <p class="font-semibold truncate">${p.name}</p>
-                            <p class="text-xs text-gray-300 mt-1 flex justify-between">
-                                <span>${formatCS(p.price)}</span>
-                                ${p.priceNexus > 0 ? `<span class="text-yellow-400" title="Precio Nexus"><i data-lucide="star" class="w-3 h-3 inline"></i> ${formatNexus(p.priceNexus)}</span>` : ''}
-                            </p>
+                        <button onclick="window.updatePastPurchaseCart('${p.id}', 1)" class="text-left p-2 bg-gray-700 rounded-lg text-sm hover:bg-yellow-600 transition border border-gray-600 hover:border-yellow-500 flex flex-col justify-between h-full">
+                            <p class="font-semibold line-clamp-2">${p.name}</p>
+                            <div class="w-full mt-1">
+                                <p class="text-xs text-green-300 font-bold">${formatCS(p.price)}</p>
+                                ${p.priceNexus > 0 ? `<p class="text-[10px] text-yellow-400 font-bold" title="Precio Nexus"><i data-lucide="star" class="w-3 h-3 inline"></i> ${formatNexus(p.priceNexus)}</p>` : ''}
+                            </div>
                         </button>`;
                     });
                 });
             }
         });
         if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+
+    window.filterPastProducts = () => {
+        const term = document.getElementById('past-purchase-product-search').value;
+        window.renderPastPurchaseProductList(term);
     };
 
     window.createNewUser = async () => {
