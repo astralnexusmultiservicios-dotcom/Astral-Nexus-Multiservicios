@@ -5145,18 +5145,23 @@
                 } catch(e) { window.showModal("Error", e.message); }
             });
         } else if (action === 'reject') {
+            const isNexusPurchase = tx.paymentMethod === 'PUNTOS_NEXUS';
             const ivaRate = adminConfig.ivaPercentage || 0;
-            const refundAmount = (item.price * item.quantity) * (1 + (ivaRate / 100));
-            // Cálculo proporcional de puntos a quitar
+            
+            // Si compró con Nexus, devolvemos Nexus. Si compró con saldo, devolvemos saldo.
+            const refundAmount = isNexusPurchase ? 0 : (item.price * item.quantity) * (1 + (ivaRate / 100));
+            const nexusRefundAmount = isNexusPurchase ? (item.priceNexus || item.cost || 0) * item.quantity : 0;
+            
+            // Cálculo proporcional de puntos a quitar (Solo si ganó puntos comprando con Saldo)
             const subtotalTransaction = tx.subtotalCS || 0;
             const itemSubtotal = (item.price * item.quantity) || 0;
-            const pointsToSubtract = subtotalTransaction > 0 
+            const pointsToSubtract = (!isNexusPurchase && subtotalTransaction > 0) 
                 ? ((itemSubtotal / subtotalTransaction) * (tx.nexusEarned || 0)) 
                 : 0;
 
             const promptHtml = `
-                <p class="mb-4 text-gray-300">¿Rechazar este pedido y devolver automáticamente <strong>${formatCS(refundAmount)}</strong> al saldo del cliente?</p>
-                ${pointsToSubtract > 0 ? `<p class="mb-4 text-xs text-yellow-400 font-bold">⚠️ También se le descontarán ${formatNexus(pointsToSubtract)} del saldo de puntos Nexus.</p>` : ''}
+                <p class="mb-4 text-gray-300">¿Rechazar este pedido y devolver automáticamente <strong>${isNexusPurchase ? formatNexus(nexusRefundAmount) : formatCS(refundAmount)}</strong> al saldo del cliente?</p>
+                ${pointsToSubtract > 0 ? `<p class="mb-4 text-xs text-yellow-400 font-bold">⚠️️ También se le descontarán ${formatNexus(pointsToSubtract)} del saldo de puntos Nexus ganados.</p>` : ''}
                 <div class="mt-2 text-left">
                     <label class="text-xs text-red-400 font-bold uppercase mb-1 block">Motivo del rechazo (Visible para el cliente)</label>
                     <textarea id="reject-reason-input" class="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-red-500 focus:outline-none placeholder-gray-500" rows="3" placeholder="Ej: ID incorrecto, región de la cuenta no coincide, etc..."></textarea>
@@ -5207,10 +5212,20 @@
                             }
                         }
 
-                        // Se devuelven los fondos y se quitan los puntos
+                        // Calcular devolucion correcta (Nexus o Dinero)
+                        let newFunds = currentFunds;
+                        let newNexus = currentNexus;
+                        
+                        if (isNexusPurchase) {
+                            newNexus += nexusRefundAmount;
+                        } else {
+                            newFunds += refundAmount;
+                            newNexus = Math.max(0, currentNexus - pointsToSubtract);
+                        }
+
                         t.update(userRef, { 
-                            fundsCS: currentFunds + refundAmount,
-                            nexusPoints: Math.max(0, currentNexus - pointsToSubtract)
+                            fundsCS: newFunds,
+                            nexusPoints: newNexus
                         });
 
                         // Marcar item como rechazado y añadir el motivo
@@ -5227,16 +5242,117 @@
                             userId: tx.userId,
                             amount: refundAmount,
                             pointsRemoved: pointsToSubtract,
+                            pointsRefunded: nexusRefundAmount,
                             refTransactionId: txId,
                             itemName: item.name,
                             reason: reasonText,
                             timestamp: serverTimestamp()
                         });
                     });
-                    window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado, el dinero se acreditó de vuelta y se ajustaron los puntos del cliente.");
+                    window.showModal("Reembolso Exitoso", "El pedido ha sido rechazado, se acreditó la devolución y se ajustaron los puntos del cliente.");
                 } catch(e) { window.showModal("Error", e.message); }
             });
         }
+    };
+
+    /* NUEVA FUNCIÓN: Cancelar Pedido Pendiente (Cliente) */
+    window.clientCancelPendingItem = (txId, cartKey) => {
+        const tx = purchaseHistoryData.find(t => t.id === txId);
+        if (!tx) return;
+        const item = tx.items[cartKey];
+        if (!item || item.itemStatus !== 'pending') return;
+
+        window.showConfirmModal("Cancelar Pedido", "¿Estás seguro de que deseas cancelar esta recarga?<br><br>Se te devolverá el saldo o los puntos de este artículo automáticamente a tu billetera y el pedido dejará de estar en cola.", async () => {
+            try {
+                const isNexusPurchase = tx.paymentMethod === 'PUNTOS_NEXUS';
+                const ivaRate = adminConfig.ivaPercentage || 0;
+                
+                const refundAmount = isNexusPurchase ? 0 : (item.price * item.quantity) * (1 + (ivaRate / 100));
+                const nexusRefundAmount = isNexusPurchase ? (item.priceNexus || item.cost || 0) * item.quantity : 0;
+                
+                const subtotalTransaction = tx.subtotalCS || 0;
+                const itemSubtotal = (item.price * item.quantity) || 0;
+                const pointsToSubtract = (!isNexusPurchase && subtotalTransaction > 0) 
+                    ? ((itemSubtotal / subtotalTransaction) * (tx.nexusEarned || 0)) 
+                    : 0;
+
+                await runTransaction(db, async (t) => {
+                    const txRef = doc(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION, txId);
+                    const userRef = doc(db, COLLECTIONS.USER_PROFILE(tx.userId));
+                    const catalogRef = doc(db, COLLECTIONS.PRODUCTS, 'catalog');
+                    
+                    const userDoc = await t.get(userRef);
+                    const catalogDoc = await t.get(catalogRef);
+
+                    if (!userDoc.exists()) throw new Error("Usuario no encontrado");
+
+                    const currentFunds = userDoc.data().fundsCS || 0;
+                    const currentNexus = userDoc.data().nexusPoints || 0;
+
+                    let catalogData = null;
+                    if (catalogDoc.exists()) {
+                        catalogData = catalogDoc.data();
+                        let catalogUpdated = false;
+                        const originalProductId = item.originalProductId || item.id;
+                        
+                        for (const mainCat of catalogData.catalog) {
+                            if (mainCat.subcategories) {
+                                for (const subCat of mainCat.subcategories) {
+                                    const product = subCat.products.find(p => p.id === originalProductId);
+                                    if (product) {
+                                        product.totalSold = Math.max(0, (product.totalSold || 0) - item.quantity);
+                                        if (!product.unlimited && product.availableCodes === undefined) {
+                                            product.inventory = (product.inventory || 0) + item.quantity;
+                                        }
+                                        catalogUpdated = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (catalogUpdated) {
+                            t.set(catalogRef, catalogData);
+                        }
+                    }
+
+                    let newFunds = currentFunds;
+                    let newNexus = currentNexus;
+                    
+                    if (isNexusPurchase) {
+                        newNexus += nexusRefundAmount;
+                    } else {
+                        newFunds += refundAmount;
+                        newNexus = Math.max(0, currentNexus - pointsToSubtract);
+                    }
+
+                    t.update(userRef, { 
+                        fundsCS: newFunds,
+                        nexusPoints: newNexus
+                    });
+
+                    t.update(txRef, {
+                        [`items.${cartKey}.itemStatus`]: 'rejected',
+                        [`items.${cartKey}.rejectedAt`]: serverTimestamp(),
+                        [`items.${cartKey}.rejectReason`]: 'Cancelado por el cliente antes de ser procesado'
+                    });
+
+                    const refundLogRef = doc(collection(db, COLLECTIONS.PURCHASE_HISTORY_COLLECTION));
+                    t.set(refundLogRef, {
+                        type: 'REEMBOLSO_RECARGA',
+                        userId: tx.userId,
+                        amount: refundAmount,
+                        pointsRemoved: pointsToSubtract,
+                        pointsRefunded: nexusRefundAmount,
+                        refTransactionId: txId,
+                        itemName: item.name,
+                        reason: 'Cancelado por el cliente',
+                        timestamp: serverTimestamp()
+                    });
+                });
+                window.showModal("¡Pedido Cancelado!", "Has cancelado la recarga exitosamente y se te ha devuelto tu saldo automáticamente.");
+            } catch(e) {
+                window.showModal("Error", "No se pudo cancelar el pedido: " + e.message);
+            }
+        });
     };
 
     window.openEditPlayerInfoModal = (txId, cartKey, currentId, currentName) => {
@@ -6866,7 +6982,14 @@
             else if (item.type === 'DEBT_ADDED') { detail = `Deuda añadida ${formatCS(item.amount)}`; color = 'text-red-400'; }
             else if (item.type === 'AJUSTE_MANUAL') { detail = `Ajuste: ${item.adjustmentType === 'add' ? '+' : '-'}${item.amount} ${item.currency}`; color = 'text-blue-300'; }
             else if (item.type === 'SORTEO_ENTRADA') { detail = `Rifa: ${item.raffleType}`; color = 'text-gray-400'; }
-            else if (item.type === 'REEMBOLSO_RECARGA') { detail = `Reembolso: +${formatCS(item.amount)} | -${formatNexus(item.pointsRemoved)}`; color = 'text-green-400'; }
+            else if (item.type === 'REEMBOLSO_RECARGA') { 
+                let detailsArr = [];
+                if (item.amount > 0) detailsArr.push(`+${formatCS(item.amount)}`);
+                if (item.pointsRefunded > 0) detailsArr.push(`+${formatNexus(item.pointsRefunded)}`);
+                if (item.pointsRemoved > 0) detailsArr.push(`-${formatNexus(item.pointsRemoved)}`);
+                detail = `Reembolso: ${detailsArr.join(' | ')}`; 
+                color = 'text-green-400'; 
+            }
             else if (item.type === 'SORTEO_REEMBOLSO') { detail = `Reembolso Sorteo: +${item.currency==='nexus'?formatNexus(item.amount):formatCS(item.amount)}`; color = 'text-green-400'; }
             else if (item.type === 'RECOMPENSA_DIARIA') { detail = `Cofre Diario: +${item.amount.toFixed(2)} Pts`; color = 'text-purple-400 font-bold'; }
             else if (item.type === 'RECOMPENSA_DIARIA_VACIA') { detail = `Cofre Diario: Vacío (0 Pts)`; color = 'text-gray-400'; }
@@ -6929,7 +7052,7 @@
                 const isNexusPurchase = item.paymentMethod === 'PUNTOS_NEXUS';
                 
                 if(item.items) {
-                    contentHTML = Object.values(item.items).map(p => {
+                    contentHTML = Object.entries(item.items).map(([cartKey, p]) => {
                         const unitPriceDisplay = isNexusPurchase ? formatNexus(p.priceNexus || item.costNexus) : formatCS(p.price);
                         const netTotalDisplay = isNexusPurchase ? formatNexus((p.priceNexus || item.costNexus) * p.quantity) : formatCS(p.price * p.quantity);
                         const textColorClass = isNexusPurchase ? 'text-yellow-400' : 'text-emerald-400';
@@ -6980,8 +7103,20 @@
                             if (p.itemStatus === 'pending') {
                                 pendingFulfillmentHtml = `
                                 <div class="mt-2 p-3 bg-yellow-900/20 rounded-lg border border-yellow-500/30">
-                                    <span class="text-xs text-yellow-400 font-bold flex items-center gap-2"><i data-lucide="loader" class="w-4 h-4 animate-spin"></i> En Proceso por Administrador</span>
-                                    <p class="text-[10px] text-gray-400 mt-1">Tu recarga está siendo procesada para el ID: ${p.playerInfo?.id} (${p.playerInfo?.name}).</p>
+                                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                        <div>
+                                            <span class="text-xs text-yellow-400 font-bold flex items-center gap-2"><i data-lucide="loader" class="w-4 h-4 animate-spin"></i> En Proceso por Administrador</span>
+                                            <p class="text-[10px] text-gray-400 mt-1">Tu recarga está en cola para el ID: <strong class="text-white bg-black/40 px-1 py-0.5 rounded border border-gray-700">${p.playerInfo?.id}</strong> (${p.playerInfo?.name}).</p>
+                                        </div>
+                                        <div class="flex gap-2 w-full sm:w-auto">
+                                            <button onclick="window.openEditPlayerInfoModal('${item.id}', '${cartKey}', '${(p.playerInfo?.id || '').replace(/'/g, "\\'")}', '${(p.playerInfo?.name || '').replace(/'/g, "\\'")}')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600/80 hover:bg-blue-500 text-white rounded transition shadow-sm active:scale-95 flex items-center justify-center gap-1 text-[10px] font-bold border border-blue-500/50" title="Corregir datos de jugador">
+                                                <i data-lucide="edit-2" class="w-3 h-3"></i> Editar
+                                            </button>
+                                            <button onclick="window.clientCancelPendingItem('${item.id}', '${cartKey}')" class="flex-1 sm:flex-none px-3 py-1.5 bg-red-600/80 hover:bg-red-500 text-white rounded transition shadow-sm active:scale-95 flex items-center justify-center gap-1 text-[10px] font-bold border border-red-500/50" title="Cancelar este pedido">
+                                                <i data-lucide="x" class="w-3 h-3"></i> Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>`;
                             } else if (p.itemStatus === 'completed') {
                                 const compDate = p.completedAt ? new Date(p.completedAt.seconds * 1000).toLocaleString('es-NI') : 'Fecha desconocida';
@@ -7106,15 +7241,20 @@
                 contentHTML = `<p class="text-green-400 font-bold">🏆 Ganaste: ${item.prizeDesc || prize}</p><p class="text-xs text-gray-400">En sorteo: ${item.raffleName}</p>`;
             } else if (item.type === 'REEMBOLSO_RECARGA') {
                 borderColor = 'border-green-900/50';
+                
+                let refundDetails = '';
+                if (item.amount > 0) refundDetails += `<div class="flex justify-between items-center"><span class="text-gray-400">Fondos Devueltos:</span><span class="text-green-400 font-bold">+ ${formatCS(item.amount)}</span></div>`;
+                if (item.pointsRefunded > 0) refundDetails += `<div class="flex justify-between items-center"><span class="text-gray-400">Nexus Devueltos:</span><span class="text-yellow-400 font-bold">+ ${formatNexus(item.pointsRefunded)}</span></div>`;
+                if (item.pointsRemoved > 0) refundDetails += `<div class="flex justify-between items-center"><span class="text-gray-400">Puntos Restados:</span><span class="text-red-400 font-bold">- ${formatNexus(item.pointsRemoved)}</span></div>`;
+
                 contentHTML = `
                 <div class="flex items-center gap-2 mb-2">
                     <span class="bg-green-900/40 text-green-400 px-2 py-1 rounded text-[10px] font-bold border border-green-700/50 flex items-center gap-1"><i data-lucide="refresh-ccw" class="w-3 h-3"></i> REEMBOLSO DE RECARGA</span>
                 </div>
                 <p class="text-gray-300 text-sm mb-1">Item: <span class="font-bold text-white">${item.itemName || 'Desconocido'}</span></p>
-                <p class="text-gray-300 text-sm mb-2">Motivo: <span class="text-white italic">"${item.reason || 'Pedido rechazado por el administrador'}"</span></p>
-                <div class="bg-black/40 p-3 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm">
-                    <div class="flex justify-between items-center"><span class="text-gray-400">Fondos Devueltos:</span><span class="text-green-400 font-bold">+ ${formatCS(item.amount)}</span></div>
-                    ${item.pointsRemoved > 0 ? `<div class="flex justify-between items-center"><span class="text-gray-400">Puntos Restados:</span><span class="text-red-400 font-bold">- ${formatNexus(item.pointsRemoved)}</span></div>` : ''}
+                <p class="text-gray-300 text-sm mb-2">Motivo: <span class="text-white italic">"${item.reason || 'Pedido rechazado/cancelado'}"</span></p>
+                <div class="bg-black/40 p-3 rounded-lg border border-gray-700/50 flex flex-col gap-1 text-sm shadow-inner">
+                    ${refundDetails}
                 </div>`;
             } else if (item.type === 'SORTEO_REEMBOLSO') {
                 borderColor = 'border-purple-900/50';
@@ -7474,7 +7614,8 @@
             `;
             financialHTML = `
                 <div class="border-t border-black pt-2 mt-2">
-                    <div class="flex justify-between text-green-700 font-bold text-sm"><span>Fondos Devueltos:</span><span>+${formatCS(item.amount)}</span></div>
+                    ${item.amount > 0 ? `<div class="flex justify-between text-green-700 font-bold text-sm"><span>Fondos Devueltos:</span><span>+${formatCS(item.amount)}</span></div>` : ''}
+                    ${item.pointsRefunded > 0 ? `<div class="flex justify-between text-yellow-600 font-bold mt-1 text-sm"><span>Nexus Devueltos:</span><span>+${formatNexus(item.pointsRefunded)}</span></div>` : ''}
                     ${item.pointsRemoved > 0 ? `<div class="flex justify-between text-red-600 font-bold mt-1 text-sm"><span>Puntos Restados:</span><span>-${formatNexus(item.pointsRemoved)}</span></div>` : ''}
                 </div>
             `;
