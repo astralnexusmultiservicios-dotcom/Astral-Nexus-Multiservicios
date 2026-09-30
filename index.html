@@ -818,6 +818,7 @@
                 <button onclick="window.changeAdminTab('recharges')" id="tab-admin-recharges" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Recargas</button>
                 <button onclick="window.changeAdminTab('payments')" id="tab-admin-payments" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="landmark" class="w-4 h-4"></i> Métodos Pago</button>
                 <button onclick="window.changeAdminTab('promocodes')" id="tab-admin-promocodes" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="ticket" class="w-4 h-4"></i> Códigos Regalo</button>
+                <button onclick="window.changeAdminTab('discounts')" id="tab-admin-discounts" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4"></i> Cupones Descuento</button>
                 <button onclick="window.changeAdminTab('config')" id="tab-admin-config" class="flex-shrink-0 px-4 py-2 text-sm font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Configuración</button>
             </div>
             <div id="admin-content">
@@ -1442,6 +1443,67 @@
                     </div>
                 </div>
 
+                <!-- Pestaña 10: Cupones de Descuento (NUEVA) -->
+                <div id="content-admin-discounts" class="hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-cyan-400 flex items-center gap-2"><i data-lucide="tag" class="w-6 h-6"></i> Cupones de Descuento</h3>
+                            <p class="text-gray-400 text-sm mt-1">Crea códigos para que los clientes obtengan un % de descuento en su carrito. Define límites por usuario o globales.</p>
+                        </div>
+                        <button onclick="window.showDiscountCodeForm()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition shadow-lg flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Cupón
+                        </button>
+                    </div>
+
+                    <div id="discount-code-form-container" class="hidden bg-gray-800 p-6 rounded-xl border border-cyan-900/50 shadow-lg mb-8 relative">
+                        <input type="hidden" id="edit-discount-original-code" value="">
+                        <button onclick="window.hideDiscountCodeForm()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition" title="Cancelar"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        <h4 id="discount-form-title" class="font-bold text-cyan-300 mb-4">Crear Nuevo Cupón</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Código (Ej: VERANO26)</label>
+                                <input type="text" id="new-discount-code" placeholder="CÓDIGO ÚNICO" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 outline-none uppercase font-mono tracking-widest">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Descuento (%)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="text-cyan-400 font-bold">%</span></div>
+                                    <input type="number" id="new-discount-percent" placeholder="Ej: 15" class="w-full pl-10 p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 outline-none" min="0" max="100">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Límite por Cliente (0 = Ilimitado)</label>
+                                <input type="number" id="new-discount-user-limit" placeholder="Ej: 1" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 outline-none" min="0">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Límite Global (0 = Ilimitado)</label>
+                                <input type="number" id="new-discount-total-limit" placeholder="Ej: 100" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 outline-none" min="0">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 font-bold uppercase mb-1 block">Fecha Vencimiento (Opcional)</label>
+                                <input type="date" id="new-discount-expiry" class="w-full p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-cyan-500 outline-none">
+                            </div>
+                            <div class="flex items-center pb-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="new-discount-active" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+                                    <span class="ml-3 text-sm font-bold text-gray-300">Activo</span>
+                                </label>
+                            </div>
+                            <div class="md:col-span-2 lg:col-span-3">
+                                <button id="btn-save-discount" onclick="window.saveDiscountCode()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg shadow-lg shadow-cyan-900/30 transition flex items-center justify-center gap-2 active:scale-95">
+                                    <i data-lucide="save" class="w-5 h-5"></i> Guardar Cupón
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-discounts-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- Lista de cupones renderizada aquí -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
@@ -1911,7 +1973,9 @@
         RAFFLE_ENTRIES: `artifacts/${appId}/public/data/raffle_entries`,
         PAYMENT_METHODS: `artifacts/${appId}/public/data/payment_methods`, // Nueva colección
         CURRENCIES: `artifacts/${appId}/public/data/currencies`, // Nueva colección para divisas
-        PROMO_CODES: `artifacts/${appId}/public/data/promo_codes`, // Nueva colección Códigos
+        PROMO_CODES: `artifacts/${appId}/public/data/promo_codes`, // Nueva colección Códigos Regalo
+        DISCOUNT_CODES: `artifacts/${appId}/public/data/discount_codes`, // Nueva colección Cupones
+        DISCOUNT_USAGES: `artifacts/${appId}/public/data/discount_usages` // Rastreo individual de cupones
     };
 
     let app, db, auth, functions; // Declaramos functions aquí
@@ -1932,11 +1996,13 @@
     let paymentMethodsData = []; // Datos de métodos de pago
     let currenciesData = []; // Datos de divisas
     let promoCodesData = []; // Datos de códigos promocionales
+    let discountCodesData = []; // Datos de cupones de descuento
     window.currentSelectedCurrency = 'base'; // Divisa seleccionada por defecto
     
-    // Variables para Sistema de Referidos
+    // Variables para Sistema de Referidos y Cupones
     window.appliedReferralCode = null;
     window.appliedReferralSponsor = null;
+    window.appliedPromoCode = null; // Guardará el objeto del cupón activo
     
     let confirmCallback = null;
     let unsubscribes = [];
@@ -2230,7 +2296,7 @@
     };
 
     window.changeAdminTab = (tabName) => {
-        ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments', 'promocodes'].forEach(tab => {
+        ['users', 'products', 'raffles', 'sales', 'config', 'orders', 'recharges', 'payments', 'promocodes', 'discounts'].forEach(tab => {
             const btn = document.getElementById(`tab-admin-${tab}`);
             const content = document.getElementById(`content-admin-${tab}`);
             if (btn && content) {
@@ -2252,6 +2318,7 @@
         if(tabName === 'payments') window.renderAdminPaymentMethods();
         if(tabName === 'config' && window.renderAdminCurrencies) window.renderAdminCurrencies();
         if(tabName === 'promocodes') window.renderAdminPromoCodes();
+        if(tabName === 'discounts') window.renderAdminDiscountCodes();
     };
 
     window.toggleMaintenanceState = async (isEnabled) => {
@@ -3095,34 +3162,51 @@
         const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         
         const ivaRate = adminConfig.ivaPercentage || 0;
-        let referralDiscountAmount = 0;
-        let referralDiscountText = '';
+        let appliedDiscountAmount = 0;
+        let discountTextHTML = '';
         
+        // Determinar qué tipo de código está aplicado (Referido o Promo)
         if (adminConfig.referralsEnabled !== false && window.appliedReferralCode && currentUserProfile && !currentUserProfile.referralDiscountUsed && window.appliedReferralSponsor) {
             const discPercent = adminConfig.referralDiscountPercent !== undefined ? adminConfig.referralDiscountPercent : 5;
-            referralDiscountAmount = subtotal * (discPercent / 100);
-            referralDiscountText = `
+            appliedDiscountAmount = subtotal * (discPercent / 100);
+            discountTextHTML = `
                 <div class="flex justify-between text-emerald-400 font-bold mt-1">
                     <span>Descuento Referido (${discPercent}%):</span>
-                    <span>-${formatCS(referralDiscountAmount)}</span>
+                    <span>-${formatCS(appliedDiscountAmount)}</span>
+                </div>
+            `;
+        } else if (window.appliedPromoCode) {
+            const discPercent = window.appliedPromoCode.discountPercentage || 0;
+            appliedDiscountAmount = subtotal * (discPercent / 100);
+            discountTextHTML = `
+                <div class="flex justify-between text-cyan-400 font-bold mt-1">
+                    <span>Cupón "${window.appliedPromoCode.id}" (${discPercent}%):</span>
+                    <span>-${formatCS(appliedDiscountAmount)}</span>
                 </div>
             `;
         }
         
-        const taxBase = Math.max(0, subtotal - referralDiscountAmount);
+        const taxBase = Math.max(0, subtotal - appliedDiscountAmount);
         const ivaAmount = taxBase * (ivaRate / 100);
         const totalCost = taxBase + ivaAmount;
         
-        let referralInputHTML = '';
-        if (adminConfig.referralsEnabled !== false && currentUserProfile && !currentUserProfile.referralDiscountUsed && !currentUserProfile.referredBy) {
-            referralInputHTML = `
-                <div id="referral-input-container" class="mt-4 pt-4 border-t border-slate-700/50">
-                   <label class="text-xs text-slate-400 uppercase font-bold mb-2 flex items-center gap-1"><i data-lucide="tag" class="w-3 h-3"></i> ¿Tienes un código de referido?</label>
+        let promoInputHTML = '';
+        // Solo mostrar la caja si no hay referidos usados obligatorios o si hay espacio para cupones
+        if ((!currentUserProfile || !currentUserProfile.referralDiscountUsed) || adminConfig.referralsEnabled === false || true) {
+            let activeCode = window.appliedReferralCode || (window.appliedPromoCode ? window.appliedPromoCode.id : '');
+            let successMessage = '';
+            
+            if (window.appliedReferralCode) successMessage = `✓ Código aplicado. Patrocinador: ${window.appliedReferralSponsor.name}`;
+            else if (window.appliedPromoCode) successMessage = `✓ Cupón aplicado (${window.appliedPromoCode.discountPercentage}% off).`;
+
+            promoInputHTML = `
+                <div id="promo-input-container" class="mt-4 pt-4 border-t border-slate-700/50">
+                   <label class="text-xs text-slate-400 uppercase font-bold mb-2 flex items-center gap-1"><i data-lucide="tag" class="w-3 h-3"></i> ¿Tienes un código promocional o referido?</label>
                    <div class="flex gap-2">
-                       <input type="text" id="cart-referral-code" value="${window.appliedReferralCode || ''}" placeholder="Ej: JUAN1234" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white uppercase focus:border-emerald-500 outline-none">
-                       <button onclick="window.applyReferralCode()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-md whitespace-nowrap">Aplicar</button>
+                       <input type="text" id="cart-promo-code" value="${activeCode}" placeholder="Ej: VERANO2026 o JUAN123" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white uppercase focus:border-emerald-500 outline-none">
+                       <button onclick="window.applyPromoOrReferralCode()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-md whitespace-nowrap">Aplicar</button>
                    </div>
-                   <p id="referral-message" class="text-[10px] mt-1 ${window.appliedReferralCode ? 'text-green-400' : ''}">${window.appliedReferralCode ? `✓ Código aplicado. Patrocinador: ${window.appliedReferralSponsor.name}` : ''}</p>
+                   <p id="promo-message" class="text-[10px] mt-1 ${activeCode ? 'text-green-400 font-bold' : ''}">${successMessage}</p>
                 </div>
             `;
         }
@@ -3165,10 +3249,10 @@
                         </div>`}).join('')}</div>
                 <div class="mt-4 pt-4 border-t border-slate-700 text-sm">
                     <div class="flex justify-between text-slate-400"><span>Subtotal:</span><span>${formatCS(subtotal)}</span></div>
-                    ${referralDiscountText}
+                    ${discountTextHTML}
                     <div class="flex justify-between text-slate-400"><span>IVA (${ivaRate}%):</span><span>${formatCS(ivaAmount)}</span></div>
                     <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-slate-700/50"><span>Total:</span><span class="text-emerald-400">${formatCS(totalCost)}</span></div>
-                    ${referralInputHTML}
+                    ${promoInputHTML}
                 </div>`;
             totalDetailsBar.innerHTML = `Subtotal: ${formatCS(subtotal)} + IVA: ${formatCS(ivaAmount)}`;
             purchaseButton.disabled = false; purchaseButton.classList.remove('opacity-50', 'cursor-not-allowed'); lucide.createIcons();
@@ -3176,37 +3260,91 @@
         totalDisplayBottomBar.textContent = formatCS(totalCost);
     };
 
-    window.applyReferralCode = async () => {
-        const codeInput = document.getElementById('cart-referral-code');
+    window.applyPromoOrReferralCode = async () => {
+        const codeInput = document.getElementById('cart-promo-code');
         if (!codeInput) return;
         
         const code = codeInput.value.trim().toUpperCase();
-        const msgEl = document.getElementById('referral-message');
+        const msgEl = document.getElementById('promo-message');
         
         if(!code) { msgEl.textContent = "Ingresa un código."; msgEl.className = "text-[10px] mt-1 text-red-400"; return; }
-        if(code === currentUserProfile.myReferralCode) {
-            msgEl.textContent = "No puedes usar tu propio código."; msgEl.className = "text-[10px] mt-1 text-red-400"; return;
-        }
+        
+        // Reset state
+        window.appliedReferralCode = null;
+        window.appliedReferralSponsor = null;
+        window.appliedPromoCode = null;
         
         try {
-            const q = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("myReferralCode", "==", code), limit(1));
-            const snap = await getDocs(q);
-            
-            if(snap.empty) {
-                msgEl.textContent = "✕ El código de referido no es válido."; msgEl.className = "text-[10px] mt-1 text-red-400";
-                window.appliedReferralCode = null;
-                window.appliedReferralSponsor = null;
+            // 1. Verificar si es código de referido (Si está habilitado)
+            if(adminConfig.referralsEnabled !== false && code !== currentUserProfile.myReferralCode) {
+                const qRef = query(collection(db, COLLECTIONS.USER_PROFILES_COLLECTION), where("myReferralCode", "==", code), limit(1));
+                const snapRef = await getDocs(qRef);
+                
+                if(!snapRef.empty) {
+                    if (currentUserProfile.referralDiscountUsed || currentUserProfile.referredBy) {
+                        msgEl.textContent = "✕ Ya utilizaste un código de referido en tu primera compra."; msgEl.className = "text-[10px] mt-1 text-red-400";
+                        window.renderCartSummary();
+                        return;
+                    }
+                    const sponsorDoc = snapRef.docs[0];
+                    window.appliedReferralCode = code;
+                    window.appliedReferralSponsor = { id: sponsorDoc.id, name: sponsorDoc.data().name };
+                    window.renderCartSummary();
+                    return;
+                }
+            } else if (code === currentUserProfile.myReferralCode) {
+                msgEl.textContent = "✕ No puedes utilizar tu propio código de referido."; msgEl.className = "text-[10px] mt-1 text-red-400";
                 window.renderCartSummary();
                 return;
             }
+
+            // 2. Si no fue referido, verificar si es un Cupón de Descuento (Admin)
+            const promoRef = doc(db, COLLECTIONS.DISCOUNT_CODES, code);
+            const promoSnap = await getDoc(promoRef);
             
-            const sponsorDoc = snap.docs[0];
-            const sponsorData = sponsorDoc.data();
-            
-            window.appliedReferralCode = code;
-            window.appliedReferralSponsor = { id: sponsorDoc.id, name: sponsorData.name };
-            
+            if (promoSnap.exists()) {
+                const promo = promoSnap.data();
+                
+                if (promo.status !== 'active') {
+                    msgEl.textContent = "✕ Este cupón no está activo en este momento."; msgEl.className = "text-[10px] mt-1 text-red-400";
+                    window.renderCartSummary(); return;
+                }
+                
+                if (promo.expiresAt) {
+                    const expiryDate = new Date(promo.expiresAt.seconds * 1000);
+                    // Establecer final del día para la fecha de expiración
+                    expiryDate.setHours(23, 59, 59, 999);
+                    if (new Date() > expiryDate) {
+                        msgEl.textContent = "✕ Este cupón ya expiró."; msgEl.className = "text-[10px] mt-1 text-red-400";
+                        window.renderCartSummary(); return;
+                    }
+                }
+                
+                if (promo.totalLimit > 0 && (promo.totalUsed || 0) >= promo.totalLimit) {
+                    msgEl.textContent = "✕ Este cupón ha alcanzado su límite máximo de usos global."; msgEl.className = "text-[10px] mt-1 text-red-400";
+                    window.renderCartSummary(); return;
+                }
+                
+                if (promo.perUserLimit > 0) {
+                    const usageRef = doc(db, COLLECTIONS.DISCOUNT_USAGES, `${code}_${currentUserId}`);
+                    const usageSnap = await getDoc(usageRef);
+                    const userUses = usageSnap.exists() ? (usageSnap.data().count || 0) : 0;
+                    if (userUses >= promo.perUserLimit) {
+                        msgEl.textContent = "✕ Ya alcanzaste tu límite personal de uso para este cupón."; msgEl.className = "text-[10px] mt-1 text-red-400";
+                        window.renderCartSummary(); return;
+                    }
+                }
+
+                // Es válido
+                window.appliedPromoCode = { id: promoSnap.id, ...promo };
+                window.renderCartSummary();
+                return;
+            }
+
+            // Si no fue ninguno
+            msgEl.textContent = "✕ El código ingresado no existe o no es válido."; msgEl.className = "text-[10px] mt-1 text-red-400";
             window.renderCartSummary();
+
         } catch (error) {
             console.error("Error al validar código:", error);
             msgEl.textContent = "Error al validar el código."; msgEl.className = "text-[10px] mt-1 text-red-400";
@@ -4573,13 +4711,17 @@
             try {
                 const subtotal = Object.values(cleanCart).reduce((sum, item) => sum + item.price * item.quantity, 0);
                 
-                let referralDiscountAmount = 0;
+                let appliedDiscountAmount = 0;
                 const discPercent = adminConfig.referralDiscountPercent !== undefined ? adminConfig.referralDiscountPercent : 5;
+                
+                // Pre-cálculos de descuento (Frontend estimación)
                 if (adminConfig.referralsEnabled !== false && window.appliedReferralCode && !currentUserProfile.referralDiscountUsed && window.appliedReferralSponsor) {
-                    referralDiscountAmount = subtotal * (discPercent / 100);
+                    appliedDiscountAmount = subtotal * (discPercent / 100);
+                } else if (window.appliedPromoCode) {
+                    appliedDiscountAmount = subtotal * ((window.appliedPromoCode.discountPercentage || 0) / 100);
                 }
 
-                const taxBase = Math.max(0, subtotal - referralDiscountAmount);
+                const taxBase = Math.max(0, subtotal - appliedDiscountAmount);
                 const ivaRate = adminConfig.ivaPercentage || 0; 
                 const ivaAmount = taxBase * (ivaRate / 100);
                 const totalCostCS = taxBase + ivaAmount;
@@ -4599,8 +4741,61 @@
                     const catalogDoc = await transaction.get(productCatalogRef);
                     if (!userDoc.exists() || !catalogDoc.exists()) throw new Error("DATA_MISSING");
 
+                    let finalDiscountAmount = 0;
+                    let promoCodeRef = null;
+                    let promoCodeData = null;
+                    let promoUsageRef = null;
+                    let currentUserUsageCount = 0;
+
+                    // 1. REVALIDAR DESCUENTOS DE FORMA SEGURA EN LA TRANSACCIÓN
+                    // Caso A: Referido
+                    let sponsorRef = null;
+                    let sponsorDoc = null;
+                    let isNewSponsor = false;
+
+                    if (adminConfig.referralsEnabled !== false && window.appliedReferralCode && !userDoc.data().referralDiscountUsed && window.appliedReferralSponsor) {
+                        sponsorRef = doc(db, COLLECTIONS.USER_PROFILE(window.appliedReferralSponsor.id));
+                        sponsorDoc = await transaction.get(sponsorRef);
+                        isNewSponsor = true;
+                        finalDiscountAmount = subtotal * (discPercent / 100);
+                    } 
+                    else if (userDoc.data().referredBy) {
+                        sponsorRef = doc(db, COLLECTIONS.USER_PROFILE(userDoc.data().referredBy));
+                        sponsorDoc = await transaction.get(sponsorRef);
+                    }
+                    
+                    // Caso B: Cupón de Descuento Promocional
+                    if (window.appliedPromoCode) {
+                        promoCodeRef = doc(db, COLLECTIONS.DISCOUNT_CODES, window.appliedPromoCode.id);
+                        const pDoc = await transaction.get(promoCodeRef);
+                        
+                        if (!pDoc.exists() || pDoc.data().status !== 'active') throw new Error("codigo_invalido");
+                        promoCodeData = pDoc.data();
+                        
+                        if (promoCodeData.expiresAt) {
+                            const exp = new Date(promoCodeData.expiresAt.seconds * 1000);
+                            exp.setHours(23, 59, 59, 999);
+                            if (new Date() > exp) throw new Error("codigo_expirado");
+                        }
+                        if (promoCodeData.totalLimit > 0 && (promoCodeData.totalUsed || 0) >= promoCodeData.totalLimit) throw new Error("codigo_limite_global");
+                        
+                        if (promoCodeData.perUserLimit > 0) {
+                            promoUsageRef = doc(db, COLLECTIONS.DISCOUNT_USAGES, `${promoCodeData.id}_${currentUserId}`);
+                            const uDoc = await transaction.get(promoUsageRef);
+                            currentUserUsageCount = uDoc.exists() ? (uDoc.data().count || 0) : 0;
+                            if (currentUserUsageCount >= promoCodeData.perUserLimit) throw new Error("codigo_limite_usuario");
+                        }
+                        finalDiscountAmount = subtotal * ((promoCodeData.discountPercentage || 0) / 100);
+                    }
+
+                    // Recalcular base con el descuento transaccional seguro
+                    const safeTaxBase = Math.max(0, subtotal - finalDiscountAmount);
+                    const safeIvaAmount = safeTaxBase * (ivaRate / 100);
+                    const safeTotalCostCS = safeTaxBase + safeIvaAmount;
+                    const safeNexusEarned = adminConfig.nexusEnabled ? parseFloat((safeTaxBase / adminConfig.nexusValueInCS).toFixed(2)) : 0;
+
                     const currentFunds = userDoc.data().fundsCS || 0;
-                    if (currentFunds < totalCostCS) throw new Error("insufficient_funds");
+                    if (currentFunds < safeTotalCostCS) throw new Error("insufficient_funds");
 
                     const newCatalogData = catalogDoc.data();
                     
@@ -4645,31 +4840,15 @@
                         if (!productFound) throw new Error(`Producto no encontrado.`);
                     }
 
-                    // Determinar patrocinador para la comisión
-                    let sponsorRef = null;
-                    let sponsorDoc = null;
-                    let isNewSponsor = false;
-
-                    if (adminConfig.referralsEnabled !== false) {
-                        if (window.appliedReferralCode && !userDoc.data().referralDiscountUsed && window.appliedReferralSponsor) {
-                            sponsorRef = doc(db, COLLECTIONS.USER_PROFILE(window.appliedReferralSponsor.id));
-                            sponsorDoc = await transaction.get(sponsorRef);
-                            isNewSponsor = true;
-                        } else if (userDoc.data().referredBy) {
-                            sponsorRef = doc(db, COLLECTIONS.USER_PROFILE(userDoc.data().referredBy));
-                            sponsorDoc = await transaction.get(sponsorRef);
-                        }
-                    }
-                    
-                    // Calcular comisión
+                    // Calcular comisión de referido
                     let commissionAmount = 0;
                     const commPercent = adminConfig.referralCommissionPercent !== undefined ? adminConfig.referralCommissionPercent : 3;
                     if (sponsorDoc && sponsorDoc.exists()) {
-                        commissionAmount = taxBase * (commPercent / 100);
+                        commissionAmount = safeTaxBase * (commPercent / 100);
                     }
 
                     const currentNexusPoints = userDoc.data().nexusPoints || 0;
-                    let userUpdates = { fundsCS: currentFunds - totalCostCS, nexusPoints: currentNexusPoints + nexusEarned };
+                    let userUpdates = { fundsCS: currentFunds - safeTotalCostCS, nexusPoints: currentNexusPoints + safeNexusEarned };
                     
                     if (isNewSponsor && sponsorDoc && sponsorDoc.exists()) {
                         userUpdates.referralDiscountUsed = true;
@@ -4697,7 +4876,7 @@
                             referredUserId: currentUserId,
                             referredUserName: userDoc.data().name,
                             amount: commissionAmount,
-                            baseAmount: taxBase,
+                            baseAmount: safeTaxBase,
                             percentage: commPercent,
                             refTransactionId: purchaseRef.id,
                             timestamp: serverTimestamp(),
@@ -4705,17 +4884,41 @@
                         });
                     }
 
+                    // Actualizar uso de cupón promocional si aplica
+                    if (promoCodeRef && promoCodeData) {
+                        transaction.update(promoCodeRef, {
+                            totalUsed: (promoCodeData.totalUsed || 0) + 1
+                        });
+                        if (promoUsageRef) {
+                            transaction.set(promoUsageRef, {
+                                code: promoCodeData.id,
+                                userId: currentUserId,
+                                count: currentUserUsageCount + 1,
+                                lastUsedAt: serverTimestamp()
+                            }, { merge: true });
+                        }
+                    }
+
                     transaction.set(productCatalogRef, newCatalogData); 
-                    transaction.set(purchaseRef, { 
-                        type: 'COMPRA', userId: currentUserId, subtotalCS: subtotal, ivaPercentage: ivaRate, ivaAmountCS: ivaAmount, discountCS: referralDiscountAmount, taxBaseCS: taxBase, totalCS: totalCostCS, amountPaidCS: totalCostCS, nexusEarned, items: cleanCart, timestamp: serverTimestamp(),
+                    
+                    let historyRecord = { 
+                        type: 'COMPRA', userId: currentUserId, subtotalCS: subtotal, ivaPercentage: ivaRate, ivaAmountCS: safeIvaAmount, discountCS: finalDiscountAmount, taxBaseCS: safeTaxBase, totalCS: safeTotalCostCS, amountPaidCS: safeTotalCostCS, nexusEarned: safeNexusEarned, items: cleanCart, timestamp: serverTimestamp(),
                         paymentMethod: 'FONDOS',
                         appliedReferralCode: isNewSponsor ? window.appliedReferralCode : null
-                    });
+                    };
+                    
+                    if (window.appliedPromoCode) {
+                        historyRecord.appliedPromoCode = window.appliedPromoCode.id;
+                        historyRecord.appliedPromoDiscount = window.appliedPromoCode.discountPercentage;
+                    }
+                    
+                    transaction.set(purchaseRef, historyRecord);
                 });
                 
                 shoppingCart = {};
                 window.appliedReferralCode = null;
                 window.appliedReferralSponsor = null;
+                window.appliedPromoCode = null;
                 if(currentShopPath.mainKey && currentShopPath.subKey) {
                     window.showProducts('shop', currentShopPath.mainKey, currentShopPath.subKey);
                 }
@@ -4734,6 +4937,18 @@
                     window.showModal("No se pudo procesar la compra", "No tienes suficientes fondos en tu billetera para completar esta compra.");
                 } else if (fallbackError.message === 'item_exhausted') {
                     window.showModal("No se pudo procesar la compra", "Uno de los productos en tu carrito se ha agotado. Revisa tu carrito.");
+                } else if (fallbackError.message === 'codigo_invalido') {
+                    window.showModal("Aviso", "El cupón utilizado ya no es válido o fue desactivado.");
+                    window.appliedPromoCode = null; window.renderCartSummary();
+                } else if (fallbackError.message === 'codigo_expirado') {
+                    window.showModal("Aviso", "El cupón ha expirado justo ahora.");
+                    window.appliedPromoCode = null; window.renderCartSummary();
+                } else if (fallbackError.message === 'codigo_limite_global') {
+                    window.showModal("Aviso", "El cupón alcanzó su límite global de usos mientras procesábamos el pago.");
+                    window.appliedPromoCode = null; window.renderCartSummary();
+                } else if (fallbackError.message === 'codigo_limite_usuario') {
+                    window.showModal("Aviso", "Ya utilizaste este cupón el máximo de veces permitidas.");
+                    window.appliedPromoCode = null; window.renderCartSummary();
                 } else {
                     window.showModal("Error en transacción local", fallbackError.message);
                 }
@@ -8844,7 +9059,16 @@
             }
         }, err => handleFirestoreError(err, "Admin: Códigos Regalo"));
 
-        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub, paymentsUnsub, promoCodesUnsub);
+        // NUEVO: Escuchador de Cupones de Descuento
+        const discountsUnsub = onSnapshot(query(collection(db, COLLECTIONS.DISCOUNT_CODES)), (snapshot) => {
+            discountCodesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            discountCodesData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            if (!document.getElementById('content-admin-discounts').classList.contains('hidden')) {
+                window.renderAdminDiscountCodes();
+            }
+        }, err => handleFirestoreError(err, "Admin: Cupones de Descuento"));
+
+        unsubscribes.push(usersUnsub, rafflesUnsub, historyUnsub, paymentsUnsub, promoCodesUnsub, discountsUnsub);
     };
 
     // --- LÓGICA DE CÓDIGOS DE REGALO ---
@@ -9100,7 +9324,7 @@
                 const codeDoc = await t.get(codeRef);
 
                 if (!codeDoc.exists()) {
-                    throw new Error("El código ingresado no existe o es inválido.");
+                    throw new Error("El código ingresado no existe o es un Cupón de Descuento (úsalo en el carrito).");
                 }
 
                 const codeData = codeDoc.data();
@@ -9150,6 +9374,206 @@
         }
     };
     // --- FIN LÓGICA DE CÓDIGOS DE REGALO ---
+
+    // --- NUEVO: LÓGICA DE CUPONES DE DESCUENTO (ADMIN) ---
+    window.showDiscountCodeForm = () => {
+        document.getElementById('edit-discount-original-code').value = '';
+        document.getElementById('new-discount-code').value = '';
+        document.getElementById('new-discount-code').disabled = false; // Permitir edición si es nuevo
+        document.getElementById('new-discount-percent').value = '';
+        document.getElementById('new-discount-user-limit').value = '';
+        document.getElementById('new-discount-total-limit').value = '';
+        document.getElementById('new-discount-expiry').value = '';
+        document.getElementById('new-discount-active').checked = true;
+        
+        document.getElementById('discount-form-title').textContent = "Crear Nuevo Cupón de Descuento";
+        document.getElementById('discount-code-form-container').classList.remove('hidden');
+        document.getElementById('new-discount-code').focus();
+    };
+
+    window.hideDiscountCodeForm = () => {
+        document.getElementById('discount-code-form-container').classList.add('hidden');
+    };
+
+    window.editDiscountCode = (codeId) => {
+        const codeData = discountCodesData.find(c => c.id === codeId);
+        if(!codeData) return;
+        
+        document.getElementById('edit-discount-original-code').value = codeData.id;
+        document.getElementById('new-discount-code').value = codeData.id;
+        document.getElementById('new-discount-code').disabled = true; // No permitir cambiar el ID
+        document.getElementById('new-discount-percent').value = codeData.discountPercentage;
+        document.getElementById('new-discount-user-limit').value = codeData.perUserLimit || 0;
+        document.getElementById('new-discount-total-limit').value = codeData.totalLimit || 0;
+        
+        if (codeData.expiresAt) {
+            const dateObj = new Date(codeData.expiresAt.seconds * 1000);
+            document.getElementById('new-discount-expiry').value = dateObj.toISOString().split('T')[0];
+        } else {
+            document.getElementById('new-discount-expiry').value = '';
+        }
+        
+        document.getElementById('new-discount-active').checked = codeData.status === 'active';
+        
+        document.getElementById('discount-form-title').textContent = `Editar Cupón: ${codeData.id}`;
+        document.getElementById('discount-code-form-container').classList.remove('hidden');
+        document.getElementById('discount-code-form-container').scrollIntoView({behavior: 'smooth', block: 'center'});
+    };
+
+    window.saveDiscountCode = async () => {
+        const editId = document.getElementById('edit-discount-original-code').value;
+        const codeStr = document.getElementById('new-discount-code').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        const percent = parseFloat(document.getElementById('new-discount-percent').value);
+        const uLimit = parseInt(document.getElementById('new-discount-user-limit').value) || 0;
+        const tLimit = parseInt(document.getElementById('new-discount-total-limit').value) || 0;
+        const expiryStr = document.getElementById('new-discount-expiry').value;
+        const isActive = document.getElementById('new-discount-active').checked;
+
+        if (!codeStr) { window.showModal("Error", "Debes ingresar un nombre para el código (sin espacios)."); return; }
+        if (isNaN(percent) || percent < 0 || percent > 100) { window.showModal("Error", "El porcentaje debe estar entre 0 y 100."); return; }
+
+        let expiresAtVal = null;
+        if (expiryStr) {
+            const date = new Date(expiryStr);
+            // Evitar desajuste de zona horaria local, forzar a mediodía para que no regrese al día anterior
+            date.setUTCHours(12, 0, 0, 0); 
+            expiresAtVal = Timestamp.fromDate(date);
+        }
+
+        try {
+            if (editId) {
+                // Actualizar
+                await updateDoc(doc(db, COLLECTIONS.DISCOUNT_CODES, editId), {
+                    discountPercentage: percent,
+                    perUserLimit: uLimit,
+                    totalLimit: tLimit,
+                    expiresAt: expiresAtVal,
+                    status: isActive ? 'active' : 'inactive',
+                    updatedAt: serverTimestamp()
+                });
+                window.showModal("¡Actualizado!", "El cupón se ha modificado correctamente.");
+            } else {
+                // Crear (Verificar existencia primero)
+                const docRef = doc(db, COLLECTIONS.DISCOUNT_CODES, codeStr);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    window.showModal("Error", "Ya existe un código promocional con este nombre.");
+                    return;
+                }
+                await setDoc(docRef, {
+                    id: codeStr, // Redundante pero seguro
+                    discountPercentage: percent,
+                    perUserLimit: uLimit,
+                    totalLimit: tLimit,
+                    totalUsed: 0,
+                    expiresAt: expiresAtVal,
+                    status: isActive ? 'active' : 'inactive',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                window.showModal("¡Creado!", "El nuevo cupón de descuento está listo para usarse.");
+            }
+            window.hideDiscountCodeForm();
+        } catch(e) {
+            window.showModal("Error", "No se pudo guardar: " + e.message);
+        }
+    };
+
+    window.toggleDiscountStatus = async (codeId, currentStatus) => {
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+        try {
+            await updateDoc(doc(db, COLLECTIONS.DISCOUNT_CODES, codeId), {
+                status: newStatus,
+                updatedAt: serverTimestamp()
+            });
+        } catch(e) {
+            window.showModal("Error", e.message);
+        }
+    };
+
+    window.deleteDiscountCode = (codeId) => {
+        window.showConfirmModal("Eliminar Cupón", "¿Seguro que quieres borrar este cupón? El historial de compras de los clientes no se verá afectado, pero el código ya no podrá usarse nunca más.", async () => {
+            try {
+                await deleteDoc(doc(db, COLLECTIONS.DISCOUNT_CODES, codeId));
+            } catch(e) { window.showModal("Error", e.message); }
+        });
+    };
+
+    window.renderAdminDiscountCodes = () => {
+        const container = document.getElementById('admin-discounts-list');
+        if (!container) return;
+
+        if (!discountCodesData || discountCodesData.length === 0) {
+            container.innerHTML = '<div class="col-span-full p-6 text-center text-gray-500 bg-gray-800/30 rounded-xl border border-dashed border-gray-600">Aún no has creado ningún cupón de descuento.</div>';
+            return;
+        }
+
+        container.innerHTML = discountCodesData.map(c => {
+            const isActive = c.status === 'active';
+            let statusBadge = '';
+            
+            // Determinar si expiró o se agotó independientemente de si el admin lo marcó 'active'
+            let isExpired = false;
+            let isExhausted = false;
+            
+            if (c.expiresAt) {
+                const expDate = new Date(c.expiresAt.seconds * 1000);
+                expDate.setHours(23, 59, 59, 999);
+                if (new Date() > expDate) isExpired = true;
+            }
+            if (c.totalLimit > 0 && (c.totalUsed || 0) >= c.totalLimit) isExhausted = true;
+
+            if (!isActive) {
+                statusBadge = `<span class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px] font-bold border border-gray-600">DESACTIVADO</span>`;
+            } else if (isExpired) {
+                statusBadge = `<span class="bg-red-900/40 text-red-400 px-2 py-0.5 rounded text-[10px] font-bold border border-red-700/50">EXPIRADO</span>`;
+            } else if (isExhausted) {
+                statusBadge = `<span class="bg-yellow-900/40 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-700/50">AGOTADO</span>`;
+            } else {
+                statusBadge = `<span class="bg-green-900/40 text-green-400 px-2 py-0.5 rounded text-[10px] font-bold border border-green-700/50">ACTIVO</span>`;
+            }
+
+            const expStr = c.expiresAt ? new Date(c.expiresAt.seconds * 1000).toLocaleDateString('es-NI') : 'Sin fecha';
+            const limitStr = c.totalLimit > 0 ? `${c.totalUsed || 0} / ${c.totalLimit}` : `${c.totalUsed || 0} (Ilimitados)`;
+            const pLimitStr = c.perUserLimit > 0 ? c.perUserLimit : 'Ilimitados';
+
+            return `
+            <div class="bg-gray-800 p-4 rounded-xl border ${isActive && !isExpired && !isExhausted ? 'border-cyan-500/30 shadow-lg' : 'border-gray-700 opacity-80'} flex flex-col justify-between transition-all">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        ${statusBadge}
+                        <button onclick="window.toggleDiscountStatus('${c.id}', '${c.status}')" class="text-[10px] text-blue-400 hover:underline cursor-pointer">${isActive ? 'Desactivar' : 'Activar'}</button>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3 border-b border-gray-700 pb-2">
+                        <p class="font-mono font-black text-xl text-white tracking-widest">${c.id}</p>
+                        <span class="bg-cyan-900/30 text-cyan-300 font-bold px-2 py-1 rounded text-xs ml-auto">-${c.discountPercentage}%</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-400 mb-3">
+                        <div>
+                            <span class="block font-bold uppercase text-[9px] mb-0.5">Uso Global</span>
+                            <span class="text-white">${limitStr}</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold uppercase text-[9px] mb-0.5">Límite p/Cliente</span>
+                            <span class="text-white">${pLimitStr}</span>
+                        </div>
+                        <div class="col-span-2 mt-1">
+                            <span class="block font-bold uppercase text-[9px] mb-0.5">Vencimiento</span>
+                            <span class="${isExpired ? 'text-red-400' : 'text-gray-300'}">${expStr}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-2 border-t border-gray-700 pt-3">
+                    <button onclick="window.editDiscountCode('${c.id}')" class="text-xs bg-blue-900/40 text-blue-300 hover:bg-blue-600 hover:text-white font-bold transition flex items-center justify-center gap-1 px-3 py-2 rounded-lg border border-blue-700/50 flex-grow"><i data-lucide="edit-2" class="w-3 h-3"></i> Editar</button>
+                    <button onclick="window.deleteDiscountCode('${c.id}')" class="text-xs bg-red-900/20 text-red-400 hover:bg-red-800 hover:text-white font-bold transition flex items-center justify-center gap-1 px-3 py-2 rounded-lg border border-red-700/30"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                </div>
+            </div>
+            `;
+        }).join('');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    };
+    // --- FIN LÓGICA DE CUPONES DE DESCUENTO ---
 
     // --- NUEVA FUNCIÓN: Renderizar Historial de Recargas ---
     window.renderAdminRechargesHistory = () => {
