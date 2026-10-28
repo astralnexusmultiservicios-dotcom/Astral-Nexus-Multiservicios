@@ -1,0 +1,22 @@
+{
+  "name": "astral-nexus-platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build web",
+    "test": "node --test functions/test/*.test.mjs",
+    "test:rules": "firebase emulators:exec --project demo-astral-nexus --only firestore 'node --test tests/rules.test.mjs'",
+    "test:integration": "firebase emulators:exec --project demo-astral-nexus --only firestore \"node --test tests/rules.test.mjs && node --test functions/test/integration.mjs\""
+  },
+  "dependencies": {
+    "firebase": "^12.0.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase-tools": "^14.0.0",
+    "vite": "^7.0.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.6"
+  }
+}
