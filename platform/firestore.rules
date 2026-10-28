@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+  function admin() { return signedIn() && request.auth.token.nxAdmin == true && get(/databases/$(database)/documents/nx_staff/$(request.auth.uid)).data.active == true && get(/databases/$(database)/documents/nx_staff/$(request.auth.uid)).data.role == 'admin'; }
+  function own() { return signedIn() && resource.data.uid == request.auth.uid; }
+  match /nx_users/{uid} { allow read: if signedIn() && (uid == request.auth.uid || admin()); }
+  match /nx_products/{id} { allow read: if resource.data.active == true || admin(); }
+  match /nx_settings/store { allow read: if true; }
+  match /nx_banks/{id} { allow read: if signedIn() && (resource.data.active == true || admin()); }
+  match /nx_orders/{id} { allow read: if own() || admin(); }
+  match /nx_ledger/{id} { allow read: if own() || admin(); }
+  match /nx_deposits/{id} { allow read: if own() || admin(); }
+  match /nx_debts/{id} { allow read: if own() || admin(); }
+  match /nx_raffles/{id} { allow read: if signedIn(); }
+  match /nx_staff/{uid} { allow get: if signedIn() && (uid == request.auth.uid || admin()); }
+  match /nx_coupons/{id} { allow read: if admin(); }
+  match /nx_audit/{id} { allow read: if admin(); }
+  // No browser, including an administrator, may write money, prices or roles.
+  // Callable Functions validate authorization and all mutations with the Admin SDK.
+  // Inventory codes, idempotency records and gift hashes are never readable by clients.
+  match /{document=**} { allow read, write: if false; }
+ }
+}

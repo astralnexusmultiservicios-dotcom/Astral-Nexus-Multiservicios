@@ -1,0 +1,6 @@
+import {initializeApp} from 'firebase-admin/app';import {getFirestore} from 'firebase-admin/firestore';
+const projectId=process.argv[2];
+if(!projectId||!projectId.includes('staging')||process.env.NEXUS_SEED_PROJECT!==projectId)throw new Error('This helper only accepts an explicit project with staging in its name and matching NEXUS_SEED_PROJECT.');
+initializeApp({projectId});const db=getFirestore();
+const data=[['nx_settings/store',{taxBps:0,rewardPoints:0,transferFeeBps:0,referralBps:0,pointsPerCordoba:0,maintenance:true,transfersEnabled:false,announcement:'Entorno de pruebas',whatsapp:''}],['nx_products/test-recharge',{name:'Recarga de prueba',description:'Solo para pruebas de aceptación. No se entrega una recarga real.',category:'Pruebas',subcategory:'Recargas',priceCents:100,pricePoints:10,stock:10,unlimited:false,active:true,requiresPlayerId:true,kind:'service',imageUrl:'',sold:0}]];
+await db.runTransaction(async t=>{const refs=data.map(([path])=>db.doc(path));const docs=await t.getAll(...refs);if(docs.some(d=>d.exists))throw new Error('Staging records already exist; refusing to overwrite.');data.forEach(([,value],i)=>t.create(refs[i],value));});console.log('Staging initialized, maintenance enabled. No accounts or balances were seeded.');

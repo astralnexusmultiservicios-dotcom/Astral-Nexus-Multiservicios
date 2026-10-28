@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {quote,debit,credit,basis,transitionOrder,dayKey} from '../src/domain.mjs';import {parseRequest} from '../src/schema.mjs';
+const p={name:'Recarga',priceCents:16000,pricePoints:300,active:true,unlimited:false,stock:2,requiresPlayerId:true,kind:'service'};
+const items=[{productId:'diamond',quantity:2,playerId:'123456789'}];
+test('server catalog ignores tampered browser price',()=>{const q=quote([{...items[0],priceCents:1}],{diamond:p},{taxBps:1500});assert.equal(q.totalCents,36800);});
+test('exact integer tax and discount calculation',()=>{const q=quote(items,{diamond:p},{taxBps:1500},{active:true,expiresAtMs:Date.now()+10000,used:0,maxUses:2,minimumCents:100,discountBps:1000});assert.equal(q.discountCents,3200);assert.equal(q.taxCents,4320);assert.equal(q.totalCents,33120);});
+test('combined quantities for multiple IDs cannot bypass inventory',()=>assert.throws(()=>quote([{...items[0],quantity:2},{...items[0],quantity:1,playerId:'987654321'}],{diamond:p},{}),/Inventario/));
+test('negative, fractional and oversized quantities rejected',()=>{for(const quantity of [-1,.5,100,NaN,Infinity])assert.throws(()=>quote([{...items[0],quantity}],{diamond:p},{}));});
+test('player ID and hidden products validated',()=>{assert.throws(()=>quote([{...items[0],playerId:'abc'}],{diamond:p},{}));assert.throws(()=>quote(items,{diamond:{...p,active:false}},{}));});
+test('insufficient balance and fractional debit rejected',()=>{assert.throws(()=>debit({balanceCents:5},'cash',6),/Saldo/);assert.throws(()=>debit({points:10},'points',.1));});
+test('credit overflow rejected',()=>assert.throws(()=>credit({balanceCents:99999999},'cash',2),/rango/));
+test('wallet never mutates the caller object',()=>{const w={balanceCents:500,points:10};assert.equal(debit(w,'cash',100).balanceCents,400);assert.equal(w.balanceCents,500);});
+test('cannot refund or fulfil a processed order twice',()=>{assert.equal(transitionOrder({status:'pending'},'refunded').status,'refunded');assert.throws(()=>transitionOrder({status:'refunded'},'refunded'));assert.throws(()=>transitionOrder({status:'fulfilled'},'refunded'));});
+test('reward day follows Nicaragua midnight',()=>assert.notEqual(dayKey(Date.UTC(2026,9,28,5,59)),dayKey(Date.UTC(2026,9,28,6,0))));
+test('strict request rejects injected role, price and fractional points',()=>{const base={action:'purchase',requestId:'67dfda2f-39ed-4698-a474-7b411dfc4869',payload:{items,currency:'cash',expectedTotal:32000}};assert.throws(()=>parseRequest({...base,isAdmin:true}));assert.throws(()=>parseRequest({...base,payload:{...base.payload,items:[{...items[0],priceCents:1}]}}));});
+test('basis points rounding is stable',()=>{assert.equal(basis(101,1500),15);assert.equal(basis(999,10000),999);});
